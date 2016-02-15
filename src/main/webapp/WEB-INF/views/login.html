@@ -1,0 +1,165 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="wireframe :: header">
+</head>
+<body>
+
+<script th:src="@{/resources/js/page/login.js} " src="/resources/js/page/login.js"></script>
+
+<div id="page-content-wrapper">
+    <div class="container-fluid">
+        <div class="pad">
+            <div class="row col-lg-12">
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div id="signUpForm">
+
+                <div class="panel panel-info">
+                    <div class="panel-body">
+                        <div class="sign-up">
+
+                            <form role="form" id="user" method="post">
+
+                                <div class="col-lg-12 col-md-6">
+                                    <div class="form-group">
+                                        <label for="name">Enter Name</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="name" id="name" placeholder="Enter Name" />
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">Enter Phone</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter phone no" />
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Enter Email</label>
+                                        <div class="input-group">
+                                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email" />
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="state">Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" name="signUpPassword" id="signUpPassword" placeholder="Enter password" />
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="address">Address</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="address" id="address" placeholder="Enter Address" />
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="city">City</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="city" id="city" placeholder="Enter city" />
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="district">District</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="district" id="district" placeholder="Enter district" />
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="state">State</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="state" id="state" placeholder="Enter State" />
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="pin">Pincode</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="pin" id="pin" placeholder="Enter pincode" />
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <input type="submit" name="submit" id="submit" value="Submit" class="btn btn-info pull-right"/>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div id="login">
+
+                <div id="login-overlay" class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Login to site.com</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="well">
+                                        <form id="loginForm" th:action="@{/login}" method="post" >
+                                            <div class="form-group">
+                                                <label for="username" class="control-label">Username</label>
+                                                <input type="text" class="form-control" id="username" name="username"  title="Please enter you username" placeholder="example@gmail.com" />
+                                                <span class="help-block"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="password" class="control-label">Password</label>
+                                                <input type="password" class="form-control" id="password" name="password" title="Please enter your password" />
+                                                <span class="help-block"></span>
+                                            </div>
+                                            <input type="hidden" name="${_csrf.parameterName}"  value="${_csrf.token}" />
+                                            <div id="loginErrorMsg" class="alert alert-error hide">Wrong username og password</div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="remember" id="remember" /> Remember login
+                                                </label>
+                                                <p class="help-block">(if this is a private computer)</p>
+                                            </div>
+                                            <button type="submit" class="btn btn-success btn-block">Login</button>
+                                            <a href="/forgot/" class="btn btn-default btn-block">Help to login</a>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <p class="lead">Register now for <span class="text-success">FREE</span></p>
+                                    <ul class="list-unstyled" style="line-height: 2">
+                                        <li><span class="fa fa-check text-success"></span> See all your orders</li>
+                                        <li><span class="fa fa-check text-success"></span> Fast re-order</li>
+                                        <li><span class="fa fa-check text-success"></span> Save your favorites</li>
+                                        <li><span class="fa fa-check text-success"></span> Fast checkout</li>
+                                        <li><span class="fa fa-check text-success"></span> Get a gift <small>(only new customers)</small></li>
+                                        <li><a href="/read-more/"><u>Read more</u></a></li>
+                                    </ul>
+                                    <p><a  id="registerClick" class="btn btn-info btn-block">Yes please, register now!</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
