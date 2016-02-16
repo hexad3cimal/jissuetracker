@@ -19,7 +19,7 @@
 
 
   <build>
-    <finalName>${pom.artifactId}</finalName>
+    <finalName>jit</finalName>
 
     <plugins>
       <plugin>
@@ -28,7 +28,7 @@
         <version>2.4</version>
         <configuration>
           <warSourceDirectory>src/main/webapp</warSourceDirectory>
-          <warName>webapp</warName>
+          <warName>jit</warName>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>

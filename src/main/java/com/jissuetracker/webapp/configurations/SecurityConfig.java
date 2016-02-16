@@ -41,10 +41,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-                .antMatchers("/app/**").access("hasRole('Manager')")
-                .antMatchers("/app/**").access("hasRole('Tester')")
-                .antMatchers("/app/**").access("hasRole('Developer')")
-                .antMatchers("/app/**").access("hasRole('Administrator')")
+                .antMatchers("/app/**").access("hasAnyAuthority('Administrator','Manager','Tester','Developer')")
+//                .antMatchers("/app/**").access("hasRole('Administrator')")
+//                .antMatchers("/app/**").access("hasRole('Tester')")
+//                .antMatchers("/app/**").access("hasRole('Developer')")
                 .and().formLogin().loginPage("/login")
                 .successHandler(authenticationSuccessHandler)
                 .failureUrl("/login?error")
@@ -65,4 +65,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         Md5PasswordEncoder encoder = new Md5PasswordEncoder();
         return encoder;
     }
+
+
 }

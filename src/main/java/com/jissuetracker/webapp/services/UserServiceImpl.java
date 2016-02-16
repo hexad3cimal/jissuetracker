@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 /**
  * Created by jovin on 14/2/16.
  */
@@ -23,5 +25,9 @@ public class UserServiceImpl implements UserService {
 
     public User getUserByUserName(String userName) throws Exception {
         return userDao.getUserByUserName(userName);
+    }
+
+    public Map<String, String> userDropdownList() throws Exception {
+        return userDao.userDropdownList();
     }
 }

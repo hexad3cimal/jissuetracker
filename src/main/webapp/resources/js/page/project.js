@@ -3,7 +3,25 @@
  */
 $(function(){
 
-    var token = $('input[name=csrf-token]').val()
+    $('#userSelect').selectpicker();
+
+
+    $.ajax({
+        type: "GET",
+        url: '/jit/app/project/userDropdown',
+        success: function(json) {
+
+            var $el = $("#userSelect");
+            $el.empty(); // remove old options
+            $el.append($("<option></option>")
+                .attr("value", '').text('Please Select'));
+            $.each(json, function(value, key) {
+                $el.append($("<option></option>")
+                    .attr("value", value).text(key));
+            });
+
+        }
+    });
 
     $('#newProject').validate({
 
@@ -66,7 +84,7 @@ function addProject(){
 
     $.ajax({
 
-        url : "/webapp/app/project/addNew",
+        url : "/jit/app/project/addNew",
         type :'POST',
         contentType: "application/json",
         dataType: 'json',

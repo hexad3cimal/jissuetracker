@@ -2,6 +2,7 @@ package com.jissuetracker.webapp.controllers;
 
 import com.jissuetracker.webapp.models.Projects;
 import com.jissuetracker.webapp.services.ProjectService;
+import com.jissuetracker.webapp.services.UserService;
 import com.jissuetracker.webapp.utils.NotEmpty;
 import com.jissuetracker.webapp.utils.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class ProjectController {
     @Autowired
     ProjectService projectService;
 
+    @Autowired
+    UserService userService;
+
     @RequestMapping("/add")
     public String addProject(){
 
@@ -49,12 +53,27 @@ public class ProjectController {
         if(projectMap.containsKey("description") && NotEmpty.notEmpty(projectMap.get("description")))
             projects.setDescription(projectMap.get("description"));
 
-        projects.setManager(auth.getName());
+        if(NotEmpty.notEmpty(auth.getName()))
+             projects.setManager(auth.getName());
+
+        projects.setUrl("/jit/projects/"+projects.getName());
+
 
         projectService.add(projects);
 
         return new Response("Success");
 
+
+    }
+
+    @RequestMapping(value = "/userDropdown",method = RequestMethod.GET)
+    @ResponseBody
+    public Response userDropdown()throws Exception{
+
+        if (NotEmpty.notEmpty(userService.userDropdownList()))
+            return new Response(userService.userDropdownList());
+        else
+            return new Response("Null");
 
     }
 }

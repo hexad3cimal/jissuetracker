@@ -13,6 +13,7 @@
     <div th:include="wireframe :: sidebar">
     </div>
 </div>
+<script th:src="@{/resources/js/bootstrap-select.js} " src="/resources/js/bootstrap-select.js"></script>
 <script th:src="@{/resources/js/page/project.js} " src="/resources/js/page/project.js"></script>
 
 <div class="row">
@@ -45,6 +46,17 @@
                                     </div>
 
                                 </div>
+
+                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
+                                    <div class="form-group">
+                                        <label>Users</label>
+                                        <select id ="userSelect" multiple="multiple">
+                                            </select>
+
+                                        </div>
+                                    </div>
+
+
                                 <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-primary pull-right">Add New Project</button>

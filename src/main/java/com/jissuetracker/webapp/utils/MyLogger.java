@@ -19,4 +19,10 @@ public class MyLogger {
     public void log(JoinPoint point) {
         log.info(point.getSignature().getName() + " Aspect called...");
     }
+
+
+    @Before("execution(* com.jissuetracker.webapp.controllers.ProjectController.userDropdown(..))")
+    public void userDropdown(JoinPoint point) {
+        log.info(point.getSignature().getName() + " Aspect called...");
+    }
 }
