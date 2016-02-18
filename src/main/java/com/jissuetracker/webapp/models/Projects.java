@@ -113,8 +113,9 @@ public class Projects implements java.io.Serializable {
 		this.updatedOn = updatedOn;
 	}
 
+
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "projectUserAssociation", catalog = "IssueTracker", joinColumns = {
+	@JoinTable(name = "projectUserAssociation",  joinColumns = {
 			@JoinColumn(name = "projectId", nullable = false, updatable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "userId", nullable = false, updatable = false) })
 	public Set<User> getUsers() {

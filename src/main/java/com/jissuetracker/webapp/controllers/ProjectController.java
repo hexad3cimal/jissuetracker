@@ -1,22 +1,21 @@
 package com.jissuetracker.webapp.controllers;
 
 import com.jissuetracker.webapp.models.Projects;
+import com.jissuetracker.webapp.models.User;
 import com.jissuetracker.webapp.services.ProjectService;
 import com.jissuetracker.webapp.services.UserService;
 import com.jissuetracker.webapp.utils.NotEmpty;
 import com.jissuetracker.webapp.utils.Response;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Created by jovin on 14/2/16.
@@ -40,7 +39,7 @@ public class ProjectController {
     @RequestMapping(value = "/addNew",
             method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody public Response addNewProject
-            (@RequestBody HashMap<String,String> projectMap)
+            (@RequestBody HashMap<String,Object> projectMap)
             throws Exception{
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -48,15 +47,34 @@ public class ProjectController {
         Projects projects = new Projects();
 
         if(projectMap.containsKey("name") && NotEmpty.notEmpty(projectMap.get("name")))
-            projects.setName(projectMap.get("name"));
+            projects.setName(projectMap.get("name").toString());
 
         if(projectMap.containsKey("description") && NotEmpty.notEmpty(projectMap.get("description")))
-            projects.setDescription(projectMap.get("description"));
+            projects.setDescription(projectMap.get("description").toString());
 
-        if(NotEmpty.notEmpty(auth.getName()))
-             projects.setManager(auth.getName());
+        if(projectMap.containsKey("users") && NotEmpty.notEmpty(projectMap.get("users"))){
+            String usersString = projectMap.get("users").toString();
+            String userArray [] = usersString.split(",");
+            User userObject = new User();
+            HashSet<User> userHashSet = new HashSet<User>();
+            for (String user: userArray){
+                user = user.replace("[","");
+                user = user.replace("]","");
+                user = user.replace(" ","");
+                System.out.println("Users" + user);
+                userObject = userService.getUserByUserName(user);
+                if(NotEmpty.notEmpty(userObject))
+                    userHashSet.add(userObject);
+            }
+            projects.setUsers(userHashSet);
 
-        projects.setUrl("/jit/projects/"+projects.getName());
+        }
+
+
+            if(NotEmpty.notEmpty(auth.getName()))
+                projects.setManager(auth.getName());
+
+        projects.setUrl("/jit/project/"+projects.getName());
 
 
         projectService.add(projects);
@@ -76,4 +94,50 @@ public class ProjectController {
             return new Response("Null");
 
     }
+
+    @RequestMapping(value = "/projectHomeList")
+    @ResponseBody
+    public Response projectHomeList(
+            @RequestParam(value = "projectName") String projectName)throws Exception{
+
+        Projects project = projectService.projectHomeList(projectName);
+        Set<User> users = project.getUsers();
+        HashMap<String,List<String>> projectUsers = new HashMap<String, List<String>>();
+        List<String> projectDetails = new ArrayList<String>();
+        projectDetails.add(project.getDescription());
+        projectUsers.put("Description",projectDetails);
+        if(NotEmpty.notEmpty(users)) {
+            for (User user : users) {
+                if (user.getRoles().getRolename().equalsIgnoreCase("Manager")) {
+                    List<String> manager = new ArrayList<String>();
+                    manager.add(user.getName());
+                    projectUsers.put("Manager", manager);
+                }
+
+                if (user.getRoles().getRolename().equalsIgnoreCase("Developer")) {
+                    List<String> developer = new ArrayList<String>();
+                    developer.add(user.getName());
+                    projectUsers.put("Developers", developer);
+                }
+
+                if (user.getRoles().getRolename().equalsIgnoreCase("Tester")) {
+                    List<String> tester = new ArrayList<String>();
+                    tester.add(user.getName());
+                    projectUsers.put("Testers", tester);
+                }
+
+            }
+        }
+
+        return new Response(projectUsers);
+    }
+
+
+    @RequestMapping(value = "/{projectName}")
+    public String projectHome(@PathVariable (value = "projectName" ) String projectName)
+    {
+
+        return "projectHome";
+    }
+
 }

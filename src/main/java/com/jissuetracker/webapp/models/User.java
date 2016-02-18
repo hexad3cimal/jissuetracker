@@ -105,7 +105,7 @@ public class User implements java.io.Serializable {
 	}
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "projectUserAssociation", catalog = "IssueTracker", joinColumns = {
+	@JoinTable(name = "projectUserAssociation",  joinColumns = {
 			@JoinColumn(name = "userId", nullable = false, updatable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "projectId", nullable = false, updatable = false) })
 	public Set<Projects> getProjectses() {

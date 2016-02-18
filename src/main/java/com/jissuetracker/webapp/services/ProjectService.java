@@ -8,5 +8,7 @@ import com.jissuetracker.webapp.models.Projects;
 public interface ProjectService {
 
     public void add(Projects project)throws Exception;
+    public Projects projectHomeList(String projectName)throws Exception;
+
 
 }

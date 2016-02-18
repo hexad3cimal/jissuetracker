@@ -28,6 +28,6 @@ public class UserServiceImpl implements UserService {
     }
 
     public Map<String, String> userDropdownList() throws Exception {
-        return userDao.userDropdownList();
+        return userDao.projectUserDropdownList();
     }
 }

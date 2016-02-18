@@ -16,9 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 public class CustomExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
-    public void exception(Exception e) {
+    public Response exception(Exception e) {
 
         e.printStackTrace();
+        return new Response(e.getMessage());
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)

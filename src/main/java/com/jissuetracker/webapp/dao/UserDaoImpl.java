@@ -1,7 +1,12 @@
 package com.jissuetracker.webapp.dao;
 
 import com.jissuetracker.webapp.models.User;
+import com.jissuetracker.webapp.utils.NotEmpty;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -29,12 +34,23 @@ public class UserDaoImpl implements UserDao {
                 .setParameter("email",userName).uniqueResult();
     }
 
-    public Map<String, String> userDropdownList() throws Exception {
-        List<Object[]> dropdownList = (List<Object[]>)sessionFactory.getCurrentSession()
-                .createQuery("select email ,name from User").list();
+    public Map<String, String> projectUserDropdownList() throws Exception {
+
+       Criteria criteria = sessionFactory.getCurrentSession()
+                .createCriteria(User.class,"user").
+                createAlias("user.roles","roles").add(Restrictions.ne("roles.rolename","Manager"))
+                .add(Restrictions.ne("roles.rolename","Administrator"));
+        ProjectionList projectionList = Projections.projectionList();
+        projectionList.add(Projections.property("user.email"));
+        projectionList.add(Projections.property("user.name"));
+
+        List<Object[]> dropdownList = (List<Object[]>) criteria.setProjection(projectionList).list();
+
         Map<String,String> dropdownMap = new HashMap<String, String>();
-        for (Object[] O : dropdownList){
-            dropdownMap.put(O[0].toString(),O[1].toString());
+        if(NotEmpty.notEmpty(dropdownList)) {
+            for (Object[] O : dropdownList) {
+                dropdownMap.put(O[0].toString(), O[1].toString());
+            }
         }
         return dropdownMap;
     }

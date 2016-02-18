@@ -20,4 +20,8 @@ public class ProjectServiceImpl implements ProjectService {
         projectDao.add(project);
 
     }
+
+    public Projects projectHomeList(String projectName) throws Exception {
+        return projectDao.projectHomeList(projectName);
+    }
 }

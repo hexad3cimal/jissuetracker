@@ -11,5 +11,5 @@ public interface UserDao {
 
     public void add(User user)throws Exception;
     public User getUserByUserName(String userName)throws Exception;
-    public Map<String,String> userDropdownList()throws Exception;
+    public Map<String,String> projectUserDropdownList()throws Exception;
 }

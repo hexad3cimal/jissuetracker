@@ -6,6 +6,7 @@ $(function(){
     $('#userSelect').selectpicker();
 
 
+
     $.ajax({
         type: "GET",
         url: '/jit/app/project/userDropdown',
@@ -14,14 +15,17 @@ $(function(){
             var $el = $("#userSelect");
             $el.empty(); // remove old options
             $el.append($("<option></option>")
-                .attr("value", '').text('Please Select'));
-            $.each(json, function(value, key) {
+            );
+            $.each(json.data, function(value, key) {
                 $el.append($("<option></option>")
                     .attr("value", value).text(key));
+                $('#userSelect').selectpicker('refresh');
+
             });
 
         }
     });
+
 
     $('#newProject').validate({
 
@@ -73,10 +77,18 @@ $(function(){
 
 function addProject(){
 
+    var mySelections = [];
+    $('#userSelect option').each(function(i) {
+        if (this.selected == true) {
+            mySelections.push(this.value);
+        }
+    });
+
+    console.log(mySelections)
     var data ={
         name:$('input[name=name]').val(),
-        description:$('input[name=description]').val()
-
+        description:$('input[name=description]').val(),
+        users:mySelections
     };
 
     var token = $("meta[name='_csrf']").attr("content");
