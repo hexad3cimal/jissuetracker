@@ -9,6 +9,7 @@ public interface ProjectService {
 
     public void add(Projects project)throws Exception;
     public Projects projectHomeList(String projectName)throws Exception;
+    public Projects getByName(String projectName)throws Exception;
 
 
 }

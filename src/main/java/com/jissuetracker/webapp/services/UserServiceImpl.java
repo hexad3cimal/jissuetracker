@@ -27,6 +27,10 @@ public class UserServiceImpl implements UserService {
         return userDao.getUserByUserName(userName);
     }
 
+    public User getUserByName(String name) throws Exception {
+        return userDao.getUserByName(name);
+    }
+
     public Map<String, String> userDropdownList() throws Exception {
         return userDao.projectUserDropdownList();
     }

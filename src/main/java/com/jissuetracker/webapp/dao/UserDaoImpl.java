@@ -3,6 +3,7 @@ package com.jissuetracker.webapp.dao;
 import com.jissuetracker.webapp.models.User;
 import com.jissuetracker.webapp.utils.NotEmpty;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -32,6 +33,15 @@ public class UserDaoImpl implements UserDao {
        return (User)sessionFactory.getCurrentSession()
                 .createQuery("From User where email = :email ")
                 .setParameter("email",userName).uniqueResult();
+    }
+
+    public User getUserByName(String name) throws Exception {
+//        return (User)sessionFactory.getCurrentSession()
+//                .createQuery("From User where name = :name")
+//                .setParameter("name",name).uniqueResult();
+        return (User) sessionFactory.getCurrentSession().createCriteria(User.class,"user")
+                .setFetchMode("projectses", FetchMode.JOIN)
+                .add(Restrictions.eq("name",name)).uniqueResult();
     }
 
     public Map<String, String> projectUserDropdownList() throws Exception {

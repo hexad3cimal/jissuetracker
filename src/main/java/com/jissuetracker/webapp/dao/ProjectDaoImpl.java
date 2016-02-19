@@ -5,8 +5,12 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by jovin on 14/2/16.
@@ -29,10 +33,17 @@ public class ProjectDaoImpl implements ProjectDao {
 //                .createQuery("From Projects where name =:projectName")
 //                .setParameter("projectName",projectName).uniqueResult();
 
-        Projects projects = (Projects) sessionFactory.getCurrentSession()
-                .createCriteria(Projects.class,"project")
-                .setFetchMode("users", FetchMode.JOIN).uniqueResult();
 
-        return projects;
+        return (Projects) sessionFactory.getCurrentSession()
+                .createCriteria(Projects.class,"project").add(Restrictions.eq("name",projectName))
+                .setFetchMode("users", FetchMode.JOIN).uniqueResult();
     }
+
+    public Projects getByName(String projectName) throws Exception {
+        return (Projects) sessionFactory.getCurrentSession()
+                .createCriteria(Projects.class,"project").add(Restrictions.eq("name",projectName))
+                .setFetchMode("issueses", FetchMode.JOIN).uniqueResult();
+    }
+
+
 }

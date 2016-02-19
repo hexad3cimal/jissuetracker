@@ -1,5 +1,6 @@
 package com.jissuetracker.webapp.controllers;
 
+import com.jissuetracker.webapp.models.Issues;
 import com.jissuetracker.webapp.models.Projects;
 import com.jissuetracker.webapp.models.User;
 import com.jissuetracker.webapp.services.ProjectService;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -140,4 +142,41 @@ public class ProjectController {
         return "projectHome";
     }
 
-}
+    @RequestMapping("/{name}/projects")
+    @ResponseBody public Response userProjects
+            (@PathVariable(value = "name")String name)throws Exception{
+
+        User userProjectsObject = userService.getUserByName(name);
+        if (NotEmpty.notEmpty(userProjectsObject)) {
+            Set<Projects> projectsSet = userProjectsObject.getProjectses();
+            HashMap<String,String> userProjectsMap = new HashMap<String, String>();
+            for (Projects projects: projectsSet){
+                userProjectsMap.put(projects.getName(),projects.getUrl());
+            }
+
+            return new Response(userProjectsMap);
+
+        }
+
+        return new Response("Null");
+    }
+
+    @RequestMapping("/{name}/issues")
+    public String issueHome(@PathVariable(value = "name") String name,
+                            HttpServletRequest request)throws Exception{
+
+        Projects project = projectService.getByName(name);
+        Set<Issues> issuesSet = new HashSet<Issues>();
+        issuesSet=project.getIssueses();
+
+        if(NotEmpty.notEmpty(issuesSet)){
+        request.getSession().setAttribute("issues",issuesSet);
+            }
+        return "issuesHome";
+        }
+
+
+    }
+
+
+

@@ -24,4 +24,8 @@ public class ProjectServiceImpl implements ProjectService {
     public Projects projectHomeList(String projectName) throws Exception {
         return projectDao.projectHomeList(projectName);
     }
+
+    public Projects getByName(String projectName) throws Exception {
+        return projectDao.getByName(projectName);
+    }
 }

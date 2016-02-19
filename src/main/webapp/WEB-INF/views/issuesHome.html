@@ -1,0 +1,29 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="wireframe :: header">
+</head>
+<body>
+<script th:src="@{/resources/js/page/issuesHome.js} " src="/resources/js/page/issuesHome.js"></script>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+
+    <div th:include="wireframe :: topNavBar">
+    </div>
+</nav>
+
+<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+    <div th:include="wireframe :: sidebar">
+    </div>
+</div>
+
+
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div id="issueTable"></div>
+        </div>
+        </div>
+    </div>
+</body>
+</html>

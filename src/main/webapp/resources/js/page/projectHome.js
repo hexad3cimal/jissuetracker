@@ -14,11 +14,12 @@ $(function(){
             document.getElementById("projectDescription").innerHTML = json.data.Description;
             document.getElementById("manager").innerHTML = json.data.Manager;
             document.getElementById("developers").innerHTML = json.data.Developers;
-            document.getElementById("testers").innerHTML = json.data.Testers;
+            $("#testers").val(json.data.Testers);
 
 
         }
 
     });
+
 
 });

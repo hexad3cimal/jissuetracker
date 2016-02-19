@@ -25,8 +25,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     public String handleError404(HttpServletRequest request, Exception e)   {
 
-        e.printStackTrace();
-        return null;
+        return "404";
     }
 
     @ExceptionHandler(HibernateException.class)
