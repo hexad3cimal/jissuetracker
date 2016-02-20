@@ -3,7 +3,7 @@
 <head th:include="wireframe :: header">
 </head>
 <body>
-<script th:src="@{/resources/js/page/issuesHome.js} " src="/resources/js/page/issuesHome.js"></script>
+<script th:src="@{/resources/js/page/projectIssuesHome.js} " src="/resources/js/page/projectIssuesHome.js"></script>
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 
@@ -21,7 +21,13 @@
 
     <div class="panel panel-default">
         <div class="panel-body">
-            <div id="issueTable"></div>
+            <table>
+            <th:block th:each="issues : ${session.issues}">
+                <tr>
+                    <td><a th:text="${issues.title}" th:href="${}"></a></td>
+                </tr>
+            </th:block>
+                </table>
         </div>
         </div>
     </div>

@@ -3,6 +3,15 @@
  */
 $(function(){
 
+    $('#issueBlock').hide();
+
+$('#addIssue').click(function(){
+
+    $('#issueBlock').show();
+    $('#projectBlock').hide();
+
+});
+
     var path = $(location).attr('href');
     var splitted = path.split('/');
     document.getElementById("projectTitle").innerHTML = splitted[6];

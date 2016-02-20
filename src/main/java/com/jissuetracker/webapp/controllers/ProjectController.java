@@ -172,7 +172,7 @@ public class ProjectController {
         if(NotEmpty.notEmpty(issuesSet)){
         request.getSession().setAttribute("issues",issuesSet);
             }
-        return "issuesHome";
+        return "projectIssuesHome";
         }
 
 

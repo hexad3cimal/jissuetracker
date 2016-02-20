@@ -40,6 +40,7 @@ public class ProjectDaoImpl implements ProjectDao {
     }
 
     public Projects getByName(String projectName) throws Exception {
+        System.out.println("Reached dao");
         return (Projects) sessionFactory.getCurrentSession()
                 .createCriteria(Projects.class,"project").add(Restrictions.eq("name",projectName))
                 .setFetchMode("issueses", FetchMode.JOIN).uniqueResult();

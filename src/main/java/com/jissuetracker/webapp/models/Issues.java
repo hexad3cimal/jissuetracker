@@ -37,13 +37,15 @@ public class Issues implements java.io.Serializable {
 	private String estimatedHours;
 	private Date endDate;
 	private String description;
+	private String title;
+	private String url;
 	private Set<IssuesUpdates> issuesUpdateses = new HashSet<IssuesUpdates>(0);
 	private Set<Attachments> attachmentses = new HashSet<Attachments>(0);
 
 	public Issues() {
 	}
 
-	public Issues(Projects projects, User userByCreatedById, User userByAssignedToId, Status status, Trackers trackers,
+	public Issues(String url,String title,Projects projects, User userByCreatedById, User userByAssignedToId, Status status, Trackers trackers,
 			Attachments attachments, Date createdOn, Date updatedOn, Integer donePercentage, String estimatedHours,
 			Date endDate, String description, Set<IssuesUpdates> issuesUpdateses, Set<Attachments> attachmentses) {
 		this.projects = projects;
@@ -60,6 +62,8 @@ public class Issues implements java.io.Serializable {
 		this.description = description;
 		this.issuesUpdateses = issuesUpdateses;
 		this.attachmentses = attachmentses;
+		this.title = title;
+        this.url = url;
 	}
 
 	@Id
@@ -209,4 +213,21 @@ public class Issues implements java.io.Serializable {
 		this.attachmentses = attachmentses;
 	}
 
+    @Column(name = "title")
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Column(name = "url")
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }
