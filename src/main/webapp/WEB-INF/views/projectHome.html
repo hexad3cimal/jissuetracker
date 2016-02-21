@@ -4,9 +4,11 @@
 </head>
 <body>
 <link th:href="@{/resources/css/bootstrap-datetimepicker.css}" href="/resources/css/bootstrap-datetimepicker.css" rel="stylesheet" />
-
-<script th:src="@{/resources/js/page/projectHome.js} " src="/resources/js/page/projectHome.js"></script>
+<link th:href="@{/resources/css/bootstrap-select.css}" href="/resources/css/bootstrap-select.css" rel="stylesheet" />
+<script th:src="@{/resources/js/bootstrap-select.js} " src="/resources/js/bootstrap-select.js"></script>
+<script th:src="@{/resources/js/moment.js} " src="/resources/js/moment.js"></script>
 <script th:src="@{/resources/js/bootstrap-datetimepicker.min.js} " src="/resources/js/bootstrap-datetimepicker.min.js"></script>
+<script th:src="@{/resources/js/page/projectHome.js} " src="/resources/js/page/projectHome.js"></script>
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 
@@ -51,7 +53,31 @@
                 </div>
             </div>
         </div>
-            <button id="addIssue" class="btn btn-default">Submit</button>
+            <div class="row">
+                <div class="col-xs-12 col-md-6 col-lg-4">
+                    <div id="addIssue">
+                        <div class="panel panel-blue panel-widget">
+                            <div class="row no-padding widget-left ">
+                                <div class="large">Add Issue</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-4">
+                    <div class="panel panel-teal panel-widget">
+                        <div class="row no-padding widget-left ">
+                            <div class="large">View All Issues</div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="col-xs-12 col-md-6 col-lg-4">-->
+                    <!--<div class="panel panel-red panel-widget">-->
+                        <!--<div class="row no-padding widget-left ">-->
+                            <!--<div class="large">View All Packages</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            </div>
         </div>
     </div>
 
@@ -59,41 +85,45 @@
         <div class="row col-sm-8 col-sm-offset-2 col-lg-8 col-lg-offset-2">
 
             <div class="panel panel-info">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Add New Issue
+                    </div>
+                </div>
                 <div class="panel-body">
 
                         <form role="form" id="issue" method="post">
 
-                            <div class="col-lg-12 col-md-6">
                                 <div class="form-group">
                                     <label for="title">Title</label>
-                                    <div class="input-group">
+                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
                                         <input type="text" class="form-control" name="title" id="title" placeholder="Enter Name" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="tracker">Tracker</label>
-                                    <div class="input-group">
+                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
                                         <select id ="tracker" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="description">Description</label>
-                                    <div class="input-group">
+                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
                                         <input type="text" class="form-control" id="description" name="description" placeholder="Enter description" />
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="assigned">Assigned to</label>
-                                    <div class="input-group">
+                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
                                         <select id ="assigned" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="status">Status</label>
-                                    <div class="input-group">
+                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
                                         <select id ="status" multiple="multiple">
                                         </select>
                                     </div>
@@ -101,37 +131,17 @@
 
                                 <div class="form-group">
                                     <label>Completion Date</label>
-                                    <div class="input-group">
-                                        <div class="input-append date completionDate">
-                                            <input size="16" type="text" value="" readonly="readonly"/>
-                                            <span class="add-on"><i class="icon-th"></i></span>
-                                        </div>
+                                    <div class="input-group date col-sm-8 col-md-8 col-lg-8" id="completionDate">
+                                        <input type="text" class="form-control" name="completionDate" />
+                                                 <span class="input-group-addon">
+                                                     <span class="glyphicon glyphicon-calendar"></span>
+                                                 </span>
                                     </div>
                                 </div>
 
-                                <!--<div class="form-group">-->
-                                    <!--<label for="district">District</label>-->
-                                    <!--<div class="input-group">-->
-                                        <!--<input type="text" class="form-control" name="district" id="district" placeholder="Enter district" />-->
-                                    <!--</div>-->
-                                <!--</div>-->
 
-                                <!--<div class="form-group">-->
-                                    <!--<label for="state">State</label>-->
-                                    <!--<div class="input-group">-->
-                                        <!--<input type="text" class="form-control" name="state" id="state" placeholder="Enter State" />-->
-                                    <!--</div>-->
-                                <!--</div>-->
-
-                                <!--<div class="form-group">-->
-                                    <!--<label for="pin">Pincode</label>-->
-                                    <!--<div class="input-group">-->
-                                        <!--<input type="text" class="form-control" name="pin" id="pin" placeholder="Enter pincode" />-->
-                                    <!--</div>-->
-                                <!--</div>-->
 
                                 <input type="submit" name="submit" id="submit" value="Submit" class="btn btn-info pull-right"/>
-                            </div>
                         </form>
 
                 </div>

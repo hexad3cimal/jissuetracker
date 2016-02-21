@@ -5,10 +5,40 @@ $(function(){
 
     $('#issueBlock').hide();
 
-$('#addIssue').click(function(){
+    $("#completionDate").datetimepicker();
+
+    $('#tracker').selectpicker();
+
+
+    $('#addIssue').click(function(){
+
+
+
+    $.ajax({
+        type: "GET",
+        url: '/jit/app/tracker/list',
+        success: function(json) {
+
+            var $el = $("#tracker");
+            $el.empty(); // remove old options
+            $el.append($("<option></option>")
+            );
+            $.each(json.data, function(value, key) {
+                $el.append($("<option></option>")
+                    .attr("value", value).text(key));
+                $('#tracker').selectpicker('refresh');
+
+            });
+
+        }
+    });
 
     $('#issueBlock').show();
+
+
     $('#projectBlock').hide();
+
+
 
 });
 
@@ -23,7 +53,7 @@ $('#addIssue').click(function(){
             document.getElementById("projectDescription").innerHTML = json.data.Description;
             document.getElementById("manager").innerHTML = json.data.Manager;
             document.getElementById("developers").innerHTML = json.data.Developers;
-            $("#testers").val(json.data.Testers);
+            $("#testers").text(json.data.Testers);
 
 
         }
