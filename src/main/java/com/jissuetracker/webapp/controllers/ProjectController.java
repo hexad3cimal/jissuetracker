@@ -103,6 +103,7 @@ public class ProjectController {
             @RequestParam(value = "projectName") String projectName)throws Exception{
 
         Projects project = projectService.projectHomeList(projectName);
+        if (NotEmpty.notEmpty(project)){
         Set<User> users = project.getUsers();
         HashMap<String,List<String>> projectUsers = new HashMap<String, List<String>>();
         List<String> projectDetails = new ArrayList<String>();
@@ -132,6 +133,10 @@ public class ProjectController {
         }
 
         return new Response(projectUsers);
+        }
+
+        return new Response("Null");
+
     }
 
 
@@ -174,6 +179,33 @@ public class ProjectController {
             }
         return "projectIssuesHome";
         }
+
+    @RequestMapping("/{name}/userList")
+    @ResponseBody
+    public Response userDropDownList(@PathVariable(value = "name")String name)throws Exception
+    {
+        Projects project = projectService.projectHomeList(name);
+
+        if (NotEmpty.notEmpty(project)){
+
+            Set<User> users = project.getUsers();
+            HashMap<String,String> projectUsersDropDown = new HashMap<String, String>();
+            if (NotEmpty.notEmpty(users)){
+
+                for (User user : users){
+                projectUsersDropDown.put(user.getId().toString(),user.getName());
+
+                }
+
+            }
+
+            return new Response(projectUsersDropDown);
+
+        }
+
+        return new Response("Null");
+
+    }
 
 
     }

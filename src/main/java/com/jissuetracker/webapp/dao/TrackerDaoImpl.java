@@ -19,7 +19,7 @@ public class TrackerDaoImpl implements TrackerDao {
     @Autowired
     SessionFactory sessionFactory;
 
-    public HashMap<String, String> trackerMap() throws Exception {
+    public HashMap<String, String> trackerDropDownMap() throws Exception {
 
         List<Object []> trackersList = sessionFactory.getCurrentSession()
                 .createQuery("select id,name from Trackers")

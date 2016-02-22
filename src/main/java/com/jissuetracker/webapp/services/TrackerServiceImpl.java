@@ -17,7 +17,7 @@ public class TrackerServiceImpl implements TrackerService {
     @Autowired
     TrackerDao trackerDao;
 
-    public HashMap<String, String> trackerMap() throws Exception {
-        return trackerDao.trackerMap();
+    public HashMap<String, String> trackerDropDownMap() throws Exception {
+        return trackerDao.trackerDropDownMap();
     }
 }

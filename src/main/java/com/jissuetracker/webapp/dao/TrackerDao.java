@@ -7,5 +7,5 @@ import java.util.HashMap;
  */
 public interface TrackerDao {
 
-    public HashMap<String,String> trackerMap()throws Exception;
+    public HashMap<String,String> trackerDropDownMap()throws Exception;
 }
