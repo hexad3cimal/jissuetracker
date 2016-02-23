@@ -9,8 +9,8 @@ import java.util.List;
  */
 public interface RolesDao {
 
-    public List<Roles> rolesList() throws Exception;
-    public Roles getByName(String roleName)throws Exception;
-    public void add(Roles role)throws Exception;
-    public void remove(Roles role)throws Exception;
+    List<Roles> rolesList() throws Exception;
+    Roles getByName(String roleName)throws Exception;
+    void add(Roles role)throws Exception;
+    void remove(Roles role)throws Exception;
 }

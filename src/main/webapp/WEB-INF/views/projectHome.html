@@ -3,11 +3,13 @@
 <head th:include="wireframe :: header">
 </head>
 <body>
-<link th:href="@{/resources/css/bootstrap-datetimepicker.css}" href="/resources/css/bootstrap-datetimepicker.css" rel="stylesheet" />
-<link th:href="@{/resources/css/bootstrap-select.css}" href="/resources/css/bootstrap-select.css" rel="stylesheet" />
-<script th:src="@{/resources/js/bootstrap-select.js} " src="/resources/js/bootstrap-select.js"></script>
+<link th:href="@{/resources/css/chosen.css}" href="/resources/css/chosen.css" rel="stylesheet"/>
+<link th:href="@{/resources/css/bootstrap-datetimepicker.css}" href="/resources/css/bootstrap-datetimepicker.css"
+      rel="stylesheet"/>
+<script th:src="@{/resources/js/chosen.jquery.js} " src="/resources/js/chosen.jquery.js"></script>
 <script th:src="@{/resources/js/moment.js} " src="/resources/js/moment.js"></script>
-<script th:src="@{/resources/js/bootstrap-datetimepicker.min.js} " src="/resources/js/bootstrap-datetimepicker.min.js"></script>
+<script th:src="@{/resources/js/bootstrap-datetimepicker.min.js} "
+        src="/resources/js/bootstrap-datetimepicker.min.js"></script>
 <script th:src="@{/resources/js/page/projectHome.js} " src="/resources/js/page/projectHome.js"></script>
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -24,35 +26,35 @@
 <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
 
     <div class="col-lg-12">
-        <div id ="projectBlock">
+        <div id="projectBlock">
 
-        <div class="row">
-            <div class="col-lg-6">
+            <div class="row">
+                <div class="col-lg-6">
 
-                <h1 id="projectTitle"></h1>
+                    <h1 id="projectTitle"></h1>
 
-                <p id="projectDescription"></p>
-            </div>
-            <div class="col-lg-6">
-                <div class="panel panel-default">
+                    <p id="projectDescription"></p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
 
-                    <div class="panel-body">
-                        <h3>Manager</h3>
+                        <div class="panel-body">
+                            <h3>Manager</h3>
 
-                        <p id ="manager">
-                        </p>
-                        <h3>Testers</h3>
+                            <p id="manager">
+                            </p>
+                            <h3>Testers</h3>
 
-                        <p id ="testers">
-                        </p>
-                        <h3>Developers</h3>
+                            <p id="testers">
+                            </p>
+                            <h3>Developers</h3>
 
-                        <p id ="developers">
-                        </p>
+                            <p id="developers">
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
             <div class="row col-sm-8 col-sm-offset-2 col-lg-8 col-lg-offset-2">
                 <div class="col-xs-12 col-md-6 col-lg-4">
                     <div id="addIssue">
@@ -71,17 +73,17 @@
                     </div>
                 </div>
                 <!--<div class="col-xs-12 col-md-6 col-lg-4">-->
-                    <!--<div class="panel panel-red panel-widget">-->
-                        <!--<div class="row no-padding widget-left ">-->
-                            <!--<div class="large">View All Packages</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
+                <!--<div class="panel panel-red panel-widget">-->
+                <!--<div class="row no-padding widget-left ">-->
+                <!--<div class="large">View All Packages</div>-->
+                <!--</div>-->
+                <!--</div>-->
                 <!--</div>-->
             </div>
         </div>
     </div>
 
-    <div id ="issueBlock">
+    <div id="issueBlock">
         <div class="col-xs-12" style="height:15%;"></div>
 
         <div class="row col-sm-8 col-sm-offset-2 col-lg-8 col-lg-offset-2">
@@ -94,72 +96,69 @@
                 </div>
                 <div class="panel-body">
 
-                        <form role="form" id="issue" method="post">
+                    <form id="issue" method="post">
 
-                                <div class="form-group">
-                                    <label for="title">Title</label>
-                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
-                                        <input type="text" class="form-control" name="title" id="title" placeholder="Enter Name" />
-                                    </div>
-                                </div>
-
-                            <div class="form-group">
-                                <label for="assigned">Assigned to</label>
-                                <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
-                                    <select id ="assigned" required="required">
-                                    </select>
-                                </div>
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
+                                <input type="text" class="form-control" name="title" id="title"
+                                       placeholder="Enter Name"/>
                             </div>
-
-                                <div class="form-group">
-                                    <label for="tracker">Tracker</label>
-                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
-                                        <select id ="tracker" required="required">
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="description">Description</label>
-                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
-                                        <textarea id="description" class="form-control" placeholder="Enter description"
-                                                  name="description" rows="5" >
-
-                                        </textarea>
-                                    </div>
-                                </div>
+                        </div>
 
 
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
+                                        <textarea id="description" class="form-control" required="required"
+                                                  name="description"></textarea>
+                            </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label>Completion Date</label>
-                                <div class="input-group date col-sm-8 col-md-8 col-lg-8" id="completionDate">
-                                    <input type="text" class="form-control" name="completionDate" />
+                        <div class="form-group">
+                            <label for="assigned">Assigned to</label>
+                            <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
+                                <select id="assigned" name="assigned" class="selectpicker" required="required"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tracker">Tracker</label>
+                            <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
+                                <select id="tracker" name="tracker" class="selectpicker" required="required"></select>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>Completion Date</label>
+                            <div class="input-group date col-sm-8 col-md-8 col-lg-8" id="completionDate">
+                                <input type="text" class="form-control" name="completionDate"/>
                                                  <span class="input-group-addon">
                                                      <span class="glyphicon glyphicon-calendar"></span>
                                                  </span>
-                                </div>
                             </div>
+                        </div>
 
 
-                            <div class="form-group">
-                                    <label for="status">Status</label>
-                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
-                                        <select id ="status" required="required">
-                                        </select>
-                                    </div>
-                                </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <div class="input-group col-sm-8 col-md-8 col-lg-8 ">
+                                <select id="status" name="status" class="selectpicker" required="required"></select>
+                            </div>
+                        </div>
 
 
-
-                            <div class="form-group">
-                                <input type="submit" name="submit" id="submit" value="Add" class="btn btn-success pull-right"/>
-                       </div>
-                        </form>
+                        <div class="form-group">
+                            <input type="submit" name="submit" id="submit" value="Add"
+                                   class="btn btn-success pull-right"/>
+                        </div>
+                    </form>
 
                 </div>
             </div>
         </div>
-        </div>
+    </div>
 </div>
 
 

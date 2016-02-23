@@ -11,9 +11,11 @@ $(function(){
 
     $("#completionDate").datetimepicker();
 
-    $('#tracker').selectpicker();
-    $('#assigned').selectpicker();
-    $('#status').selectpicker();
+    //$('#tracker').selectpicker();
+    //$('#assigned').selectpicker();
+    //$('#status').selectpicker();
+
+
 
 
     $('#addIssue').click(function(){
@@ -32,10 +34,8 @@ $(function(){
             $.each(json.data, function(value, key) {
                 $el.append($("<option></option>")
                     .attr("value", value).text(key));
-                $('#tracker').selectpicker('refresh');
-
             });
-
+            $('#tracker').chosen({width: "95%"});
         }
     });
 
@@ -52,9 +52,9 @@ $(function(){
                 $.each(json.data, function(value, key) {
                     $el.append($("<option></option>")
                         .attr("value", value).text(key));
-                    $('#status').selectpicker('refresh');
-
                 });
+                $('#status').chosen({width: "95%"});
+
 
             }
         });
@@ -69,14 +69,16 @@ $(function(){
 
                 var $el = $("#assigned");
                 $el.empty(); // remove old options
+                $el.append($("<option></option>"));
                 $el.append($("<option></option>")
-                );
+                    .attr("value", " ").text("Choose One"));
                 $.each(json.data, function(value, key) {
                     $el.append($("<option></option>")
                         .attr("value", value).text(key));
-                    $('#assigned').selectpicker('refresh');
-
                 });
+
+                $('#assigned').chosen({width: "95%"});
+
 
             }
         });
@@ -96,9 +98,9 @@ $(function(){
         url: '/jit/app/project/projectHomeList?projectName='+splitted[6],
         success: function(json) {
 
-            $("projectDescription").text(json.data.Description);
-            $("manager").text(json.data.Manager);
-            $("developers").text(json.data.Developers);
+            $("#projectDescription").text(json.data.Description);
+            $("#manager").text(json.data.Manager);
+            $("#developers").text(json.data.Developers);
             $("#testers").text(json.data.Testers);
 
 
@@ -106,16 +108,19 @@ $(function(){
 
     });
 
-    //$.validator.setDefaults({
-    //
-    //    ignore: ':not(select:hidden, input:visible, textarea:visible)'
-    //
-    //
-    //
-    //});
+    $.validator.setDefaults({
+
+        ignore: ':not(select:hidden, input:visible, textarea:visible)'
+
+
+
+    });
+
+    $('#issue select').on('change', function(e) {
+        $('#issue').validate().element($(this));
+    });
 
     $('#issue').validate({
-        ignore: [],
         rules:{
 
             title:{
@@ -151,11 +156,6 @@ $(function(){
         errorPlacement: function(error, element) {
             if(element.parent('.input-group').length) {
                 error.insertAfter(element.parent());
-            } else {
-                error.insertAfter(element);
-            }
-            if (element.attr("name") == "title") {
-                error.insertAfter(".bootstrap-select");
             } else {
                 error.insertAfter(element);
             }

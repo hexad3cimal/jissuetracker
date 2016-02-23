@@ -28,4 +28,8 @@ public class ProjectServiceImpl implements ProjectService {
     public Projects getByName(String projectName) throws Exception {
         return projectDao.getByName(projectName);
     }
+
+    public Boolean doesUserHasProject(String email, String projectName) throws Exception {
+        return projectDao.doesUserHasProject(email,projectName);
+    }
 }

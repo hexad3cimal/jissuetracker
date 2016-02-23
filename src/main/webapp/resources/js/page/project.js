@@ -84,7 +84,7 @@ function addProject(){
         }
     });
 
-    console.log(mySelections)
+    console.log(mySelections);
     var data ={
         name:$('input[name=name]').val(),
         description:$('input[name=description]').val(),

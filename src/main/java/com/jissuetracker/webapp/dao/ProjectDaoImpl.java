@@ -1,6 +1,8 @@
 package com.jissuetracker.webapp.dao;
 
 import com.jissuetracker.webapp.models.Projects;
+import com.jissuetracker.webapp.models.User;
+import com.jissuetracker.webapp.utils.NotEmpty;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by jovin on 14/2/16.
@@ -40,10 +43,24 @@ public class ProjectDaoImpl implements ProjectDao {
     }
 
     public Projects getByName(String projectName) throws Exception {
-        System.out.println("Reached dao");
         return (Projects) sessionFactory.getCurrentSession()
                 .createCriteria(Projects.class,"project").add(Restrictions.eq("name",projectName))
                 .setFetchMode("issueses", FetchMode.JOIN).uniqueResult();
+    }
+
+    public Boolean doesUserHasProject(String email,String projectName) throws Exception {
+        Projects project = (Projects) sessionFactory.getCurrentSession()
+                .createCriteria(Projects.class,"project")
+                .setFetchMode("users",FetchMode.JOIN).add(Restrictions.eq("name",projectName)).uniqueResult();
+        Set<User> userSet = project.getUsers();
+        if (NotEmpty.notEmpty(userSet)){
+            for(User user:userSet){
+                if (user.getEmail().equalsIgnoreCase(email))
+                    return true;
+            }
+
+        }
+        return false;
     }
 
 

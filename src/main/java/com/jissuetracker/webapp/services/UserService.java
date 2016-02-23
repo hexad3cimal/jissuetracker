@@ -9,9 +9,9 @@ import java.util.Map;
  */
 public interface UserService {
 
-    public void add(User user)throws Exception;
-    public User getUserByUserName(String userName)throws Exception;
-    public User getUserByName(String name)throws Exception;
-    public Map<String,String> userDropdownList()throws Exception;
+    void add(User user)throws Exception;
+    User getUserByUserName(String userName)throws Exception;
+    User getUserByName(String name)throws Exception;
+    Map<String,String> userDropdownList()throws Exception;
 
 }

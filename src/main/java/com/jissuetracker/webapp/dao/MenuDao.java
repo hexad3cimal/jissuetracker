@@ -7,5 +7,5 @@ import com.jissuetracker.webapp.models.Menu;
  */
 public interface MenuDao {
 
-    public Menu loadMenuByRole(String roleName)throws Exception;
+    Menu loadMenuByRole(String roleName)throws Exception;
 }

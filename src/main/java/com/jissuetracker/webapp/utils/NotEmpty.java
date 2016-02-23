@@ -11,32 +11,20 @@ public class NotEmpty {
 
 
     public static boolean notEmpty( String string ){
-        if( string == null || string.trim().length() == 0 ){
-            return false;
-        }
-        return true;
+        return !(string == null || string.trim().length() == 0);
     }
 
     public static boolean notEmpty( Map<?, ?> map ){
-        if( map == null || map.isEmpty() ){
-            return false;
-        }
-        return true;
+        return !(map == null || map.isEmpty());
     }
 
 
     public static boolean notEmpty( Object object ){
-        if( object == null ){
-            return false;
-        }
-        return true;
+        return object != null;
     }
 
     public static boolean notEmpty( Collection<?> collection ){
-        if( collection == null || collection.isEmpty() ){
-            return false;
-        }
-        return true;
+        return !(collection == null || collection.isEmpty());
     }
 
 

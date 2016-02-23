@@ -7,5 +7,5 @@ import java.util.HashMap;
  */
 public interface StatusDao {
 
-    public HashMap<String,String> statusDropDownMap()throws Exception;
+    HashMap<String,String> statusDropDownMap()throws Exception;
 }

@@ -141,10 +141,14 @@ public class ProjectController {
 
 
     @RequestMapping(value = "/{projectName}")
-    public String projectHome(@PathVariable (value = "projectName" ) String projectName)
+    public String projectHome(@PathVariable (value = "projectName" )
+                                  String projectName)throws Exception
     {
 
-        return "projectHome";
+        if (projectService.doesUserHasProject(SecurityContextHolder.getContext().getAuthentication().getName(),projectName))
+            return "projectHome";
+        else
+            return "404";
     }
 
     @RequestMapping("/{name}/projects")
@@ -191,10 +195,8 @@ public class ProjectController {
             Set<User> users = project.getUsers();
             HashMap<String,String> projectUsersDropDown = new HashMap<String, String>();
             if (NotEmpty.notEmpty(users)){
-
                 for (User user : users){
                 projectUsersDropDown.put(user.getId().toString(),user.getName());
-
                 }
 
             }

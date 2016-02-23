@@ -5,7 +5,7 @@ $(function(){
 
     var path = $(location).attr('href');
     var splitted = path.split('/');
-    console.log(splitted)
+    console.log(splitted);
 
 
     $.ajax({

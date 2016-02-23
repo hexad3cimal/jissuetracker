@@ -9,10 +9,10 @@ import java.util.List;
  */
 public interface RolesService {
 
-    public List<Roles> rolesList() throws Exception;
-    public void add(Roles role)throws Exception;
-    public void remove(Roles role)throws Exception;
-    public Roles getByName(String roleName)throws Exception;
+    List<Roles> rolesList() throws Exception;
+    void add(Roles role)throws Exception;
+    void remove(Roles role)throws Exception;
+    Roles getByName(String roleName)throws Exception;
 
 
 }

@@ -7,6 +7,6 @@ import java.util.HashMap;
  */
 public interface TrackerService {
 
-    public HashMap<String,String> trackerDropDownMap()throws Exception;
+    HashMap<String,String> trackerDropDownMap()throws Exception;
 
 }
