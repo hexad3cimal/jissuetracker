@@ -42,9 +42,23 @@ public class User implements java.io.Serializable {
 		this.password = password;
 	}
 
-	public User(Roles roles, String name, String email, String password, Set<Projects> projectses,
+	public User(Integer id,Roles roles, String name, String email, String password, Set<Projects> projectses,
 			Set<Issues> issuesesForAssignedToId, Set<IssuesUpdates> issuesUpdateses,
 			Set<Issues> issuesesForCreatedById) {
+		this.id = id;
+		this.roles = roles;
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.projectses = projectses;
+		this.issuesesForAssignedToId = issuesesForAssignedToId;
+		this.issuesUpdateses = issuesUpdateses;
+		this.issuesesForCreatedById = issuesesForCreatedById;
+	}
+
+	public User(Roles roles, String name, String email, String password, Set<Projects> projectses,
+				Set<Issues> issuesesForAssignedToId, Set<IssuesUpdates> issuesUpdateses,
+				Set<Issues> issuesesForCreatedById) {
 		this.roles = roles;
 		this.name = name;
 		this.email = email;

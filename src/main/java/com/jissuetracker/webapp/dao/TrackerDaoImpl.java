@@ -31,4 +31,8 @@ public class TrackerDaoImpl implements TrackerDao {
 
         return trackerMap;
     }
+
+    public Trackers getById(Integer trackerId) throws Exception {
+        return (Trackers)sessionFactory.getCurrentSession().get(Trackers.class,trackerId);
+    }
 }

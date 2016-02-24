@@ -64,4 +64,8 @@ public class UserDaoImpl implements UserDao {
         }
         return dropdownMap;
     }
+
+    public User getUserById(Integer userId) throws Exception {
+        return (User)sessionFactory.getCurrentSession().get(User.class,userId);
+    }
 }

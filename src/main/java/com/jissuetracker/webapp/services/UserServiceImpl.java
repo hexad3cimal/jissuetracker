@@ -34,4 +34,8 @@ public class UserServiceImpl implements UserService {
     public Map<String, String> userDropdownList() throws Exception {
         return userDao.projectUserDropdownList();
     }
+
+    public User getUserById(Integer userId) throws Exception {
+        return userDao.getUserById(userId);
+    }
 }

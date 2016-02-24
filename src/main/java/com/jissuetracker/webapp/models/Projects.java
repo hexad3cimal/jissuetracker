@@ -42,6 +42,19 @@ public class Projects implements java.io.Serializable {
 		this.name = name;
 	}
 
+	public Projects(Integer id,String name, String description, String url, Date createdOn, Date updatedOn, Set<User> users,
+					Set<Issues> issueses, String manager) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.url = url;
+		this.createdOn = createdOn;
+		this.updatedOn = updatedOn;
+		this.users = users;
+		this.issueses = issueses;
+		this.manager = manager;
+	}
+
 	public Projects(String name, String description, String url, Date createdOn, Date updatedOn, Set<User> users,
 			Set<Issues> issueses, String manager) {
 		this.name = name;

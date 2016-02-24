@@ -1,6 +1,7 @@
 package com.jissuetracker.webapp.services;
 
 import com.jissuetracker.webapp.dao.TrackerDao;
+import com.jissuetracker.webapp.models.Trackers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,5 +20,9 @@ public class TrackerServiceImpl implements TrackerService {
 
     public HashMap<String, String> trackerDropDownMap() throws Exception {
         return trackerDao.trackerDropDownMap();
+    }
+
+    public Trackers getById(Integer trackerId) throws Exception {
+        return trackerDao.getById(trackerId);
     }
 }

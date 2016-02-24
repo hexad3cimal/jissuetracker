@@ -1,5 +1,7 @@
 package com.jissuetracker.webapp.services;
 
+import com.jissuetracker.webapp.models.Trackers;
+
 import java.util.HashMap;
 
 /**
@@ -8,5 +10,7 @@ import java.util.HashMap;
 public interface TrackerService {
 
     HashMap<String,String> trackerDropDownMap()throws Exception;
+    public Trackers getById(Integer trackerId)throws Exception;
+
 
 }

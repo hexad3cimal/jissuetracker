@@ -13,5 +13,6 @@ public interface UserService {
     User getUserByUserName(String userName)throws Exception;
     User getUserByName(String name)throws Exception;
     Map<String,String> userDropdownList()throws Exception;
+    public User getUserById(Integer userId)throws Exception;
 
 }

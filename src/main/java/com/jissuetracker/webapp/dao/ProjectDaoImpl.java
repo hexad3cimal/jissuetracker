@@ -31,12 +31,6 @@ public class ProjectDaoImpl implements ProjectDao {
     }
 
     public Projects projectHomeList(String projectName) throws Exception {
-
-//        Projects projects = (Projects) sessionFactory.getCurrentSession()
-//                .createQuery("From Projects where name =:projectName")
-//                .setParameter("projectName",projectName).uniqueResult();
-
-
         return (Projects) sessionFactory.getCurrentSession()
                 .createCriteria(Projects.class,"project").add(Restrictions.eq("name",projectName))
                 .setFetchMode("users", FetchMode.JOIN).uniqueResult();
