@@ -31,7 +31,7 @@ public class StatusDaoImpl implements StatusDao{
         return statusDropDownMap;
     }
 
-    public Status getById(String statusId) throws Exception {
+    public Status getById(Integer statusId) throws Exception {
         return (Status)sessionFactory.getCurrentSession().get(Status.class,statusId);
     }
 

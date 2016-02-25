@@ -6,6 +6,7 @@ package com.jissuetracker.webapp.configurations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.jissuetracker.webapp.utils.CustomDateFormatter;
 import com.jissuetracker.webapp.utils.MyLogger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -81,5 +82,11 @@ public class AppConfig extends WebMvcConfigurationSupport {
         converters.add(jacksonMessageConverter());
         super.configureMessageConverters(converters);
     }
+
+    @Bean
+    public CustomDateFormatter customDateFormatter(){
+        return new CustomDateFormatter();
+    }
+
 
 }

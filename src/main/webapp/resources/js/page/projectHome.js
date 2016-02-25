@@ -124,7 +124,11 @@ $(function(){
         rules:{
 
             title:{
-                required:true
+                required:true,
+                remote:{
+                    url: "/jit/app/issues/checkIfIssueExist",
+                    type: "GET"
+                }
             },
             description:{
                 required:true
@@ -154,7 +158,28 @@ $(function(){
         errorElement: 'span',
         errorClass: 'help-block',
         errorPlacement: function(error, element) {
-            if(element.parent('.input-group').length) {
+            if (element.attr("name") == "title" ){
+
+                $.ajax({
+
+                    type: "GET",
+                    url: '/jit/app/issues/issueTitleUrlMap?title='+element.val(),
+                    success: function(json) {
+                        var $el = $("#titleError");
+
+                        $.each(json.data, function(value, key) {
+
+                            $el.append($("<a></a>")
+                                .attr("href", value).text(key));
+                        });
+
+
+
+                    }
+                });
+            }
+
+            else if(element.parent('.input-group').length) {
                 error.insertAfter(element.parent());
             } else {
                 error.insertAfter(element);
@@ -164,7 +189,7 @@ $(function(){
 
 
         submitHandler: function(form) {
-            addProject();
+            addIssue();
         }
 
 
@@ -172,3 +197,38 @@ $(function(){
 
 
 });
+
+function addIssue(){
+
+    var path = $(location).attr('href');
+    var splitted = path.split('/');
+    var data = {
+        title:$('input[name=title]').val(),
+        description:$('#description').val(),
+        completionDate:$('input[name=completionDate]').val(),
+        status:$('#status').chosen().val(),
+        assigned:$('#assigned').chosen().val(),
+        tracker:$('#tracker').chosen().val()
+    };
+
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+
+    $.ajax({
+
+        type:"POST",
+        url:"/jit/app/issues/"+splitted[6]+"/add",
+        contentType: "application/json",
+        dataType: 'json',
+        data:JSON.stringify(data),
+        beforeSend: function(xhr){
+            xhr.setRequestHeader(header, token);
+        },
+        success: function(data) {
+
+
+        }
+
+
+    });
+}

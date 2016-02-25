@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+
 /**
  * Created by jovin on 24/2/16.
  */
@@ -24,5 +26,17 @@ public class IssueServiceImpl implements IssueService {
     public void update(Issues issue) throws Exception {
         issueDao.update(issue);
 
+    }
+
+    public Integer getId() throws Exception {
+        return issueDao.getId();
+    }
+
+    public Boolean checkIfIssueExist(String issueTitle) throws Exception {
+        return issueDao.checkIfIssueExist(issueTitle);
+    }
+
+    public HashMap<String, String> getIssueByTitleMap(String title) throws Exception {
+        return issueDao.getIssueByTitleMap(title);
     }
 }

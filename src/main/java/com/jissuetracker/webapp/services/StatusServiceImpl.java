@@ -22,7 +22,7 @@ public class StatusServiceImpl implements StatusService {
         return statusDao.statusDropDownMap();
     }
 
-    public Status getById(String statusId) throws Exception {
+    public Status getById(Integer statusId) throws Exception {
         return statusDao.getById(statusId);
     }
 

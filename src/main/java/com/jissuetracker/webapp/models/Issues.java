@@ -68,7 +68,6 @@ public class Issues implements java.io.Serializable {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-
 	@Column(name = "id", unique = true, nullable = false)
 	public Integer getId() {
 		return this.id;
@@ -139,7 +138,7 @@ public class Issues implements java.io.Serializable {
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "createdOn", length = 19)
+	@Column(name = "createdOn", length = 19,insertable = false, nullable = false)
 	public Date getCreatedOn() {
 		return this.createdOn;
 	}
@@ -149,7 +148,7 @@ public class Issues implements java.io.Serializable {
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "updatedOn", length = 19)
+	@Column(name = "updatedOn", length = 19,insertable = false, nullable = false)
 	public Date getUpdatedOn() {
 		return this.updatedOn;
 	}
