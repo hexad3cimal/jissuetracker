@@ -22,22 +22,22 @@ $(function(){
 
 
 
-    $.ajax({
-        type: "GET",
-        url: '/jit/app/tracker/list',
-        success: function(json) {
+        $.ajax({
+            type: "GET",
+            url: '/jit/app/tracker/list',
+            success: function(json) {
 
-            var $el = $("#tracker");
-            $el.empty(); // remove old options
-            $el.append($("<option></option>")
-            );
-            $.each(json.data, function(value, key) {
+                var $el = $("#tracker");
+                $el.empty(); // remove old options
                 $el.append($("<option></option>")
-                    .attr("value", value).text(key));
-            });
-            $('#tracker').chosen({width: "95%"});
-        }
-    });
+                );
+                $.each(json.data, function(value, key) {
+                    $el.append($("<option></option>")
+                        .attr("value", value).text(key));
+                });
+                $('#tracker').chosen({width: "95%"});
+            }
+        });
 
 
         $.ajax({
@@ -83,14 +83,14 @@ $(function(){
             }
         });
 
-    $('#issueBlock').show();
+        $('#issueBlock').show();
 
 
-    $('#projectBlock').hide();
+        $('#projectBlock').hide();
 
 
 
-});
+    });
 
 
     $.ajax({
@@ -169,12 +169,10 @@ $(function(){
 
                         $.each(json.data, function(value, key) {
 
+                            $el.append($("</br><p style='color:red'></p>").text("Oops, this one looks like "));
                             $el.append($("<a></a>")
-                                .attr("href", value).text(key));
+                                .attr("href", key).text(value));
                         });
-
-
-
                     }
                 });
             }
@@ -186,8 +184,6 @@ $(function(){
             }
 
         },
-
-
         submitHandler: function(form) {
             addIssue();
         }
