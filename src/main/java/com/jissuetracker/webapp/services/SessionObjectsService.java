@@ -27,22 +27,50 @@ public class SessionObjectsService {
     @Autowired
     UserService userService;
 
-    public void setSessionObjects(Authentication authentication, HttpServletRequest request)throws Exception{
-        UserSession userSession = new UserSession();
-        userSession.setUser(userService.getUserByUserName(authentication.getName()));
-        Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>)SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        Roles roles = rolesService.getByName(authorities.iterator().next().getAuthority());
+    private UserSession userSession = new UserSession();
+
+    private Roles roles;
+
+    private Authentication authentication;;
+
+    public void setSessionObjects(HttpServletRequest request)throws Exception{
+
+        setCurrentUser();
+        populateMenu();
+        request.getSession().setAttribute("userSession",userSession);
+        UserSession usr = (UserSession)request.getSession().getAttribute("userSession");
+        System.out.println("user session >>"+usr.getUser().getEmail());
+
+    }
+
+
+    public void setCurrentUser() throws Exception{
+        authentication =SecurityContextHolder.getContext().getAuthentication();
+        if(authentication !=null)
+            userSession.setUser(userService.getUserByUserName(authentication.getName().toString()));
+
+        else
+            System.out.println("Authentication is null");
+    }
+
+    public void populateMenu()throws Exception{
+        authentication =SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication !=null){
+            Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>)authentication.getAuthorities();
+            roles = rolesService.getByName(authorities.iterator().next().getAuthority());
+        }else
+            roles = null;
 
         if(NotEmpty.notEmpty(roles))
         {
             Set<Menu> menuSet = roles.getMenuSet();
             ArrayList<Menu> menuList = new ArrayList<Menu>(menuSet);
             userSession.setMenuList(menuList);
-            request.getSession().setAttribute("userSession",userSession);
         }
 
-
     }
+
 
 
 }

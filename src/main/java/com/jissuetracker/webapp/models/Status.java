@@ -31,6 +31,11 @@ public class Status implements java.io.Serializable {
 		this.issueses = issueses;
 	}
 
+	public Status(Integer id, String name) {
+		this.name = name;
+		this.id = id;
+	}
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 

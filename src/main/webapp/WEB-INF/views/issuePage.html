@@ -1,0 +1,80 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="wireframe :: header">
+</head>
+<body>
+<link th:href="@{/resources/css/datatables.min.css}" href="/resources/css/datatables.min.css" rel="stylesheet"/>
+
+<link th:href="@{/resources/css/chosen.css}" href="/resources/css/chosen.css" rel="stylesheet"/>
+<link th:href="@{/resources/css/custom.css}" href="/resources/css/custom.css" rel="stylesheet"/>
+<link th:href="@{/resources/css/bootstrap-editable.css}" href="/resources/css/bootstrap-editable.css" rel="stylesheet"/>
+<link th:href="@{/resources/css/bootstrap-datetimepicker.css}" href="/resources/css/bootstrap-datetimepicker.css"
+      rel="stylesheet"/>
+<script th:src="@{/resources/js/chosen.jquery.js} " src="/resources/js/chosen.jquery.js"></script>
+<script th:src="@{/resources/js/moment.js} " src="/resources/js/moment.js"></script>
+<script th:src="@{/resources/js/bootstrap-editable.js} " src="/resources/js/bootstrap-editable.js"></script>
+<script th:src="@{/resources/js/bootstrap-datetimepicker.min.js} "
+        src="/resources/js/bootstrap-datetimepicker.min.js"></script>
+<script th:src="@{/resources/js/datatables.min.js} " src="/resources/js/datatables.min.js"></script>
+
+<script th:src="@{/resources/js/page/issuePage.js} " src="/resources/js/page/issuePage.js"></script>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+
+    <div th:include="wireframe :: topNavBar">
+    </div>
+</nav>
+
+<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+    <div th:include="wireframe :: sidebar">
+    </div>
+</div>
+
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h1 id="issueTitle"></h1>
+            <div class="row col-sm-12 col-lg-12 col-md-12">
+                <div class="row col-sm-8 col-lg-8 col-md-8">
+                    <div class="issueDescription" id="issueDescription"></div>
+                </div>
+                <div class="row col-sm-4 col-lg-4 col-md-4">
+                    <div id="issueType"></div>
+                    <div id="issueStatus"></div>
+                    <div class="createdBy" id="createdBy"></div>
+                    <div class="createdDate" id="createdDate"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="updatesListBlock">
+
+    </div>
+
+    <div id="updateBlock">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row col-sm-12 col-lg-12 col-md-12">
+               <div class="form-group">
+                    &nbsp;
+                    &nbsp;
+                </div>
+                <div class="row col-sm-12 col-lg-12 col-md-12">
+                    <form id ="issueUpdateForm" method="post">
+                    <div class="form-group">
+                        <textarea id="updateText" name="updateText" class="form-control custom-control" rows="3"></textarea>
+                    </div>
+                    <input type="submit" id ="update" value="update" class="btn btn-primary pull-right" />
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+</div>
+</body>
+</html>

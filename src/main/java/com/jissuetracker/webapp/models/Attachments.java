@@ -40,6 +40,16 @@ public class Attachments implements java.io.Serializable {
 		this.issueses = issueses;
 	}
 
+	public Attachments(Integer id,Issues issues, IssuesUpdates issuesUpdates, String link, Set<IssuesUpdates> issuesUpdateses,
+					   Set<Issues> issueses) {
+		this.issues = issues;
+		this.issuesUpdates = issuesUpdates;
+		this.link = link;
+		this.issuesUpdateses = issuesUpdateses;
+		this.issueses = issueses;
+		this.id = id;
+	}
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 

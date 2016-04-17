@@ -96,4 +96,17 @@ public class MyLogger {
 
         log.info(point.getSignature().getName()
                 + "  called with arguments "+ point.getArgs());    }
+
+    @Before("execution(* com.jissuetracker.webapp.services.SessionObjectsService.setSessionObjects(..))")
+    public void setSessionObjects(JoinPoint point) {
+
+        log.info(point.getSignature().getName()
+                + "  called with arguments "+ point.getArgs());    }
+
+    @After("execution(* com.jissuetracker.webapp.services.SessionObjectsService.setSessionObjects(..))")
+    public void afterSetSessionObjects(JoinPoint point) {
+
+        log.info(point.getSignature().getName()
+                + "  called after with arguments "+ point.getArgs());    }
+
 }

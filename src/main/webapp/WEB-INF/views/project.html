@@ -13,63 +13,62 @@
     <div th:include="wireframe :: sidebar">
     </div>
 </div>
-<link th:href="@{/resources/css/bootstrap-select.css}" href="/resources/css/bootstrap-select.css" rel="stylesheet" />
-<script th:src="@{/resources/js/bootstrap-select.js} " src="/resources/js/bootstrap-select.js"></script>
+<link th:href="@{/resources/css/datatables.min.css}" href="/resources/css/datatables.min.css" rel="stylesheet"/>
+<script th:src="@{/resources/js/datatables.min.js} " src="/resources/js/datatables.min.js"></script>
+
+<link th:href="@{/resources/css/chosen.css}" href="/resources/css/chosen.css" rel="stylesheet"/>
+<script th:src="@{/resources/js/chosen.jquery.js} " src="/resources/js/chosen.jquery.js"></script>
 <script th:src="@{/resources/js/page/project.js} " src="/resources/js/page/project.js"></script>
 
 <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
     <div class="col-lg-12">
 
         <div class="row">
-            <div id ="addProject">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <div class="panel-title">
-                            Add New Project
-                        </div>
-                     </div>
-                    <div class="panel-body">
-                        <div class="col-md-12">
-                            <form id ="newProject">
 
-                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
-                                    <div class="form-group">
-                                        <label>Name</label>
-                                        <input name="name" class="form-control" placeholder="Enter project Name"/>
-                                    </div>
-                                </div>
+            <div id="projectBlock">
 
-                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
+                <div id="datatable">
+                    <div class="form-group">
+                        &nbsp;
+                        &nbsp;
+                    </div>
+                    <div class="panel panel-default">
 
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <input name="description" class="form-control" placeholder="Enter project description "/>
-                                    </div>
+                        <div class="panel-body">
+                            <h3>Projects</h3>
+                            <table id="projectTable" class="table table-striped " cellspacing="0"
+                                   width="100%">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Created on</th>
+                                    <th>Updated on</th>
+                                    <th>Users</th>
+                                    <th>Edit</th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Created on</th>
+                                <th>Updated on</th>
+                                <th>Users</th>
+                                <th>Edit</th>
+                                </tfoot>
+                            </table>
 
-                                </div>
-
-                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
-                                    <div class="form-group">
-                                        <label>Users</label>
-                                        <select id ="userSelect" multiple="multiple">
-                                        </select>
-                                    </div>
-                                    </div>
-
-
-                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary pull-right">Add New Project</button>
-                                    </div>
-                                </div>
-                            </form>
                         </div>
                     </div>
+
+                    <input type="submit" id="reload" value="Go back"
+                           class="btn btn-success pull-right"/>
                 </div>
+
             </div>
+
+
         </div>
-
-
     </div>
 </div>
 

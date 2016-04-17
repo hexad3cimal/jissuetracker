@@ -3,6 +3,8 @@
 <head th:include="wireframe :: header">
 </head>
 <body>
+<link th:href="@{/resources/css/datatables.min.css}" href="/resources/css/datatables.min.css" rel="stylesheet"/>
+
 <link th:href="@{/resources/css/chosen.css}" href="/resources/css/chosen.css" rel="stylesheet"/>
 <link th:href="@{/resources/css/bootstrap-datetimepicker.css}" href="/resources/css/bootstrap-datetimepicker.css"
       rel="stylesheet"/>
@@ -10,6 +12,8 @@
 <script th:src="@{/resources/js/moment.js} " src="/resources/js/moment.js"></script>
 <script th:src="@{/resources/js/bootstrap-datetimepicker.min.js} "
         src="/resources/js/bootstrap-datetimepicker.min.js"></script>
+<script th:src="@{/resources/js/datatables.min.js} " src="/resources/js/datatables.min.js"></script>
+
 <script th:src="@{/resources/js/page/projectHome.js} " src="/resources/js/page/projectHome.js"></script>
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -66,9 +70,11 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-4">
-                    <div class="panel panel-teal panel-widget">
-                        <div class="row no-padding widget-left ">
-                            <div class="large">View All Issues</div>
+                    <div id="viewAllIssues">
+                        <div class="panel panel-teal panel-widget">
+                            <div class="row no-padding widget-left ">
+                                <div class="large">View All Issues</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -159,6 +165,47 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div id="datatables">
+        <div class="form-group">
+            &nbsp;
+            &nbsp;
+        </div>
+        <div class="panel panel-default">
+
+            <div class="panel-body">
+                <h3>Issues</h3>
+        <table id="issueTable" class="table table-striped " cellspacing="0"
+               width="100%">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Created by</th>
+                <th>Assigned to</th>
+                <th>Status</th>
+                <th>Type</th>
+                <th>Created on</th>
+                <th>Updated on</th>
+                <th>View Issue</th>
+            </tr>
+            </thead>
+            <tfoot>
+            <th>Title</th>
+            <th>Created by</th>
+            <th>Assigned to</th>
+            <th>Status</th>
+            <th>Type</th>
+            <th>Created on</th>
+            <th>Updated on</th>
+            <th>View Issue</th>
+            </tfoot>
+        </table>
+
+    </div>
+    </div>
+
+        <input type="submit" id="reload" value="Go back"
+               class="btn btn-success pull-right"/>
     </div>
 </div>
 

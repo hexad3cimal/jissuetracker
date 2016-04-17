@@ -31,6 +31,11 @@ public class Trackers implements java.io.Serializable {
 		this.issueses = issueses;
 	}
 
+	public Trackers(Integer id,String name) {
+		this.name = name;
+		this.id = id;
+	}
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 

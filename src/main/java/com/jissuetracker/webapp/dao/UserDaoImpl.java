@@ -36,9 +36,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     public User getUserByName(String name) throws Exception {
-//        return (User)sessionFactory.getCurrentSession()
-//                .createQuery("From User where name = :name")
-//                .setParameter("name",name).uniqueResult();
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class,"user")
                 .setFetchMode("projectses", FetchMode.JOIN)
                 .add(Restrictions.eq("name",name)).uniqueResult();

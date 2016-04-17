@@ -2,10 +2,12 @@ package com.jissuetracker.webapp.configurations;
 
 
 import com.jissuetracker.webapp.services.SessionObjectsService;
+import com.jissuetracker.webapp.utils.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
@@ -38,10 +40,11 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
                                         Authentication authentication)
             throws ServletException, IOException {
 
+        logger.debug("Reached authenticationSuccessHandler");
         SavedRequest savedRequest = requestCache.getRequest(request, response);
 
         try {
-            sessionObjectsService.setSessionObjects(authentication, request);
+            sessionObjectsService.setSessionObjects(request);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,7 +68,6 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
         String targetUrl = savedRequest.getRedirectUrl();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
-
 
 
 

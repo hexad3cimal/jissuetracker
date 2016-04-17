@@ -1,6 +1,10 @@
 package com.jissuetracker.webapp.models;
 // Generated 9 Feb, 2016 6:00:21 PM by Hibernate Tools 4.0.0
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jissuetracker.webapp.utils.CustomDateFormatter;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,6 +49,17 @@ public class IssuesUpdates implements java.io.Serializable {
 		this.attachmentses = attachmentses;
 	}
 
+	public IssuesUpdates(Integer id,Issues issues, User user, Attachments attachments, String updates, Date date,
+						 Set<Attachments> attachmentses) {
+		this.issues = issues;
+		this.user = user;
+		this.attachments = attachments;
+		this.updates = updates;
+		this.date = date;
+		this.attachmentses = attachmentses;
+		this.id =id;
+	}
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 
@@ -57,6 +72,7 @@ public class IssuesUpdates implements java.io.Serializable {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "issueId")
 	public Issues getIssues() {
@@ -77,7 +93,7 @@ public class IssuesUpdates implements java.io.Serializable {
 		this.user = user;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "attachementId")
 	public Attachments getAttachments() {
 		return this.attachments;
@@ -96,6 +112,7 @@ public class IssuesUpdates implements java.io.Serializable {
 		this.updates = updates;
 	}
 
+	@JsonSerialize(using = CustomDateFormatter.class)
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "date", length = 19)
 	public Date getDate() {

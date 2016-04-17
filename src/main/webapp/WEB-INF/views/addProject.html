@@ -1,0 +1,81 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="wireframe :: header">
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+
+    <div th:include="wireframe :: topNavBar">
+    </div>
+</nav>
+
+<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+    <div th:include="wireframe :: sidebar">
+    </div>
+</div>
+<link th:href="@{/resources/css/datatables.min.css}" href="/resources/css/datatables.min.css" rel="stylesheet"/>
+<script th:src="@{/resources/js/datatables.min.js} " src="/resources/js/datatables.min.js"></script>
+
+<link th:href="@{/resources/css/chosen.css}" href="/resources/css/chosen.css" rel="stylesheet"/>
+<script th:src="@{/resources/js/chosen.jquery.js} " src="/resources/js/chosen.jquery.js"></script>
+<script th:src="@{/resources/js/page/addProject.js} " src="/resources/js/page/addProject.js"></script>
+
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+    <div class="col-lg-12">
+
+        <div class="row">
+
+            <div id="addProject">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            Add New Project
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-12">
+                            <form id="newProject" th:object="${projectDto}">
+
+                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <input name="name" class="form-control" th:field="${projectDto.name}"/>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
+
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <input name="description" class="form-control"
+                                               th:field="${projectDto.description}"/>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
+                                    <div class="form-group">
+                                        <label>Users</label>
+                                        <select id="userSelect" name="userSelect"
+                                                multiple="multiple" class="chosen-select">
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
+                                    <div class="form-group">
+                                        <button type="submit" id="submitButton"
+                                                class="btn btn-primary pull-right"></button>
+                                    </div>
+                                    <input id="userList"  type="hidden"  th:value="${projectDto.userList}" style="display: none;"/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

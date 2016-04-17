@@ -32,7 +32,6 @@ public class AppConfig extends WebMvcConfigurationSupport {
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
     @Bean
@@ -70,7 +69,9 @@ public class AppConfig extends WebMvcConfigurationSupport {
 
         ObjectMapper mapper = new ObjectMapper();
         //Registering Hibernate4Module to support lazy objects
-        mapper.registerModule(new Hibernate4Module());
+        Hibernate4Module hm = new Hibernate4Module();
+        hm.disable(Hibernate4Module.Feature.USE_TRANSIENT_ANNOTATION);
+        mapper.registerModule(hm);
         messageConverter.setObjectMapper(mapper);
         return messageConverter;
 

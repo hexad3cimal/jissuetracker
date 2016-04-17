@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created by jovin on 14/2/16.
  */
@@ -31,5 +33,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     public Boolean doesUserHasProject(String email, String projectName) throws Exception {
         return projectDao.doesUserHasProject(email,projectName);
+    }
+
+    public List<Projects> projectsList() throws Exception {
+        return projectDao.projectsList();
     }
 }
