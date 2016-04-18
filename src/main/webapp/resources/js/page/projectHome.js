@@ -20,8 +20,6 @@ $(function () {
 
     $("#completionDate").datetimepicker();
 
-    $('#datatables').hide();
-
     $('#addIssue').click(function () {
 
         $.ajax({
@@ -88,6 +86,7 @@ $(function () {
 
 
         $('#projectBlock').hide();
+        $('#datatables').hide();
 
 
     });
@@ -100,7 +99,6 @@ $(function () {
 
         $('#projectBlock').hide();
 
-        $('#datatables').show();
         //issueTable.ajax.reload();
 
 
@@ -148,6 +146,7 @@ $(function () {
         url: '/jit/app/project/projectHomeList?projectName=' + getProjectName(),
         success: function (json) {
 
+            $("#projectTitle").text(getProjectName());
             $("#projectDescription").text(json.data.Description);
             $("#manager").text(json.data.Manager);
             $("#developers").text(json.data.Developers);

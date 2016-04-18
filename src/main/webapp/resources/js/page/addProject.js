@@ -11,7 +11,6 @@ $(function () {
 
     editOrAddChecker();
 
-    console.log($('#userList').val());
     //for enabling the validation of chosen plugin fields
     $.validator.setDefaults({
         ignore: ':not(select:hidden, input:visible, textarea:visible)'
@@ -23,6 +22,7 @@ $(function () {
     });
 
 
+    //for populating user dropdown
     $.ajax({
         type: "GET",
         url: '/jit/app/project/userDropdown',
@@ -42,11 +42,12 @@ $(function () {
             jQuery('#userSelect').val(users)
             $('#userSelect').chosen({width: "95%"});
             ;
-            console.log(users[1]);
 
         }
     });
 
+
+    //for validating project form
     $('#newProject').validate({
 
         rules: {
@@ -92,6 +93,7 @@ $(function () {
 });
 
 
+//function to add/update project
 function addProject() {
 
     var mySelections = [];
@@ -104,6 +106,7 @@ function addProject() {
     var data = {
         name: $('input[name=name]').val(),
         description: $('input[name=description]').val(),
+        id: $('input[name=projectId]').val(),
         users: mySelections
     };
 
@@ -126,7 +129,9 @@ function addProject() {
 
 }
 
+//function to format texts in the dom
 function editOrAddChecker() {
+
     jQuery('#userSelect').val(['tester@gmail.com'])
     jQuery('#userSelect').trigger("liszt:updated");
     var path = $(location).attr('href');
@@ -134,22 +139,26 @@ function editOrAddChecker() {
 
     if (splitted[6] == "add") {
         $('#submitButton').text("Add new Project")
+        document.title = "Add new Project";
+
     } else {
         $('#submitButton').text("Update Project");
-
+        $('.panel-title').text("Update Project");
+        document.title = "Update Project";
 
     }
 
 
 }
 
+//function to format the values that is to be populated to the
+// multi select box in case of edit
 function formatUserArray(ids) {
 
     var convertedArray = ids.split(',');
 
     for (var i = convertedArray.length - 1; i >= 0; i--) {
-       convertedArray[i] = convertedArray[i].replace(/[\[\] ]+/g, '');
+        convertedArray[i] = convertedArray[i].replace(/[\[\] ]+/g, '');
     }
-
     return convertedArray
 }

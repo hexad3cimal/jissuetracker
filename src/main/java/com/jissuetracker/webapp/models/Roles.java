@@ -1,6 +1,8 @@
 package com.jissuetracker.webapp.models;
 // Generated 9 Feb, 2016 6:00:21 PM by Hibernate Tools 4.0.0
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
@@ -62,7 +64,7 @@ public class Roles implements java.io.Serializable {
 		this.users = users;
 	}
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "roles")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "roles")
     public Set<Menu> getMenuSet() {
         return menuSet;
     }

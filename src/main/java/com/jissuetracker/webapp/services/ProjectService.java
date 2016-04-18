@@ -14,6 +14,9 @@ public interface ProjectService {
     public Projects getByName(String projectName)throws Exception;
     public Boolean doesUserHasProject(String email,String projectName)throws Exception;
     List<Projects> projectsList()throws Exception;
+    public void update(Projects projects)throws Exception;
+    Projects getById(Integer id)throws Exception;
+
 
 
 }

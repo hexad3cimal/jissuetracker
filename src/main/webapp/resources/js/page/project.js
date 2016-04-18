@@ -6,7 +6,7 @@
 var token = $("meta[name='_csrf']").attr("content");
 var header = $("meta[name='_csrf_header']").attr("content");
 
-$(function(){
+$(function () {
 
     $('#addProject').hide();
 
@@ -24,28 +24,41 @@ $(function(){
             }
         },
         "columns": [
-            { "data": "name" },
-            { "data": "description" },
-            { "data": "createdOn" },
-            { "data": "updatedOn" },
-            { "data": "users" },
-            { "data": "name" }
+            {"data": "name"},
+            {"data": "description"},
+            {"data": "createdOn"},
+            {"data": "updatedOn"},
+            {"data": "users"},
+            {"data": "name"}
 
-        ],  "columnDefs": [ {
+        ], "columnDefs": [{
             "targets": 5,
             "data": "name",
-            "render": function ( data, type, full, meta ) {
-                if(data != null)
-                    return '<a style="text-decoration:none;padding-left:4px;padding-right:4px;color: white;background-color: #061901" href="/jit/app/project/edit/'+data+'">Edit</a>';
+            "render": function (data, type, full, meta) {
+                if (data != null)
+                    return '<a style="text-decoration:none;padding-left:4px;padding-right:4px;color: white;background-color: #061901" href="/jit/app/project/edit/' + data + '">Edit</a>';
             }
-        } ]
+        },
+            {
+                "targets": 4,
+                "data": "users",
+                "render": function (data) {
+                    var name = [data[0].name];
+                    for (j = 0; j < data.length; j++) {
 
+                        if (name[j] != data[j].name)
+                            name.push(data[j].name);
 
+                    }
+                    return name;
+
+                }
+            }
+        ]
 
     });
 
 
 });
-
 
 

@@ -1,6 +1,9 @@
 package com.jissuetracker.webapp.models;
 // Generated 9 Feb, 2016 6:00:21 PM by Hibernate Tools 4.0.0
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jissuetracker.webapp.utils.CustomDateFormatter;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -106,6 +109,7 @@ public class Projects implements java.io.Serializable {
 		this.url = url;
 	}
 
+	@JsonSerialize(using = CustomDateFormatter.class)
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "createdOn", length = 19,insertable = false, nullable = false)
 	public Date getCreatedOn() {
@@ -116,6 +120,7 @@ public class Projects implements java.io.Serializable {
 		this.createdOn = createdOn;
 	}
 
+	@JsonSerialize(using = CustomDateFormatter.class)
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "updatedOn", length = 19,insertable = false, nullable = false)
 	public Date getUpdatedOn() {

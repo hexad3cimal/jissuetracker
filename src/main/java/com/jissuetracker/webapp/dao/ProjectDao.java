@@ -12,10 +12,12 @@ import java.util.List;
 public interface ProjectDao {
 
     public void add(Projects projects)throws Exception;
+    public void update(Projects projects)throws Exception;
     public Projects projectHomeList(String projectName)throws Exception;
     public Projects getByName(String projectName)throws Exception;
     public Boolean doesUserHasProject(String email,String projectName)throws Exception;
     List<Projects> projectsList()throws Exception;
+    Projects getById(Integer id)throws Exception;
 
 
 }

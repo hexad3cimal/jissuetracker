@@ -1,0 +1,51 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="wireframe :: header">
+</head>
+<body>
+<link th:href="@{/resources/css/datatables.min.css}" href="/resources/css/datatables.min.css" rel="stylesheet"/>
+
+<link th:href="@{/resources/css/chosen.css}" href="/resources/css/chosen.css" rel="stylesheet"/>
+<link th:href="@{/resources/css/bootstrap-datetimepicker.css}" href="/resources/css/bootstrap-datetimepicker.css"
+      rel="stylesheet"/>
+<script th:src="@{/resources/js/chosen.jquery.js} " src="/resources/js/chosen.jquery.js"></script>
+<script th:src="@{/resources/js/moment.js} " src="/resources/js/moment.js"></script>
+<script th:src="@{/resources/js/bootstrap-datetimepicker.min.js} "
+        src="/resources/js/bootstrap-datetimepicker.min.js"></script>
+<script th:src="@{/resources/js/datatables.min.js} " src="/resources/js/datatables.min.js"></script>
+
+<script th:src="@{/resources/js/page/projectHome.js} " src="/resources/js/page/projectHome.js"></script>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+
+    <div th:include="wireframe :: topNavBar">
+    </div>
+</nav>
+
+<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+    <div th:include="wireframe :: sidebar">
+    </div>
+</div>
+
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+
+    <div class="col-lg-12">
+        <div id="menuBlock">
+            <div class="row">
+                <div class="form-group">
+                    &nbsp;
+                    &nbsp;
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="col-lg-12">
+    <div id="addMenu">
+
+        </div>
+        </div>
+
+</body>
+</html>

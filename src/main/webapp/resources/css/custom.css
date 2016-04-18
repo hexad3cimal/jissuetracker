@@ -81,3 +81,14 @@
     word-wrap: normal;
 
 }
+
+.addNewProject{
+    font-size: 1.2em;
+    color:#FF481F;
+}
+
+.issue-status{
+    background-color: #D8DCDD;
+
+
+}

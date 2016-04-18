@@ -27,7 +27,12 @@ public class ProjectDaoImpl implements ProjectDao {
 
     public void add(Projects project) throws Exception {
 
-        sessionFactory.getCurrentSession().saveOrUpdate(project);
+        sessionFactory.getCurrentSession().save(project);
+
+    }
+
+    public void update(Projects project) throws Exception {
+        sessionFactory.getCurrentSession().update(project);
 
     }
 
@@ -64,6 +69,10 @@ public class ProjectDaoImpl implements ProjectDao {
     public List<Projects> projectsList() throws Exception {
         return sessionFactory.getCurrentSession().createCriteria(Projects.class)
                 .setFetchMode("users",FetchMode.JOIN).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
+
+    public Projects getById(Integer id) throws Exception {
+        return (Projects)sessionFactory.getCurrentSession().get(Projects.class,id);
     }
 
 

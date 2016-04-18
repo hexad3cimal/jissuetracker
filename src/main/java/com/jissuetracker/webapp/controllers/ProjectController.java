@@ -88,6 +88,11 @@ public class ProjectController {
 
 
         Projects projects = new Projects();
+        if (projectMap.containsKey("id") && NotEmpty.notEmpty(projectMap.get("id").toString())) {
+                projects = projectService.getById(Integer.parseInt(projectMap.get("id").toString()));
+            System.out.println("projects.getId()"+projects.getId()+"  "+projectMap.get("id"));
+
+        }
 
         if (projectMap.containsKey("name") && NotEmpty.notEmpty(projectMap.get("name")))
             projects.setName(projectMap.get("name").toString());
@@ -121,7 +126,17 @@ public class ProjectController {
             projects.setUrl("/jit/app/project/" + projects.getName());
 
 
-        projectService.add(projects);
+        if(projects.getId() == null){
+            projectService.add(projects);
+
+            System.out.println("projects.getId()"+projects.getId()+" add ");
+
+        }
+        else{
+            projectService.update(projects);
+            System.out.println("projects.getId()"+projects.getId()+" update ");
+
+        }
 
         return new Response("Success");
 

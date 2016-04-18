@@ -38,4 +38,12 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Projects> projectsList() throws Exception {
         return projectDao.projectsList();
     }
+
+    public void update(Projects projects) throws Exception {
+        projectDao.update(projects);
+    }
+
+    public Projects getById(Integer id) throws Exception {
+        return projectDao.getById(id);
+    }
 }

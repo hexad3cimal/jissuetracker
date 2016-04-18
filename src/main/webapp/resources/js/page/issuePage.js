@@ -189,7 +189,7 @@ function populateUpdates(updates) {
             '<div class="row col-sm-10 col-lg-10 col-md-10">'
             + '<div class="issueDescription" id="updateDescription' + i + '"></div>'
             + '</div>' +
-            '<div class="row col-sm-2 col-lg-2 col-md-2">'
+            '<div class="row col-sm-2 col-lg-2 col-md-2 ">'
             + '<div class="createdBy" id="updatedBy' + i + '"></div>'
             + '<div class="createdDate" id="updatedDate' + i + '"></div>'
             + '</div>'
@@ -201,10 +201,12 @@ function populateUpdates(updates) {
 
         if (updates[i].updates != null)
             $("#updateDescription" + i).text(updates[i].updates.toString());
-        if (updates[i].user != null)
-            $("#updatedBy" + i).text(updates[i].user.name.toString());
+        if (updates[i].user != null){
+            $("#updatedBy" + i).html('<i class="fa fa-user" aria-hidden="true"></i> '+updates[i].user.name.toString());
+
+        }
         if (updates[i].date != null)
-            $("#updatedDate" + i).text(updates[i].date.toString());
+            $("#updatedDate" + i).html('<i class="fa fa-calendar" aria-hidden="true"></i>'+' '+updates[i].date.toString());
 
 
     }

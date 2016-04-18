@@ -1,7 +1,10 @@
 package com.jissuetracker.webapp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.annotation.Generated;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Entity
 @Table(name = "menu")
-public class Menu {
+public class Menu implements Serializable{
 
     private int id;
     private String name;
@@ -81,7 +84,8 @@ public class Menu {
         this.subMenuSet = subMenuSet;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roleId")
     public Roles getRoles() {
         return roles;

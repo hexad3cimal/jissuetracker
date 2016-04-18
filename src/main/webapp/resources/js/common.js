@@ -14,3 +14,14 @@ $(window).on('resize', function () {
 $(window).on('resize', function () {
     if ($(window).width() <= 767) $('#sidebar-collapse').collapse('hide')
 });
+
+$(function(){
+
+    var url = window.location;
+    $('#sidebar a[href="' + url + '"]').parent('li').addClass('active');
+    $('#sidebar a').filter(function () {
+        return this.href == url;
+    }).parent('li').addClass('active');
+
+
+});
