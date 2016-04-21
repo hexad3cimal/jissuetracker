@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,5 +38,13 @@ public class UserServiceImpl implements UserService {
 
     public User getUserById(Integer userId) throws Exception {
         return userDao.getUserById(userId);
+    }
+
+    public void update(User user) throws Exception {
+        userDao.update(user);
+    }
+
+    public List<User> userList() throws Exception {
+        return userDao.userList();
     }
 }

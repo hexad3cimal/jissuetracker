@@ -115,6 +115,13 @@ $(function () {
             "type": 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader(header, token);
+            },
+            "dataSrc": function ( json ) {
+
+
+                if(json.data == null)
+                    json.data = []
+                return json.data
             }
         },
         "columns": [
@@ -132,7 +139,7 @@ $(function () {
             "data": "url",
             "render": function ( data, type, full, meta ) {
                 if(data != null)
-                return '<a style="text-decoration:none;padding-left:4px;padding-right:4px;color: white;background-color: #cb2027" href="'+data+'">View</a>';
+                    return '<a style="text-decoration:none;padding-left:4px;padding-right:4px;color: white;background-color: #cb2027" href="'+data+'">View</a>';
             }
         } ]
 

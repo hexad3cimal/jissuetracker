@@ -43,40 +43,47 @@ public class ProjectController {
     }
 
     @RequestMapping("/add")
-    public ModelAndView addProject(@ModelAttribute ProjectDto projectDto) throws Exception{
+    public ModelAndView addProject(@ModelAttribute ProjectDto projectDto) throws Exception {
 
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("projectDto",projectDto);
+        modelAndView.addObject("projectDto", projectDto);
         modelAndView.setViewName("addProject");
-        return  modelAndView;
+        return modelAndView;
     }
 
     @RequestMapping("/edit/{project}")
-    public ModelAndView editProject(@PathVariable(value ="project")String project,
-                                   @ModelAttribute ProjectDto projectDto) throws Exception{
+    public ModelAndView editProject(@PathVariable(value = "project") String project,
+                                    @ModelAttribute ProjectDto projectDto) throws Exception {
 
         ModelAndView modelAndView = new ModelAndView();
-        Projects projectObject = projectService.getByName(project);
-        if(NotEmpty.notEmpty(projectObject.getId()))
-            projectDto.setId(projectObject.getId());
-        if(NotEmpty.notEmpty(projectObject.getDescription()))
-            projectDto.setDescription(projectObject.getDescription());
-        if(NotEmpty.notEmpty(projectObject.getName()))
-            projectDto.setName(projectObject.getName());
-        if(NotEmpty.notEmpty(projectObject.getUsers())){
-            List<String> userList = new ArrayList<String>();
-            for (User u :projectObject.getUsers()){
-                userList.add(u.getEmail());
-            }
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+            if (getCurrentUserDetails.getDetails().getRoles().getId() == 1 || projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail(), project)) {
+                Projects projectObject = projectService.getByName(project);
+               if(NotEmpty.notEmpty(projectObject)) {
+                    if (NotEmpty.notEmpty(projectObject.getId()))
+                        projectDto.setId(projectObject.getId());
+                    if (NotEmpty.notEmpty(projectObject.getDescription()))
+                        projectDto.setDescription(projectObject.getDescription());
+                    if (NotEmpty.notEmpty(projectObject.getName()))
+                        projectDto.setName(projectObject.getName());
+                    if (NotEmpty.notEmpty(projectObject.getUsers())) {
+                        List<String> userList = new ArrayList<String>();
+                        for (User u : projectObject.getUsers()) {
+                            userList.add(u.getEmail());
+                        }
 
-            projectDto.setUserList(userList);
-        }
+                        projectDto.setUserList(userList);
+                    }
+                }
+                modelAndView.addObject("projectDto", projectDto);
+                modelAndView.setViewName("addProject");
+                return modelAndView;
+            } else
+                return new ModelAndView("404");
 
-            modelAndView.addObject("projectDto",projectDto);
-        modelAndView.setViewName("addProject");
-        return  modelAndView;
+        }else
+            return new ModelAndView("404");
     }
-
 
 
     @RequestMapping(value = "/addNew",
@@ -89,8 +96,8 @@ public class ProjectController {
 
         Projects projects = new Projects();
         if (projectMap.containsKey("id") && NotEmpty.notEmpty(projectMap.get("id").toString())) {
-                projects = projectService.getById(Integer.parseInt(projectMap.get("id").toString()));
-            System.out.println("projects.getId()"+projects.getId()+"  "+projectMap.get("id"));
+            projects = projectService.getById(Integer.parseInt(projectMap.get("id").toString()));
+            System.out.println("projects.getId()" + projects.getId() + "  " + projectMap.get("id"));
 
         }
 
@@ -122,19 +129,18 @@ public class ProjectController {
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails()))
             projects.setManager(getCurrentUserDetails.getDetails().getEmail());
 
-        if(NotEmpty.notEmpty(projects.getName()))
+        if (NotEmpty.notEmpty(projects.getName()))
             projects.setUrl("/jit/app/project/" + projects.getName());
 
 
-        if(projects.getId() == null){
+        if (projects.getId() == null) {
             projectService.add(projects);
 
-            System.out.println("projects.getId()"+projects.getId()+" add ");
+            System.out.println("projects.getId()" + projects.getId() + " add ");
 
-        }
-        else{
+        } else {
             projectService.update(projects);
-            System.out.println("projects.getId()"+projects.getId()+" update ");
+            System.out.println("projects.getId()" + projects.getId() + " update ");
 
         }
 
@@ -200,10 +206,17 @@ public class ProjectController {
     @RequestMapping(value = "/{projectName}")
     public String projectHome(@PathVariable(value = "projectName")
                               String projectName) throws Exception {
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+            if (getCurrentUserDetails.getDetails().getRoles().getId() == 1)
+                return "projectHome";
 
-        if (projectService.doesUserHasProject(SecurityContextHolder.getContext().getAuthentication().getName(), projectName))
-            return "projectHome";
-        else
+            else if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail(), projectName))
+                return "projectHome";
+            else
+                return "404";
+
+
+        } else
             return "404";
     }
 
@@ -267,7 +280,7 @@ public class ProjectController {
 
     @RequestMapping("/list")
     @ResponseBody
-    public Response projectList() throws Exception{
+    public Response projectList() throws Exception {
 
         return new Response(projectService.projectsList());
     }

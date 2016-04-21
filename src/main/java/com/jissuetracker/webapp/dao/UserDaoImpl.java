@@ -28,6 +28,10 @@ public class UserDaoImpl implements UserDao {
         sessionFactory.getCurrentSession().save(user);
     }
 
+    public void update(User user) throws Exception {
+        sessionFactory.getCurrentSession().update(user);
+    }
+
     public User getUserByUserName(String userName) throws Exception {
 
        return (User)sessionFactory.getCurrentSession()
@@ -63,6 +67,15 @@ public class UserDaoImpl implements UserDao {
     }
 
     public User getUserById(Integer userId) throws Exception {
-        return (User)sessionFactory.getCurrentSession().get(User.class,userId);
+        return (User)sessionFactory.getCurrentSession().createCriteria(User.class)
+                .setFetchMode("roles",FetchMode.JOIN)
+                .setFetchMode("projectses",FetchMode.JOIN).add(Restrictions.eq("id",userId))
+                .uniqueResult();
+    }
+
+    public List<User> userList() throws Exception {
+        return sessionFactory.getCurrentSession().createCriteria(User.class)
+                .setFetchMode("roles",FetchMode.JOIN)
+                .setFetchMode("projectses",FetchMode.JOIN).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 }

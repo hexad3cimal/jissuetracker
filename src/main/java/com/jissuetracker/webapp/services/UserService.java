@@ -2,6 +2,7 @@ package com.jissuetracker.webapp.services;
 
 import com.jissuetracker.webapp.models.User;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,5 +15,7 @@ public interface UserService {
     User getUserByName(String name)throws Exception;
     Map<String,String> userDropdownList()throws Exception;
     public User getUserById(Integer userId)throws Exception;
+    void update(User user)throws Exception;
+    List<User> userList()throws Exception;
 
 }

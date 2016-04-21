@@ -2,6 +2,7 @@ package com.jissuetracker.webapp.dao;
 
 import com.jissuetracker.webapp.models.Projects;
 import com.jissuetracker.webapp.models.User;
+import com.jissuetracker.webapp.utils.GetCurrentUserDetails;
 import com.jissuetracker.webapp.utils.NotEmpty;
 import com.terracotta.entity.RootEntity;
 import org.hibernate.Criteria;
@@ -12,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +26,9 @@ public class ProjectDaoImpl implements ProjectDao {
 
     @Autowired
     SessionFactory sessionFactory;
+
+    @Autowired
+    GetCurrentUserDetails getCurrentUserDetails;
 
     public void add(Projects project) throws Exception {
 
@@ -66,9 +71,29 @@ public class ProjectDaoImpl implements ProjectDao {
         return false;
     }
 
+    //retrieves project list based on user
     public List<Projects> projectsList() throws Exception {
-        return sessionFactory.getCurrentSession().createCriteria(Projects.class)
-                .setFetchMode("users",FetchMode.JOIN).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+
+        if(NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+            if (getCurrentUserDetails.getDetails().getRoles().getId() == 1)
+                return sessionFactory.getCurrentSession().createCriteria(Projects.class)
+                        .setFetchMode("users", FetchMode.JOIN).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+            else {
+                List<Projects> projectsList = sessionFactory.getCurrentSession().createCriteria(Projects.class)
+                        .setFetchMode("users", FetchMode.JOIN).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+
+                List<Projects> projectsFinalList = new ArrayList<Projects>();
+                for (Projects p : projectsList) {
+                    if (NotEmpty.notEmpty(p.getUsers())) {
+                        if (p.getUsers().contains(getCurrentUserDetails.getDetails()))
+                            projectsFinalList.add(p);
+                    }
+                }
+                return projectsFinalList;
+            }
+        }else
+            return null;
+
     }
 
     public Projects getById(Integer id) throws Exception {

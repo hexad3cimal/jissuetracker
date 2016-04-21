@@ -6,19 +6,18 @@
 var token = $("meta[name='_csrf']").attr("content");
 var header = $("meta[name='_csrf_header']").attr("content");
 
-
+$.ajaxSetup({
+    beforeSend: function (xhr) {
+        xhr.setRequestHeader(header, token);
+    }
+});
 $(function () {
     $.fn.editable.defaults.mode = 'inline';
 
-    $.ajaxSetup({
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader(header, token);
-        }
-    });
 
     $('#updateBlock').hide();
 
-    $("#issueStatus").click(function (){
+    $("#issueStatus").click(function () {
 
         $.ajax({
             type: "GET",
@@ -30,7 +29,9 @@ $(function () {
                     type: 'select',
                     pk: 1,
                     url: "/jit/app/issues/updateStatus/" + getIssueId(),
-
+                    success :function(){
+                      location.reload();
+                    },
                     title: 'Update status',
                     source: json.data
                 });
@@ -39,10 +40,7 @@ $(function () {
         });
 
 
-
     });
-
-
 
 
     $.ajax({
@@ -66,7 +64,7 @@ $(function () {
 
             }
 
-            if (json.data.updatable.toString() == "true") {
+            if (json.data.updatable == "true" && json.data.status.name != "Closed") {
 
                 $('#updateBlock').show();
 
@@ -101,7 +99,6 @@ $(function () {
     });
 
 
-
     $('#issueUpdateForm').validate({
         rules: {
 
@@ -131,7 +128,7 @@ $(function () {
         },
         submitHandler: function (form) {
 
-            logger("Reached submit handler");
+
             addUpdate();
         }
 
@@ -144,12 +141,12 @@ $(function () {
 //function for adding new issue via ajax post
 function addUpdate() {
 
+
 //populating the data from form fields
     var data = {
         updateText: $('#updateText').val()
     };
 
-    console.log(data.updateText);
 
 //ajax post
     $.ajax({
@@ -159,9 +156,13 @@ function addUpdate() {
         contentType: "application/json",
         dataType: 'json',
         data: JSON.stringify(data),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader(header, token);
+        },
         success: function (data) {
 
             location.reload();
+
 
         }
     });
@@ -179,19 +180,16 @@ function getIssueId() {
 function populateUpdates(updates) {
 
     for (i = 0; i < updates.length; i++) {
-        logger(updates[i]);
+
         $('#updatesListBlock').append('<div class="panel panel-default">' +
             '<div class="panel-body">' +
             '<div class="row col-sm-12 col-lg-12 col-md-12">' +
-            '<div class="form-group">&nbsp;&nbsp;'
-            + '</div>' +
-
-            '<div class="row col-sm-10 col-lg-10 col-md-10">'
+           '<div class="row col-sm-10 col-lg-10 col-md-10">'
             + '<div class="issueDescription" id="updateDescription' + i + '"></div>'
             + '</div>' +
             '<div class="row col-sm-2 col-lg-2 col-md-2 ">'
-            + '<div class="createdBy" id="updatedBy' + i + '"></div>'
-            + '<div class="createdDate" id="updatedDate' + i + '"></div>'
+            + '<div class="btn custom-button-orange btn-xs" id="updatedBy' + i + '"></div>'
+            + '<div class="btn custom-button-grey btn-xs" id="updatedDate' + i + '"></div>'
             + '</div>'
 
             + '</div>'
@@ -201,20 +199,13 @@ function populateUpdates(updates) {
 
         if (updates[i].updates != null)
             $("#updateDescription" + i).text(updates[i].updates.toString());
-        if (updates[i].user != null){
-            $("#updatedBy" + i).html('<i class="fa fa-user" aria-hidden="true"></i> '+updates[i].user.name.toString());
+        if (updates[i].user != null) {
+            $("#updatedBy" + i).html('<span class="glyphicon glyphicon-user"></span>' + ' ' + updates[i].user.name.toString());
 
         }
         if (updates[i].date != null)
-            $("#updatedDate" + i).html('<i class="fa fa-calendar" aria-hidden="true"></i>'+' '+updates[i].date.toString());
+            $("#updatedDate" + i).html('<span class="glyphicon glyphicon-calendar"></span>' + ' ' + updates[i].date.toString());
 
-
-    }
-
-
-    function logger(logger){
-
-        console.log(logger);
 
     }
 

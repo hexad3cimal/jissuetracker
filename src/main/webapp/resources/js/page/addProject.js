@@ -122,6 +122,7 @@ function addProject() {
         },
         success: function (data) {
 
+            window.location.href="http://localhost:8080/jit/app/project/";
 
         }
 
@@ -132,8 +133,8 @@ function addProject() {
 //function to format texts in the dom
 function editOrAddChecker() {
 
-    jQuery('#userSelect').val(['tester@gmail.com'])
-    jQuery('#userSelect').trigger("liszt:updated");
+    //jQuery('#userSelect').val(['tester@gmail.com'])
+    //jQuery('#userSelect').trigger("liszt:updated");
     var path = $(location).attr('href');
     var splitted = path.split('/');
 

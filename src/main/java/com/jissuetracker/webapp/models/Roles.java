@@ -64,6 +64,7 @@ public class Roles implements java.io.Serializable {
 		this.users = users;
 	}
 
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "roles")
     public Set<Menu> getMenuSet() {
         return menuSet;
