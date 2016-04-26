@@ -100,5 +100,13 @@ public class ProjectDaoImpl implements ProjectDao {
         return (Projects)sessionFactory.getCurrentSession().get(Projects.class,id);
     }
 
+    public  List<Projects> userProjectsList(Integer userId)throws Exception{
+
+        return sessionFactory.getCurrentSession().createCriteria(Projects.class,"project")
+                .setFetchMode("users",FetchMode.JOIN).createAlias("project.users","users")
+                .add(Restrictions.eq("users.id",userId)).list();
+    }
+
+
 
 }

@@ -30,7 +30,8 @@ public class IssuesUpdates implements java.io.Serializable {
 
 	private Integer id;
 	private Issues issues;
-	private User user;
+	private String updatedBy;
+	private String updatedByUserEmail;
 	private Attachments attachments;
 	private String updates;
 	private Date date;
@@ -39,20 +40,20 @@ public class IssuesUpdates implements java.io.Serializable {
 	public IssuesUpdates() {
 	}
 
-	public IssuesUpdates(Issues issues, User user, Attachments attachments, String updates, Date date,
+	public IssuesUpdates(Issues issues, String updatedBy, Attachments attachments, String updates, Date date,
 			Set<Attachments> attachmentses) {
 		this.issues = issues;
-		this.user = user;
+		this.updatedBy = updatedBy;
 		this.attachments = attachments;
 		this.updates = updates;
 		this.date = date;
 		this.attachmentses = attachmentses;
 	}
 
-	public IssuesUpdates(Integer id,Issues issues, User user, Attachments attachments, String updates, Date date,
+	public IssuesUpdates(Integer id,Issues issues, String updatedBy, Attachments attachments, String updates, Date date,
 						 Set<Attachments> attachmentses) {
 		this.issues = issues;
-		this.user = user;
+		this.updatedBy = updatedBy;
 		this.attachments = attachments;
 		this.updates = updates;
 		this.date = date;
@@ -83,15 +84,7 @@ public class IssuesUpdates implements java.io.Serializable {
 		this.issues = issues;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "updatedById")
-	public User getUser() {
-		return this.user;
-	}
 
-	public void setUser(User user) {
-		this.user = user;
-	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "attachementId")
@@ -132,4 +125,21 @@ public class IssuesUpdates implements java.io.Serializable {
 		this.attachmentses = attachmentses;
 	}
 
+	@Column(name = "updatedBy")
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	@Column(name = "updatedByUserEmail")
+	public String getUpdatedByUserEmail() {
+		return updatedByUserEmail;
+	}
+
+	public void setUpdatedByUserEmail(String updatedByUserEmail) {
+		this.updatedByUserEmail = updatedByUserEmail;
+	}
 }

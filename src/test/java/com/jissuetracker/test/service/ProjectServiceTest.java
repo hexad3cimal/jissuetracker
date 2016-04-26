@@ -44,7 +44,7 @@ public class ProjectServiceTest {
     @Test
     public void doesUserHasProject()throws Exception{
 
-        User user = new User(1,null,"Jovin","jovin.25@hmail.com","123",null,null,null,null);
+        User user = new User(1,null,"Jovin","jovin.25@hmail.com","123",null,null,null);
         Set<User> users = new HashSet<User>();
         users.add(user);
         Projects project =
@@ -57,7 +57,7 @@ public class ProjectServiceTest {
 
     @Test
     public void projectHomeList() throws Exception {
-        User user = new User(1,null,"Jovin","jovin.25@hmail.com","123",null,null,null,null);
+        User user = new User(1,null,"Jovin","jovin.25@hmail.com","123",null,null,null);
         Set<User> users = new HashSet<User>();
         users.add(user);
         Projects project =

@@ -140,28 +140,39 @@ public class IssueController {
     public Response getIssueDetailsByIdAjaxCall(@PathVariable(value = "id") String id) throws Exception {
 
         Issues issue = issueService.getById(Integer.parseInt(id));
-        Projects project = issue.getProjects();
-        User creator = issue.getUserByCreatedById();
-        User assignedTo = issue.getUserByAssignedToId();
         Set<IssuesUpdates> issuesUpdatesSet = new TreeSet<IssuesUpdates>(new IssueUpdateDateComparator());
-        if(issue.getIssuesUpdateses() != null){
+        if(NotEmpty.notEmpty(issue)){
+            Projects project = issue.getProjects();
+
+
+            if(issue.getIssuesUpdateses() != null){
 
             issuesUpdatesSet.addAll(issue.getIssuesUpdateses());
             issue.setIssuesUpdateses(issuesUpdatesSet);
 
-            for(IssuesUpdates issuesUpdates : issuesUpdatesSet)
-                System.out.println("issuesUpdates"+issuesUpdates.getDate());
         }
+
 
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails()))
         {
-            if(creator.getId() == getCurrentUserDetails.getDetails().getId()){
-                issue.setUpdatable("true");
-            }else if(assignedTo.getId() == getCurrentUserDetails.getDetails().getId()){
-                issue.setUpdatable("true");
+
+            if((getCurrentUserDetails.getDetails().getEmail().equalsIgnoreCase(issue.getUserByAssignedToId().getEmail())) &&
+                    issue.getReadByAssigned().equalsIgnoreCase("false")) {
+                issue.setReadByAssigned("true");
+                issueService.update(issue);
+            }
+
+            if(NotEmpty.notEmpty(project)){
+                if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail()
+                        , project.getName()))
+                    issue.setUpdatable("true");
+
             }
             else
                 issue.setUpdatable("false");
+
+        }
+
 
         }
 
@@ -184,8 +195,10 @@ public class IssueController {
 
         }
 
-        if(NotEmpty.notEmpty(getCurrentUserDetails.getDetails()))
-            issuesUpdate.setUser(getCurrentUserDetails.getDetails());
+        if(NotEmpty.notEmpty(getCurrentUserDetails.getDetails())){
+            issuesUpdate.setUpdatedBy(getCurrentUserDetails.getDetails().getName());
+            issuesUpdate.setUpdatedByUserEmail(getCurrentUserDetails.getDetails().getEmail());
+        }
 
         if(NotEmpty.notEmpty(issueUpdates)){
             if(issueUpdates.containsKey("updateText"))

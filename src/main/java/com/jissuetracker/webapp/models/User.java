@@ -23,7 +23,6 @@ public class User implements java.io.Serializable {
 	private String password;
 	private Set<Projects> projectses = new HashSet<Projects>(0);
 	private Set<Issues> issuesesForAssignedToId = new HashSet<Issues>(0);
-	private Set<IssuesUpdates> issuesUpdateses = new HashSet<IssuesUpdates>(0);
 	private Set<Issues> issuesesForCreatedById = new HashSet<Issues>(0);
 
 	public User() {
@@ -35,7 +34,7 @@ public class User implements java.io.Serializable {
 	}
 
 	public User(Integer id,Roles roles, String name, String email, String password, Set<Projects> projectses,
-			Set<Issues> issuesesForAssignedToId, Set<IssuesUpdates> issuesUpdateses,
+			Set<Issues> issuesesForAssignedToId,
 			Set<Issues> issuesesForCreatedById) {
 		this.id = id;
 		this.roles = roles;
@@ -44,12 +43,11 @@ public class User implements java.io.Serializable {
 		this.password = password;
 		this.projectses = projectses;
 		this.issuesesForAssignedToId = issuesesForAssignedToId;
-		this.issuesUpdateses = issuesUpdateses;
 		this.issuesesForCreatedById = issuesesForCreatedById;
 	}
 
 	public User(Roles roles, String name, String email, String password, Set<Projects> projectses,
-				Set<Issues> issuesesForAssignedToId, Set<IssuesUpdates> issuesUpdateses,
+				Set<Issues> issuesesForAssignedToId,
 				Set<Issues> issuesesForCreatedById) {
 		this.roles = roles;
 		this.name = name;
@@ -57,7 +55,6 @@ public class User implements java.io.Serializable {
 		this.password = password;
 		this.projectses = projectses;
 		this.issuesesForAssignedToId = issuesesForAssignedToId;
-		this.issuesUpdateses = issuesUpdateses;
 		this.issuesesForCreatedById = issuesesForCreatedById;
 	}
 
@@ -132,14 +129,6 @@ public class User implements java.io.Serializable {
 		this.issuesesForAssignedToId = issuesesForAssignedToId;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-	public Set<IssuesUpdates> getIssuesUpdateses() {
-		return this.issuesUpdateses;
-	}
-
-	public void setIssuesUpdateses(Set<IssuesUpdates> issuesUpdateses) {
-		this.issuesUpdateses = issuesUpdateses;
-	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userByCreatedById")
 	public Set<Issues> getIssuesesForCreatedById() {

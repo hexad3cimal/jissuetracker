@@ -49,4 +49,10 @@ public class IssueServiceImpl implements IssueService {
     public Issues getById(Integer id) throws Exception {
         return issueDao.getById(id);
     }
+
+    public List<Issues> getIssuesById(Integer userId) throws Exception {
+        return issueDao.getIssuesById(userId);
+    }
+
+
 }

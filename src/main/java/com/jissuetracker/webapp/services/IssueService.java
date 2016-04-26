@@ -18,5 +18,7 @@ public interface IssueService {
     public HashMap<String,String> getIssueByTitleMap(String title)throws Exception;
     public List<IssueDto> projectIssuesList(String projectName)throws Exception;
     Issues getById(Integer id)throws Exception;
+    List<Issues> getIssuesById(Integer userId)throws Exception;
+
 
 }

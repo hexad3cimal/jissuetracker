@@ -30,7 +30,7 @@ $(function () {
                     pk: 1,
                     url: "/jit/app/issues/updateStatus/" + getIssueId(),
                     success :function(){
-                      location.reload();
+                        location.reload();
                     },
                     title: 'Update status',
                     source: json.data
@@ -47,55 +47,58 @@ $(function () {
         type: "GET",
         url: '/jit/app/issues/ajax/' + getIssueId(),
         success: function (json) {
+            if (json.data != null) {
 
-            $("#createdBy").text("Created by: " + json.data.userByCreatedById.name);
-            $("#createdDate").text("Created on: " + json.data.createdOn);
-            $("#issueTitle").text(json.data.title);
-            $("#issueDescription").text(json.data.description);
+                $("#createdBy").text("Created by: " + json.data.userByCreatedById.name);
+                $("#createdDate").text("Created on: " + json.data.createdOn);
+                $("#issueTitle").text(json.data.title);
+                $("#issueDescription").text(json.data.description);
 
-            document.title = json.data.title;
-
-
-            var updates = json.data.issuesUpdateses;
-
-            if (updates.length > 0) {
-
-                populateUpdates(updates);
-
-            }
-
-            if (json.data.updatable == "true" && json.data.status.name != "Closed") {
-
-                $('#updateBlock').show();
-
-            }
+                document.title = json.data.title;
 
 
-            if (json.data.trackers.name.toString() == "Bug") {
-                $("#issueType").addClass('issueTypeBug');
-                $("#issueType").text(json.data.trackers.name);
+                var updates = json.data.issuesUpdateses;
 
-            } else if (json.data.trackers.name.toString() == "Modification") {
-                $("#issueType").addClass('issueTypeModification');
-                $("#issueType").text(json.data.trackers.name);
+                if (updates.length > 0) {
 
-            } else {
-                $("#issueType").addClass('issueTypeFeature');
-                $("#issueType").text(json.data.trackers.name);
-            }
+                    populateUpdates(updates);
+
+                }
+
+                if (json.data.updatable == "true" && json.data.status.name != "Closed") {
+
+                    $('#updateBlock').show();
+
+                }
 
 
-            if (json.data.status.name.toString() == "Closed") {
-                $("#issueStatus").addClass('issueStatusClosed');
-                $("#issueStatus").text(json.data.status.name);
+                if (json.data.trackers.name.toString() == "Bug") {
+                    $("#issueType").addClass('issueTypeBug');
+                    $("#issueType").text(json.data.trackers.name);
 
-            } else {
-                $("#issueStatus").addClass('issueStatusOpen');
-                $("#issueStatus").text(json.data.status.name);
-            }
+                } else if (json.data.trackers.name.toString() == "Modification") {
+                    $("#issueType").addClass('issueTypeModification');
+                    $("#issueType").text(json.data.trackers.name);
+
+                } else {
+                    $("#issueType").addClass('issueTypeFeature');
+                    $("#issueType").text(json.data.trackers.name);
+                }
+
+
+                if (json.data.status.name.toString() == "Closed") {
+                    $("#issueStatus").addClass('issueStatusClosed');
+                    $("#issueStatus").text(json.data.status.name);
+
+                } else {
+                    $("#issueStatus").addClass('issueStatusOpen');
+                    $("#issueStatus").text(json.data.status.name);
+                }
+
+            }else
+                $("#issueDescription").text("Issue does not exist");
 
         }
-
     });
 
 
@@ -184,7 +187,7 @@ function populateUpdates(updates) {
         $('#updatesListBlock').append('<div class="panel panel-default">' +
             '<div class="panel-body">' +
             '<div class="row col-sm-12 col-lg-12 col-md-12">' +
-           '<div class="row col-sm-10 col-lg-10 col-md-10">'
+            '<div class="row col-sm-10 col-lg-10 col-md-10">'
             + '<div class="issueDescription" id="updateDescription' + i + '"></div>'
             + '</div>' +
             '<div class="row col-sm-2 col-lg-2 col-md-2 ">'
@@ -199,8 +202,8 @@ function populateUpdates(updates) {
 
         if (updates[i].updates != null)
             $("#updateDescription" + i).text(updates[i].updates.toString());
-        if (updates[i].user != null) {
-            $("#updatedBy" + i).html('<span class="glyphicon glyphicon-user"></span>' + ' ' + updates[i].user.name.toString());
+        if (updates[i].updatedBy != null) {
+            $("#updatedBy" + i).html('<span class="glyphicon glyphicon-user"></span>' + ' ' + updates[i].updatedBy);
 
         }
         if (updates[i].date != null)

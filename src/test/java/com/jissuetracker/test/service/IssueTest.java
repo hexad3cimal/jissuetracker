@@ -38,9 +38,9 @@ public class IssueTest {
         MockitoAnnotations.initMocks(IssueTest.class);
         Trackers tracker = new Trackers(1,"Bug");
         Status status = new Status(1,"Open");
-        User user = new User(1,null,"Jovin","jovin.25@hmail.com","123",null,null,null,null);
-        User creator = new User(1,null,"Creator","jovin.25@hmail.com","123",null,null,null,null);
-        User assigned = new User(1,null,"Editor","jovin.25@hmail.com","123",null,null,null,null);
+        User user = new User(1,null,"Jovin","jovin.25@hmail.com","123",null,null,null);
+        User creator = new User(1,null,"Creator","jovin.25@hmail.com","123",null,null,null);
+        User assigned = new User(1,null,"Editor","jovin.25@hmail.com","123",null,null,null);
         Set<User> users = new HashSet<User>();
         users.add(user);
         Projects project =
@@ -51,7 +51,7 @@ public class IssueTest {
         Issues issue2  = new Issues(2,"url","Test Issue 2", project, creator, assigned,
                 status, tracker,null,new Date(),new Date(),null,null,new Date(), "Test description", null,null);
         Attachments attachment = new Attachments();
-        IssuesUpdates issuesUpdate = new IssuesUpdates(1,issue,assigned,attachment,"Fixed the issue",new Date(),null);
+        IssuesUpdates issuesUpdate = new IssuesUpdates(1,issue,assigned.getName(),attachment,"Fixed the issue",new Date(),null);
         attachment = new Attachments(1,null,issuesUpdate,"filelink",null,null);
         when(issueDao.getById(1)).thenReturn(issue);
         when(issueDao.getById(2)).thenReturn(issue2);

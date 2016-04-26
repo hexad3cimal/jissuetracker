@@ -35,6 +35,7 @@ public class Issues implements java.io.Serializable {
 	private String url;
 	private Set<IssuesUpdates> issuesUpdateses = new HashSet<IssuesUpdates>(0);
 	private Set<Attachments> attachmentses = new HashSet<Attachments>(0);
+	private String readByAssigned;
 
 
 	private String updatable;
@@ -259,5 +260,14 @@ public class Issues implements java.io.Serializable {
 
 	public void setUpdatable(String updatable) {
 		this.updatable = updatable;
+	}
+
+	@Column(name = "readByAssigned")
+	public String getReadByAssigned() {
+		return readByAssigned;
+	}
+
+	public void setReadByAssigned(String readByAssigned) {
+		this.readByAssigned = readByAssigned;
 	}
 }

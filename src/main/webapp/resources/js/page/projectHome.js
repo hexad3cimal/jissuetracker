@@ -8,11 +8,11 @@ var header = $("meta[name='_csrf_header']").attr("content");
 
 $(function () {
 
-    $('#reload').click(function() {
+    $('#reload').click(function () {
         location.reload();
     });
 
-    document.title = getProjectName()+' - Home';
+    document.title = getProjectName() + ' - Home';
 
     $("#projectTitle").val(getProjectName());
 
@@ -38,7 +38,6 @@ $(function () {
                 $('#tracker').chosen({width: "95%"});
             }
         });
-
 
 
         $.ajax({
@@ -92,7 +91,7 @@ $(function () {
     });
 
 
-    $('#viewAllIssues').click(function(){
+    $('#viewAllIssues').click(function () {
 
         $('#issueBlock').hide();
 
@@ -116,36 +115,35 @@ $(function () {
             beforeSend: function (xhr) {
                 xhr.setRequestHeader(header, token);
             },
-            "dataSrc": function ( json ) {
+            "dataSrc": function (json) {
 
 
-                if(json.data == null)
+                if (json.data == null)
                     json.data = []
                 return json.data
             }
         },
         "columns": [
-            { "data": "title" },
-            { "data": "createdBy" },
-            { "data": "assignedTo" },
-            { "data": "status" },
-            { "data": "tracker" },
-            { "data": "createdOn" },
-            { "data": "updatedOn" },
-            { "data": "url" }
+            {"data": "title"},
+            {"data": "createdBy"},
+            {"data": "assignedTo"},
+            {"data": "status"},
+            {"data": "tracker"},
+            {"data": "createdOn"},
+            {"data": "updatedOn"},
+            {"data": "url"}
 
-        ],  "columnDefs": [ {
+        ], "columnDefs": [{
             "targets": 7,
             "data": "url",
-            "render": function ( data, type, full, meta ) {
-                if(data != null)
-                    return '<a style="text-decoration:none;padding-left:4px;padding-right:4px;color: white;background-color: #cb2027" href="'+data+'">View</a>';
+            "render": function (data, type, full, meta) {
+                if (data != null)
+                    return '<a style="text-decoration:none;padding-left:4px;padding-right:4px;color: white;background-color: #cb2027" href="' + data + '">View</a>';
             }
-        } ]
+        }]
 
 
     });
-
 
 
     $.ajax({
@@ -154,10 +152,21 @@ $(function () {
         success: function (json) {
 
             $("#projectTitle").text(getProjectName());
-            $("#projectDescription").text(json.data.Description);
-            $("#manager").text(json.data.Manager);
-            $("#developers").text(json.data.Developers);
-            $("#testers").text(json.data.Testers);
+
+            if (json.data.Description != null)
+                $("#projectDescription").text(json.data.Description);
+
+            if (json.data.Manager != null)
+                $("#manager").text(json.data.Manager);
+
+            if (json.data.Developers != null)
+                $("#developers").text(json.data.Developers);
+
+            if (json.data.Testers != null)
+                $("#testers").text(json.data.Testers);
+
+            if (json.data.Reporters != null)
+                $("#reporters").text(json.data.Reporters);
 
 
         }
@@ -281,7 +290,7 @@ function addIssue() {
 }
 
 //function which returns current project name
-function getProjectName(){
+function getProjectName() {
 
     //splitting the current url for getting the project name
     var path = $(location).attr('href');

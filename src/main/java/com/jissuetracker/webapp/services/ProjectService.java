@@ -16,6 +16,8 @@ public interface ProjectService {
     List<Projects> projectsList()throws Exception;
     public void update(Projects projects)throws Exception;
     Projects getById(Integer id)throws Exception;
+    List<Projects> userProjectsList(Integer userId)throws Exception;
+
 
 
 

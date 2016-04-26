@@ -1,20 +1,21 @@
 package com.jissuetracker.webapp.controllers;
 
 import com.jissuetracker.webapp.dto.UserDto;
+import com.jissuetracker.webapp.models.Issues;
 import com.jissuetracker.webapp.models.Projects;
 import com.jissuetracker.webapp.models.User;
+import com.jissuetracker.webapp.services.IssueService;
+import com.jissuetracker.webapp.services.ProjectService;
 import com.jissuetracker.webapp.services.RolesService;
 import com.jissuetracker.webapp.services.UserService;
+import com.jissuetracker.webapp.utils.GetCurrentUserDetails;
 import com.jissuetracker.webapp.utils.NotEmpty;
 import com.jissuetracker.webapp.utils.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,95 +36,232 @@ public class UserController {
     @Autowired
     RolesService rolesService;
 
+    @Autowired
+    ProjectService projectService;
+
+    @Autowired
+    GetCurrentUserDetails getCurrentUserDetails;
+
+    @Autowired
+    IssueService issueService;
+
+
     @RequestMapping("/")
-    public String home(){
-        return "user";
-    }
+    public String home() throws Exception {
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
 
-    @RequestMapping("/{name}")
-    public String userHomePage(@PathVariable(value = "name") String name,
-                               HttpServletRequest request)throws Exception{
 
-        User userHomePageObject = userService.getUserByName(name);
-        if (NotEmpty.notEmpty(userHomePageObject)) {
-            request.getSession().setAttribute("userHomePageObject",userHomePageObject);
             return "userHomePage";
-        }
+        }else
+            return "404";
+
+    }
+    @RequestMapping("/user")
+    public String user() throws Exception {
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+
+            if(getCurrentUserDetails.getDetails().getRoles().getId() ==1)
+
+            return "user";
         else
+            return "404";
+
+    }else
             return "404";
 
     }
 
+    @RequestMapping("/{name}")
+    public String userHomePage(@PathVariable(value = "name") String name)
+            throws Exception {
+        return "userHomePage";
+
+    }
+
+    @RequestMapping("/homepageData/{userId}")
+    @ResponseBody
+    public Response homepageData(@PathVariable(value = "userId") Integer userId) throws Exception{
+        HashMap<String,Integer> stats = new HashMap<String, Integer>();
+        if (NotEmpty.notEmpty(userId)) {
+            Integer unreadIssueCount = 0;
+
+            List<Issues> issuesList = issueService.getIssuesById(userId);
+
+            if(NotEmpty.notEmpty(issuesList)) {
+                stats.put("issueCount",issuesList.size());
+                for (int i=0;i<issuesList.size();i++){
+                    if(NotEmpty.notEmpty(issuesList.get(i))){
+                        if(issuesList.get(i).getReadByAssigned().equalsIgnoreCase("false")){
+                            System.out.println("issuesList.get(i)" +
+                                    ".getReadByAssigned().equalsIgnoreCase(\"false\")" +issuesList.get(i).getTitle());
+                            ++unreadIssueCount;
+                        }
+                    }
+                }
+                stats.put("unreadIssueCount",unreadIssueCount);
+
+
+            }
+        }
+        return new Response(stats);
+    }
+
     @RequestMapping("/add")
-    public ModelAndView addUserPage(){
+    public ModelAndView addUserPage() throws Exception {
 
         UserDto user = new UserDto();
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("addUser");
-        modelAndView.addObject("user",user);
-        return modelAndView;
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+            if (getCurrentUserDetails.getDetails().getRoles().getId() == 1) {
+                modelAndView.setViewName("addUser");
+                modelAndView.addObject("user", user);
+            } else
+                modelAndView.setViewName("404");
+            return modelAndView;
+
+        } else {
+            modelAndView.setViewName("404");
+            return modelAndView;
+        }
     }
 
     @RequestMapping("/edit/{id}")
-    public ModelAndView editUser(@PathVariable(value = "id")Integer id) throws Exception{
+    public ModelAndView editUser(@PathVariable(value = "id") Integer id) throws Exception {
 
         UserDto userDto = new UserDto();
-        User user = new User();
-        if (id != null){
-            user = userService.getUserById(id);
-            userDto.setId(user.getId());
-            userDto.setName(user.getName());
-            userDto.setEmail(user.getEmail());
-            if(NotEmpty.notEmpty(user.getRoles()))
-                userDto.setRoles(user.getRoles().getRolename());
-            if(NotEmpty.notEmpty(user.getProjectses())){
-                List<String> projectsList = new ArrayList<String>();
-                for (Projects project:user.getProjectses())
-                    projectsList.add(project.getId().toString());
-                userDto.setProjectses(projectsList);
-            }
-        }
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("addUser");
-        modelAndView.addObject("user",userDto);
-        return modelAndView;
-    }
 
+        if (id != null) {
+            if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+                if (getCurrentUserDetails.getDetails().getRoles().getId() == 1) {
+                    User user = userService.getUserById(id);
+                    if (NotEmpty.notEmpty(user)) {
+                        populateUserDto(user, userDto);
+                    }
+                    modelAndView.setViewName("addUser");
+                    modelAndView.addObject("user", userDto);
+                    return modelAndView;
+                } else {
+                    modelAndView.setViewName("404");
+                    return modelAndView;
+                }
+            } else {
+                modelAndView.setViewName("404");
+                return modelAndView;
+            }
+        } else {
+            modelAndView.setViewName("404");
+            return modelAndView;
+        }
+
+    }
 
 
     @RequestMapping("/addNew")
     @ResponseBody
-    public Response addUserAjax(@RequestBody HashMap<String,String> userMap) throws Exception{
+    public Response addUserAjax(@RequestBody HashMap<String, String> userMap) throws Exception {
 
         User user = new User();
-     if(NotEmpty.notEmpty(userMap)){
-         if(userMap.containsKey("id") && NotEmpty.notEmpty(userMap.get("id")))
-             user = userService.getUserById(Integer.parseInt(userMap.get("id")));
-            if(userMap.containsKey("name") && NotEmpty.notEmpty(userMap.get("name")))
-                user.setName(userMap.get("name"));
-            if (userMap.containsKey("password") && NotEmpty.notEmpty(userMap.get("password")))
-                user.setPassword(com.jissuetracker.webapp.utils.PasswordEncoder.getMD5(userMap.get("password")));
-            if (userMap.containsKey("role") && NotEmpty.notEmpty(userMap.get("role")))
-                user.setRoles(rolesService.getByName(userMap.get("role")));
-            if (userMap.containsKey("email") && NotEmpty.notEmpty(userMap.get("email")))
-                  user.setEmail(userMap.get("email"));
-         if(user.getId() !=null){
-             System.out.println("Reached output");
-             userService.update(user);
-         }else
-            userService.add(user);
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+            if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+                if (NotEmpty.notEmpty(userMap)) {
+                    if (userMap.containsKey("id") && NotEmpty.notEmpty(userMap.get("id")))
+                        user = userService.getUserById(Integer.parseInt(userMap.get("id")));
+                    if (userMap.containsKey("name") && NotEmpty.notEmpty(userMap.get("name")))
+                        user.setName(userMap.get("name"));
+                    if (userMap.containsKey("password") && NotEmpty.notEmpty(userMap.get("password")))
+                        user.setPassword(com.jissuetracker.webapp.utils.PasswordEncoder.getMD5(userMap.get("password")));
+                    if (userMap.containsKey("role") && NotEmpty.notEmpty(userMap.get("role"))
+                            && (getCurrentUserDetails.getDetails().getRoles().getId() == 1))
+                        user.setRoles(rolesService.getByName(userMap.get("role")));
 
-         return new Response("Success");
+                    if (user.getId() != null) {
+                        userService.update(user);
+                    } else if(getCurrentUserDetails.getDetails().getRoles().getId() == 1)
+                        userService.add(user);
 
-     }
-        return new Response("Error");
+                    return new Response("Success");
+
+                } else
+                    return new Response("Error");
+
+            } else
+                return new Response("Error");
+
+        } else
+            return new Response("Error");
 
     }
 
     @RequestMapping("/list")
     @ResponseBody
-    public Response userList()throws Exception{
+    public Response userList() throws Exception {
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+            if (getCurrentUserDetails.getDetails().getRoles().getId() == 1) {
+                return new Response(userService.userList());
+            } else
+                return new Response("Error");
 
-        return new Response(userService.userList());
+        } else
+            return new Response("Error");
     }
+
+
+    @RequestMapping("/profile")
+    public ModelAndView viewAndEditProfile() throws Exception {
+
+        UserDto userDto = new UserDto();
+        ModelAndView modelAndView = new ModelAndView();
+
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+            User user = getCurrentUserDetails.getDetails();
+            if (NotEmpty.notEmpty(user)) {
+                userDto.setId(user.getId());
+                userDto.setName(user.getName());
+                userDto.setEmail(user.getEmail());
+                if (NotEmpty.notEmpty(user.getRoles()))
+                    userDto.setRoles(user.getRoles().getRolename());
+                if (NotEmpty.notEmpty(projectService.userProjectsList(user.getId()))) {
+                    List<String> projectsList = new ArrayList<String>();
+                    for (Projects project : projectService.userProjectsList(user.getId()))
+                        projectsList.add(project.getId().toString());
+                    userDto.setProjectses(projectsList);
+                }
+            }
+            modelAndView.setViewName("profile");
+            modelAndView.addObject("user", userDto);
+            return modelAndView;
+        } else {
+            modelAndView.setViewName("404");
+            return modelAndView;
+        }
+    }
+
+
+    @RequestMapping("/doesUserExist")
+    @ResponseBody
+    public Boolean doesUserExist(@RequestParam("email") String email)throws Exception{
+
+        return !NotEmpty.notEmpty(userService.getUserByUserName(email));
+
+    }
+
+    public UserDto populateUserDto(User user, UserDto userDto) {
+
+        userDto.setId(user.getId());
+        userDto.setName(user.getName());
+        userDto.setEmail(user.getEmail());
+        if (NotEmpty.notEmpty(user.getRoles()))
+            userDto.setRoles(user.getRoles().getRolename());
+        if (NotEmpty.notEmpty(user.getProjectses())) {
+            List<String> projectsList = new ArrayList<String>();
+            for (Projects project : user.getProjectses())
+                projectsList.add(project.getId().toString());
+            userDto.setProjectses(projectsList);
+        }
+
+        return userDto;
+    }
+
+
 }

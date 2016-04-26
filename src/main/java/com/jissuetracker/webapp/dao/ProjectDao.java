@@ -17,6 +17,7 @@ public interface ProjectDao {
     public Projects getByName(String projectName)throws Exception;
     public Boolean doesUserHasProject(String email,String projectName)throws Exception;
     List<Projects> projectsList()throws Exception;
+    List<Projects> userProjectsList(Integer userId)throws Exception;
     Projects getById(Integer id)throws Exception;
 
 

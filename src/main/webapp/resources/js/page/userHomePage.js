@@ -3,22 +3,42 @@
  */
 $(function(){
 
-    var path = $(location).attr('href');
-    var splitted = path.split('/');
-    console.log(splitted);
+    $.ajax({
+        type:"GET",
+        url:'/jit/app/user/homepageData/'+getLoggedInUserId(),
+        success:function(json){
+            if(json.data.issueCount != null){
+                $('#allIssuesNo').text(json.data.issueCount)
+            }
+            if(json.data.unreadIssueCount != null){
+                $('#newIssuesNo').text(json.data.unreadIssueCount)
+            }
+        }
+
+    });
 
 
     $.ajax({
         type: "GET",
-        url: '/jit/app/project/'+splitted[6]+'/projects',
+        url: '/jit/app/project/'+getLoggedInUserId()+'/projects',
         success:function(json) {
-            $('#projectTable').append('<table></table>');
-            var table = $('#projectTable').children();
-            $.each(json.data, function (key, value) {
-                table.append( '<tr><td><a href=' + value + '>' + key + '</a></td></tr>' );
-            console.log(key + " " + value)
-        });
+            if(json.data !=null) {
+                $('#projectTable').append('<table></table>');
+                var table = $('#projectTable').children();
+                $.each(json.data, function (key, value) {
+                    table.append('<tr><td><a href=' + value + '>' + key + '</a></td></tr>');
+                    console.log(key + " " + value)
+                });
+            }
 
-    }
+        }
     });
 });
+
+
+
+//function which returns current project name
+function getLoggedInUserId() {
+
+    return $('#loggedinUserId').val();
+}

@@ -6,19 +6,22 @@
 var token = $("meta[name='_csrf']").attr("content");
 var header = $("meta[name='_csrf_header']").attr("content");
 
+//adding csrf tokens in all ajax
 $.ajaxSetup({
     beforeSend: function (xhr) {
         xhr.setRequestHeader(header, token);
     }
 });
 
-$(function(){
 
+$(function () {
+
+    //calling function to check whether action is edit or add
     editOrAddChecker();
 
-        $.ajax({
+    $.ajax({
 
-        url:'/jit/app/roles/list',
+        url: '/jit/app/roles/list',
         type: 'GET',
         success: function (json) {
 
@@ -36,46 +39,46 @@ $(function(){
     })
 
 
-
-
-
     $('#user').validate({
-        rules:{
-            name:{
-                required:true
+        rules: {
+            name: {
+                required: true
 
             },
-            email:{
-                required:true
+            email: {
+                required: true,
+                remote: {
+                    url: "/jit/app/user/doesUserExist",
+                    type: "GET"
+                }
             },
-            password:{
-                required:true
+            password: {
+                required: true
             },
-          role:{
-              required:true
-          }
+            role: {
+                required: true
+            }
         },
 
 
-
-        highlight: function(element) {
+        highlight: function (element) {
             $(element).closest('.form-group').addClass('has-error');
 
         },
-        unhighlight: function(element) {
+        unhighlight: function (element) {
             $(element).closest('.form-group').removeClass('has-error');
         },
         errorElement: 'span',
         errorClass: 'help-block',
-        errorPlacement: function(error, element) {
-            if(element.parent('.input-group').length) {
+        errorPlacement: function (error, element) {
+            if (element.parent('.input-group').length) {
                 error.insertAfter(element.parent());
             } else {
                 error.insertAfter(element);
             }
         },
 
-        submitHandler: function(form) {
+        submitHandler: function (form) {
             addUser();
         }
 
@@ -92,24 +95,29 @@ function addUser() {
     //PNotify.prototype.options.styling = "bootstrap3";
 
     var JsonData = {
-        email :$('#email').val(),
-        id :$('#id').val(),
-        name :$('#name').val(),
-        role :$('#role').val(),
-        password :$('#password').val()
+        email: $('#email').val(),
+        id: $('#id').val(),
+        name: $('#name').val(),
+        role: $('#role').val(),
+        password: $('#password').val()
 
     };
 
 
     $.ajax({
-        url:'/jit/app/user/addNew',
+        url: '/jit/app/user/addNew',
         type: 'POST',
         contentType: "application/json",
         dataType: 'json',
         data: JSON.stringify(JsonData),
-        success: function(data) {
+        success: function (data) {
 
-            window.location.href="http://localhost:8080/jit/app/user/";
+            var path = $(location).attr('href');
+            var splitted = path.split('/');
+            if (splitted[6] == "profile")
+                window.location.href = "http://localhost:8080/jit/app/user/profile";
+            else
+                window.location.href = "http://localhost:8080/jit/app/user/";
 
         }
     });

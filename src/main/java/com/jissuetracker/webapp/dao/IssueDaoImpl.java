@@ -103,4 +103,12 @@ public class IssueDaoImpl implements IssueDao {
                 .setFetchMode("issuesUpdateses",FetchMode.JOIN)
                 .add(Restrictions.eq("id",id)).uniqueResult();
     }
+
+    public List<Issues> getIssuesById(Integer userId) throws Exception {
+        return sessionFactory.getCurrentSession().createCriteria(Issues.class,"issues")
+                .createAlias("issues.userByAssignedToId","assigned")
+                .add(Restrictions.eq("assigned.id",userId)).list();
+    }
+
+
 }

@@ -44,11 +44,17 @@ public class ProjectController {
 
     @RequestMapping("/add")
     public ModelAndView addProject(@ModelAttribute ProjectDto projectDto) throws Exception {
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())){
+        if (getCurrentUserDetails.getDetails().getRoles().getId() == 1 || getCurrentUserDetails.getDetails().getRoles().getId() == 2) {
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("projectDto", projectDto);
-        modelAndView.setViewName("addProject");
-        return modelAndView;
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.addObject("projectDto", projectDto);
+            modelAndView.setViewName("addProject");
+            return modelAndView;
+        }
+        }
+            return new ModelAndView("404");
+
     }
 
     @RequestMapping("/edit/{project}")
@@ -57,7 +63,9 @@ public class ProjectController {
 
         ModelAndView modelAndView = new ModelAndView();
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
-            if (getCurrentUserDetails.getDetails().getRoles().getId() == 1 || projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail(), project)) {
+            if (getCurrentUserDetails.getDetails().getRoles().getId() == 1
+                    || (getCurrentUserDetails.getDetails().getRoles().getId() == 2
+                    && projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail(), project))) {
                 Projects projectObject = projectService.getByName(project);
                if(NotEmpty.notEmpty(projectObject)) {
                     if (NotEmpty.notEmpty(projectObject.getId()))
@@ -97,8 +105,6 @@ public class ProjectController {
         Projects projects = new Projects();
         if (projectMap.containsKey("id") && NotEmpty.notEmpty(projectMap.get("id").toString())) {
             projects = projectService.getById(Integer.parseInt(projectMap.get("id").toString()));
-            System.out.println("projects.getId()" + projects.getId() + "  " + projectMap.get("id"));
-
         }
 
         if (projectMap.containsKey("name") && NotEmpty.notEmpty(projectMap.get("name")))
@@ -112,39 +118,46 @@ public class ProjectController {
             String userArray[] = usersString.split(",");
             User userObject = new User();
             HashSet<User> userHashSet = new HashSet<User>();
-            for (String user : userArray) {
-                user = user.replace("[", "");
-                user = user.replace("]", "");
-                user = user.replace(" ", "");
-                System.out.println("Users" + user);
-                userObject = userService.getUserByUserName(user);
-                if (NotEmpty.notEmpty(userObject))
-                    userHashSet.add(userObject);
+            if(NotEmpty.notEmpty(userArray)) {
+                for (String user : userArray) {
+                    user = user.replace("[", "");
+                    user = user.replace("]", "");
+                    user = user.replace(" ", "");
+                    userObject = userService.getUserByUserName(user);
+                    if (NotEmpty.notEmpty(userObject))
+                        userHashSet.add(userObject);
+                }
             }
             projects.setUsers(userHashSet);
 
         }
 
 
-        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails()))
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+
+
             projects.setManager(getCurrentUserDetails.getDetails().getEmail());
 
-        if (NotEmpty.notEmpty(projects.getName()))
-            projects.setUrl("/jit/app/project/" + projects.getName());
+            if (NotEmpty.notEmpty(projects.getName()))
+                projects.setUrl("/jit/app/project/" + projects.getName());
 
 
-        if (projects.getId() == null) {
-            projectService.add(projects);
+            if (projects.getId() == null &&
+                    (getCurrentUserDetails.getDetails().getRoles().getId() == 1
+                            || (getCurrentUserDetails.getDetails().getRoles().getId() == 2))) {
+                projectService.add(projects);
+                return new Response("Success");
 
-            System.out.println("projects.getId()" + projects.getId() + " add ");
 
-        } else {
-            projectService.update(projects);
-            System.out.println("projects.getId()" + projects.getId() + " update ");
+            } else {
+                projectService.update(projects);
+                return new Response("Success");
 
+
+            }
         }
 
-        return new Response("Success");
+        return new Response("Error");
 
 
     }
@@ -174,30 +187,38 @@ public class ProjectController {
             projectUsers.put("Description", projectDetails);
             if (NotEmpty.notEmpty(users)) {
                 for (User user : users) {
-                    if (user.getRoles().getRolename().equalsIgnoreCase("Manager")) {
+                    if (NotEmpty.notEmpty(user.getRoles())) {
+                        {
+
+                           if (user.getRoles().getRolename().equalsIgnoreCase("Developer")) {
+                                List<String> developer = new ArrayList<String>();
+                                developer.add(user.getName());
+                                projectUsers.put("Developers", developer);
+                            }
+
+                            if (user.getRoles().getRolename().equalsIgnoreCase("Tester")) {
+                                List<String> tester = new ArrayList<String>();
+                                tester.add(user.getName());
+                                projectUsers.put("Testers", tester);
+                            }
+                            if (user.getRoles().getRolename().equalsIgnoreCase("Reporter")) {
+                                List<String> reporters = new ArrayList<String>();
+                                reporters.add(user.getName());
+                                projectUsers.put("Reporters", reporters);
+                            }
+                        }
+                    }
+                    if(NotEmpty.notEmpty(project.getManager())){
+                        if(NotEmpty.notEmpty(userService.getUserByUserName(project.getManager())));
                         List<String> manager = new ArrayList<String>();
-                        manager.add(user.getName());
+                        manager.add(userService.getUserByUserName(project.getManager()).getName());
                         projectUsers.put("Manager", manager);
                     }
-
-                    if (user.getRoles().getRolename().equalsIgnoreCase("Developer")) {
-                        List<String> developer = new ArrayList<String>();
-                        developer.add(user.getName());
-                        projectUsers.put("Developers", developer);
-                    }
-
-                    if (user.getRoles().getRolename().equalsIgnoreCase("Tester")) {
-                        List<String> tester = new ArrayList<String>();
-                        tester.add(user.getName());
-                        projectUsers.put("Testers", tester);
-                    }
-
                 }
+
+                return new Response(projectUsers);
             }
-
-            return new Response(projectUsers);
         }
-
         return new Response("Null");
 
     }
@@ -220,12 +241,12 @@ public class ProjectController {
             return "404";
     }
 
-    @RequestMapping("/{name}/projects")
+    @RequestMapping("/{userId}/projects")
     @ResponseBody
     public Response userProjects
-            (@PathVariable(value = "name") String name) throws Exception {
+            (@PathVariable(value = "userId") Integer userId) throws Exception {
 
-        User userProjectsObject = userService.getUserByName(name);
+        User userProjectsObject = userService.getUserById(userId);
         if (NotEmpty.notEmpty(userProjectsObject)) {
             Set<Projects> projectsSet = userProjectsObject.getProjectses();
             HashMap<String, String> userProjectsMap = new HashMap<String, String>();

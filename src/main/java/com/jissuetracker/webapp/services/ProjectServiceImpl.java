@@ -46,4 +46,10 @@ public class ProjectServiceImpl implements ProjectService {
     public Projects getById(Integer id) throws Exception {
         return projectDao.getById(id);
     }
+
+    public List<Projects> userProjectsList(Integer userId)throws Exception{
+
+        return projectDao.userProjectsList(userId);
+    }
+
 }

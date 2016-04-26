@@ -41,7 +41,7 @@ $(function () {
             var users = formatUserArray($('#userList').val());
             jQuery('#userSelect').val(users)
             $('#userSelect').chosen({width: "95%"});
-            ;
+
 
         }
     });
