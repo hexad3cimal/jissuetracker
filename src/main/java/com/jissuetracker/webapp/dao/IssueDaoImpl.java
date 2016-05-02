@@ -41,8 +41,13 @@ public class IssueDaoImpl implements IssueDao {
 
     public Integer getId() throws Exception {
         List<Issues> issuesList=  sessionFactory.getCurrentSession().createCriteria(Issues.class).list();
+        if(NotEmpty.notEmpty(issuesList)){
         Issues issue = issuesList.get(issuesList.size()-1);
-        return issue.getId()+1;
+           if(NotEmpty.notEmpty(issue))
+                    return issue.getId()+1;
+
+        }
+        return 1;
     }
 
     public Boolean checkIfIssueExist(String issueTitle) throws Exception {

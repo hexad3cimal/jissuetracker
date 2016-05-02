@@ -4,6 +4,7 @@ package com.jissuetracker.webapp.configurations;
  * Created by jovin on 8/1/16.
  */
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.jissuetracker.webapp.utils.CustomDateFormatter;
@@ -66,12 +67,14 @@ public class AppConfig extends WebMvcConfigurationSupport {
     @Bean
     public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
         MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-
-        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory factory = new JsonFactory();
+        factory.setCharacterEscapes(new CustomCharacterEscapes());
+        ObjectMapper mapper = new ObjectMapper(factory);
         //Registering Hibernate4Module to support lazy objects
         Hibernate4Module hm = new Hibernate4Module();
         hm.disable(Hibernate4Module.Feature.USE_TRANSIENT_ANNOTATION);
         mapper.registerModule(hm);
+
         messageConverter.setObjectMapper(mapper);
         return messageConverter;
 

@@ -128,6 +128,9 @@ public class ProjectController {
                         userHashSet.add(userObject);
                 }
             }
+            if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails()))
+                    userHashSet.add(getCurrentUserDetails.getDetails());
+
             projects.setUsers(userHashSet);
 
         }

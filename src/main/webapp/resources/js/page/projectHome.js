@@ -138,7 +138,7 @@ $(function () {
             "data": "url",
             "render": function (data, type, full, meta) {
                 if (data != null)
-                    return '<a style="text-decoration:none;padding-left:4px;padding-right:4px;color: white;background-color: #cb2027" href="' + data + '">View</a>';
+                    return '<a style="text-decoration:none;padding-left:4px;padding-right:4px;color: white;background-color: #cb2027" href="/jit/' + data + '">View</a>';
             }
         }]
 

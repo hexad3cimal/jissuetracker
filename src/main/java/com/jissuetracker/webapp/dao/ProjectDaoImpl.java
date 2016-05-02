@@ -56,19 +56,21 @@ public class ProjectDaoImpl implements ProjectDao {
     public Boolean doesUserHasProject(String email,String projectName) throws Exception {
         Projects project = (Projects) sessionFactory.getCurrentSession()
                 .createCriteria(Projects.class,"project")
-                .setFetchMode("users",FetchMode.JOIN).add(Restrictions.eq("name",projectName)).uniqueResult();
-
-        if (NotEmpty.notEmpty(project)){
-        Set<User> userSet = project.getUsers();
-        if (NotEmpty.notEmpty(userSet)){
-            for(User user:userSet){
-                if (user.getEmail().equalsIgnoreCase(email))
-                    return true;
-            }
-
-        }
-        }
-        return false;
+                .createAlias("project.users","user")
+                .add(Restrictions.eq("name",projectName)).add(Restrictions.eq("user.email",email)).uniqueResult();
+        return NotEmpty.notEmpty(project);
+//
+//        if (NotEmpty.notEmpty(project)){
+//        Set<User> userSet = project.getUsers();
+//        if (NotEmpty.notEmpty(userSet)){
+//            for(User user:userSet){
+//                if (user.getEmail().equalsIgnoreCase(email))
+//                    return true;
+//            }
+//
+//        }
+//        }
+//        return false;
     }
 
     //retrieves project list based on user

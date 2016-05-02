@@ -87,6 +87,8 @@ public class IssueController {
                     issue.setTrackers(tracker);
             }
 
+            issue.setReadByAssigned("false");
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             User createdBy = userService.getUserByUserName(authentication.getName());
             if (NotEmpty.notEmpty(createdBy))

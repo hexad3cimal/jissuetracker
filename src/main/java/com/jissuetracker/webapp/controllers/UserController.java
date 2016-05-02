@@ -50,23 +50,27 @@ public class UserController {
     public String home() throws Exception {
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
 
+            if (getCurrentUserDetails.getDetails().getRoles().getId() == 1)
+
+                return "user";
 
             return "userHomePage";
-        }else
+        } else
             return "404";
 
     }
+
     @RequestMapping("/user")
     public String user() throws Exception {
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
 
-            if(getCurrentUserDetails.getDetails().getRoles().getId() ==1)
+            if (getCurrentUserDetails.getDetails().getRoles().getId() == 1)
 
-            return "user";
-        else
-            return "404";
+                return "user";
+            else
+                return "404";
 
-    }else
+        } else
             return "404";
 
     }
@@ -80,25 +84,25 @@ public class UserController {
 
     @RequestMapping("/homepageData/{userId}")
     @ResponseBody
-    public Response homepageData(@PathVariable(value = "userId") Integer userId) throws Exception{
-        HashMap<String,Integer> stats = new HashMap<String, Integer>();
+    public Response homepageData(@PathVariable(value = "userId") Integer userId) throws Exception {
+        HashMap<String, Integer> stats = new HashMap<String, Integer>();
         if (NotEmpty.notEmpty(userId)) {
             Integer unreadIssueCount = 0;
 
             List<Issues> issuesList = issueService.getIssuesById(userId);
 
-            if(NotEmpty.notEmpty(issuesList)) {
-                stats.put("issueCount",issuesList.size());
-                for (int i=0;i<issuesList.size();i++){
-                    if(NotEmpty.notEmpty(issuesList.get(i))){
-                        if(issuesList.get(i).getReadByAssigned().equalsIgnoreCase("false")){
-                            System.out.println("issuesList.get(i)" +
-                                    ".getReadByAssigned().equalsIgnoreCase(\"false\")" +issuesList.get(i).getTitle());
-                            ++unreadIssueCount;
+            if (NotEmpty.notEmpty(issuesList)) {
+                stats.put("issueCount", issuesList.size());
+                for (int i = 0; i < issuesList.size(); i++) {
+                    if (NotEmpty.notEmpty(issuesList.get(i))) {
+                        if (NotEmpty.notEmpty(issuesList.get(i).getReadByAssigned())) {
+                            if (issuesList.get(i).getReadByAssigned().equalsIgnoreCase("false")) {
+                                ++unreadIssueCount;
+                            }
                         }
                     }
                 }
-                stats.put("unreadIssueCount",unreadIssueCount);
+                stats.put("unreadIssueCount", unreadIssueCount);
 
 
             }
@@ -135,9 +139,7 @@ public class UserController {
             if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
                 if (getCurrentUserDetails.getDetails().getRoles().getId() == 1) {
                     User user = userService.getUserById(id);
-                    if (NotEmpty.notEmpty(user)) {
-                        populateUserDto(user, userDto);
-                    }
+                    populateUserDto(user, userDto);
                     modelAndView.setViewName("addUser");
                     modelAndView.addObject("user", userDto);
                     return modelAndView;
@@ -169,6 +171,8 @@ public class UserController {
                         user = userService.getUserById(Integer.parseInt(userMap.get("id")));
                     if (userMap.containsKey("name") && NotEmpty.notEmpty(userMap.get("name")))
                         user.setName(userMap.get("name"));
+                    if (userMap.containsKey("email") && NotEmpty.notEmpty(userMap.get("email")))
+                        user.setEmail(userMap.get("email"));
                     if (userMap.containsKey("password") && NotEmpty.notEmpty(userMap.get("password")))
                         user.setPassword(com.jissuetracker.webapp.utils.PasswordEncoder.getMD5(userMap.get("password")));
                     if (userMap.containsKey("role") && NotEmpty.notEmpty(userMap.get("role"))
@@ -177,7 +181,7 @@ public class UserController {
 
                     if (user.getId() != null) {
                         userService.update(user);
-                    } else if(getCurrentUserDetails.getDetails().getRoles().getId() == 1)
+                    } else if (getCurrentUserDetails.getDetails().getRoles().getId() == 1)
                         userService.add(user);
 
                     return new Response("Success");
@@ -237,27 +241,43 @@ public class UserController {
         }
     }
 
+    @RequestMapping("/changePassword")
+    public ModelAndView changePassword() throws Exception {
+
+        UserDto userDto = new UserDto();
+        ModelAndView modelAndView = new ModelAndView();
+
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+            User user = getCurrentUserDetails.getDetails();
+            populateUserDto(user, userDto);
+
+            modelAndView.setViewName("changePassword");
+            modelAndView.addObject("user", userDto);
+            return modelAndView;
+        } else {
+            modelAndView.setViewName("404");
+            return modelAndView;
+        }
+    }
+
 
     @RequestMapping("/doesUserExist")
     @ResponseBody
-    public Boolean doesUserExist(@RequestParam("email") String email)throws Exception{
+    public Boolean doesUserExist(@RequestParam("email") String email) throws Exception {
 
         return !NotEmpty.notEmpty(userService.getUserByUserName(email));
 
     }
 
     public UserDto populateUserDto(User user, UserDto userDto) {
+        if (NotEmpty.notEmpty(user)) {
 
-        userDto.setId(user.getId());
-        userDto.setName(user.getName());
-        userDto.setEmail(user.getEmail());
-        if (NotEmpty.notEmpty(user.getRoles()))
-            userDto.setRoles(user.getRoles().getRolename());
-        if (NotEmpty.notEmpty(user.getProjectses())) {
-            List<String> projectsList = new ArrayList<String>();
-            for (Projects project : user.getProjectses())
-                projectsList.add(project.getId().toString());
-            userDto.setProjectses(projectsList);
+            userDto.setId(user.getId());
+            userDto.setName(user.getName());
+            userDto.setEmail(user.getEmail());
+            if (NotEmpty.notEmpty(user.getRoles()))
+                userDto.setRoles(user.getRoles().getRolename());
+
         }
 
         return userDto;

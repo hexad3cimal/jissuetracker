@@ -32,11 +32,14 @@ $(function () {
             $el.empty(); // remove old options
             $el.append($("<option></option>")
             );
-            $.each(json.data, function (value, key) {
-                $el.append($("<option></option>")
-                    .attr("value", value).text(key));
+            console.log("Json" + json.data);
+            if (json.data != "Null") {
+                $.each(json.data, function (value, key) {
+                    $el.append($("<option></option>")
+                        .attr("value", value).text(key));
 
-            });
+                });
+            }
 
             var users = formatUserArray($('#userList').val());
             jQuery('#userSelect').val(users)
@@ -122,7 +125,7 @@ function addProject() {
         },
         success: function (data) {
 
-            window.location.href="http://localhost:8080/jit/app/project/";
+            window.location.href = "http://localhost:8080/jit/app/project/";
 
         }
 
@@ -155,11 +158,12 @@ function editOrAddChecker() {
 //function to format the values that is to be populated to the
 // multi select box in case of edit
 function formatUserArray(ids) {
+    if (ids != null) {
+        var convertedArray = ids.split(',');
 
-    var convertedArray = ids.split(',');
-
-    for (var i = convertedArray.length - 1; i >= 0; i--) {
-        convertedArray[i] = convertedArray[i].replace(/[\[\] ]+/g, '');
+        for (var i = convertedArray.length - 1; i >= 0; i--) {
+            convertedArray[i] = convertedArray[i].replace(/[\[\] ]+/g, '');
+        }
     }
     return convertedArray
 }

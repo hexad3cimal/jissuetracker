@@ -4,6 +4,7 @@
 </head>
 <body>
 <script th:src="@{/resources/js/page/userHomePage.js} " src="/resources/js/page/userHomePage.js"></script>
+<script th:src="@{/resources/js/lumino.glyphs.js} " src="/resources/js/lumino.glyphs.js"></script>
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 
@@ -25,8 +26,7 @@
                 <div class="panel panel-teal panel-widget">
                     <div class="row no-padding">
                         <div class="col-sm-3 col-lg-5 widget-left">
-                            <span class="glyphicon glyphicon-list"></span>
-                        </div>
+                            <svg class="glyph stroked app-window"><use xlink:href="#stroked-app-window"></use></svg></div>
                         <div class="col-sm-9 col-lg-7 widget-right">
                             <div id ="newIssuesNo" class="large"></div>
                             <div class="text-muted"> New Issues </div>
@@ -38,7 +38,7 @@
                 <div class="panel panel-red panel-widget">
                     <div class="row no-padding">
                         <div class="col-sm-3 col-lg-5 widget-left">
-                            <span class="glyphicon glyphicon-exclamation-sign"></span>
+                            <svg class="glyph stroked app window with content"><use xlink:href="#stroked-app-window-with-content"/></svg>
                         </div>
                         <div class="col-sm-9 col-lg-7 widget-right">
                             <div id="allIssuesNo" class="large"></div>

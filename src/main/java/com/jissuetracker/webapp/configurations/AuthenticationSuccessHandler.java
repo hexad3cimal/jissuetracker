@@ -28,9 +28,7 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
     @Autowired
     SessionObjectsService sessionObjectsService;
 
-    private static Logger logger = LoggerFactory.getLogger(AuthenticationSuccessHandler.class);
-    private static final String HOME_PAGE = "/app/home";
-
+    private static final String HOME_PAGE = "/app/user/";
 
     private RequestCache requestCache = new HttpSessionRequestCache();
 
@@ -40,7 +38,6 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
                                         Authentication authentication)
             throws ServletException, IOException {
 
-        logger.debug("Reached authenticationSuccessHandler");
         SavedRequest savedRequest = requestCache.getRequest(request, response);
 
         try {

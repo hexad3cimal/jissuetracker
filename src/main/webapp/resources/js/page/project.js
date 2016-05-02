@@ -8,9 +8,16 @@ var header = $("meta[name='_csrf_header']").attr("content");
 
 $(function () {
 
+    $('#addProject').hide();
+
+    if (getLoggedInUserRoleId() == 1 || getLoggedInUserRoleId() == 2){
+
+        $('#addProject').show();
+    }
+
     $('#addProject').click(function(){
 
-        window.location("http://localhost:8080/jit/app/project/add")
+        window.location.href="http://localhost:8080/jit/app/project/add"
 
     });
 
@@ -83,15 +90,17 @@ $(function () {
                 "data": "name",
                 "render": function (data, type, full, meta) {
                     if (data != null)
-                        return '<a style="text-decoration:none;padding-left:4px;padding-right:4px;color: white;background-color: #061901" href="/jit/app/project/' + data + '">View Issues</a>';
+                        return '<a style="text-decoration:none;padding-left:4px;padding-right:4px;color: white;background-color: #061901" href="' + data + '">View Issues</a>';
                 }
             }
         ]
 
     });
 
-    if ($('#roleId').val() != 1)
+    if (getLoggedInUserRoleId() != 1){
+
         datatable.column(5).visible(false);
+        }
 
 
     if ($('#userMailId').val() == $('#manager').val())
@@ -101,4 +110,8 @@ $(function () {
 
 
 });
+
+function getLoggedInUserRoleId(){
+    return $('#roleId').val();
+}
 
