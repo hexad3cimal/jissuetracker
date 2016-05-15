@@ -5,11 +5,11 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.stereotype.Component;
 
 /**
  * Created by jovin on 12/2/16.
  */
+//Custom logger based on AOP
 @Aspect
 public class MyLogger {
 

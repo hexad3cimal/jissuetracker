@@ -12,6 +12,7 @@ public class MainController {
 
 
 
+    //handles home requests
     @RequestMapping(value = {"/app/","/app/home"})
     public String home(){
 

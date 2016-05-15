@@ -32,19 +32,21 @@ public class UserDaoImpl implements UserDao {
         sessionFactory.getCurrentSession().update(user);
     }
 
-    public User getUserByUserName(String userName) throws Exception {
-
+    //gets the user by email
+    public User getUserByEmail(String email) throws Exception {
        return (User)sessionFactory.getCurrentSession()
                 .createQuery("From User where email = :email ")
-                .setParameter("email",userName).uniqueResult();
+                .setParameter("email",email).uniqueResult();
     }
 
+    //gets the user by name
     public User getUserByName(String name) throws Exception {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class,"user")
                 .setFetchMode("projectses", FetchMode.JOIN)
                 .add(Restrictions.eq("name",name)).uniqueResult();
     }
 
+    //gets the users other than Administrator and Manager from the database
     public Map<String, String> projectUserDropdownList() throws Exception {
 
        Criteria criteria = sessionFactory.getCurrentSession()
@@ -73,6 +75,8 @@ public class UserDaoImpl implements UserDao {
                 .uniqueResult();
     }
 
+
+    //gets users list along with projects associated with them
     public List<User> userList() throws Exception {
         return sessionFactory.getCurrentSession().createCriteria(User.class)
                 .setFetchMode("roles",FetchMode.JOIN)

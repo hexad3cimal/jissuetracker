@@ -11,14 +11,12 @@ import com.jissuetracker.webapp.services.UserService;
 import com.jissuetracker.webapp.utils.GetCurrentUserDetails;
 import com.jissuetracker.webapp.utils.NotEmpty;
 import com.jissuetracker.webapp.utils.Response;
+import com.jissuetracker.webapp.utils.XssCleaner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,24 +44,29 @@ public class UserController {
     IssueService issueService;
 
 
+    //handles user home page requests
     @RequestMapping("/")
     public String home() throws Exception {
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
 
+            //if logged in user is admin then user list will be shown
             if (getCurrentUserDetails.getDetails().getRoles().getId() == 1)
 
                 return "user";
 
+            //if logged in user is not admin then user specific page  will be shown
             return "userHomePage";
         } else
             return "404";
 
     }
 
+    //handles user list requests
     @RequestMapping("/user")
     public String user() throws Exception {
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
 
+            //only administrators can view user list
             if (getCurrentUserDetails.getDetails().getRoles().getId() == 1)
 
                 return "user";
@@ -75,12 +78,6 @@ public class UserController {
 
     }
 
-    @RequestMapping("/{name}")
-    public String userHomePage(@PathVariable(value = "name") String name)
-            throws Exception {
-        return "userHomePage";
-
-    }
 
     @RequestMapping("/homepageData/{userId}")
     @ResponseBody
@@ -89,7 +86,7 @@ public class UserController {
         if (NotEmpty.notEmpty(userId)) {
             Integer unreadIssueCount = 0;
 
-            List<Issues> issuesList = issueService.getIssuesById(userId);
+            List<Issues> issuesList = issueService.getUserIssuesByUserId(userId);
 
             if (NotEmpty.notEmpty(issuesList)) {
                 stats.put("issueCount", issuesList.size());
@@ -164,6 +161,10 @@ public class UserController {
     public Response addUserAjax(@RequestBody HashMap<String, String> userMap) throws Exception {
 
         User user = new User();
+if(NotEmpty.notEmpty(userMap) )
+        {
+            userMap=  (HashMap)XssCleaner.clean(userMap);
+        }
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
             if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
                 if (NotEmpty.notEmpty(userMap)) {
@@ -265,7 +266,7 @@ public class UserController {
     @ResponseBody
     public Boolean doesUserExist(@RequestParam("email") String email) throws Exception {
 
-        return !NotEmpty.notEmpty(userService.getUserByUserName(email));
+        return !NotEmpty.notEmpty(userService.getUserByEmail(email));
 
     }
 

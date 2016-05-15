@@ -51,6 +51,7 @@ public class AppConfig extends WebMvcConfigurationSupport {
         return engine;
     }
 
+   //Thymeleaf config
     @Bean
     public ThymeleafViewResolver thymeleafViewResolver() {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
@@ -58,23 +59,24 @@ public class AppConfig extends WebMvcConfigurationSupport {
         return resolver;
     }
 
+    //Configuration for custom logger
     @Bean
     public MyLogger myLogger(){
         return new MyLogger();
     }
 
 
+//for enabling json hibernate lazy loading,
+// detecting transient fields and for enabling character escapes
     @Bean
     public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
         MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
         JsonFactory factory = new JsonFactory();
         factory.setCharacterEscapes(new CustomCharacterEscapes());
         ObjectMapper mapper = new ObjectMapper(factory);
-        //Registering Hibernate4Module to support lazy objects
         Hibernate4Module hm = new Hibernate4Module();
         hm.disable(Hibernate4Module.Feature.USE_TRANSIENT_ANNOTATION);
         mapper.registerModule(hm);
-
         messageConverter.setObjectMapper(mapper);
         return messageConverter;
 
@@ -82,11 +84,11 @@ public class AppConfig extends WebMvcConfigurationSupport {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        //Here we add our custom-configured HttpMessageConverter
         converters.add(jacksonMessageConverter());
         super.configureMessageConverters(converters);
     }
 
+    //Custom date formatter for json response
     @Bean
     public CustomDateFormatter customDateFormatter(){
         return new CustomDateFormatter();

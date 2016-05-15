@@ -11,7 +11,7 @@ import java.util.Map;
 public interface UserService {
 
     void add(User user)throws Exception;
-    User getUserByUserName(String userName)throws Exception;
+    User getUserByEmail(String email)throws Exception;
     User getUserByName(String name)throws Exception;
     Map<String,String> userDropdownList()throws Exception;
     public User getUserById(Integer userId)throws Exception;

@@ -41,42 +41,41 @@ public class ProjectDaoImpl implements ProjectDao {
 
     }
 
-    public Projects projectHomeList(String projectName) throws Exception {
+    /*
+    retrieves the project with name same as @Param 'projectName' along with users associated
+     with the loaded project
+      */
+    public Projects getByProjectNameAlongWithUsers(String projectName) throws Exception {
         return (Projects) sessionFactory.getCurrentSession()
-                .createCriteria(Projects.class,"project").add(Restrictions.eq("name",projectName))
+                .createCriteria(Projects.class, "project").add(Restrictions.eq("name", projectName))
                 .setFetchMode("users", FetchMode.JOIN).uniqueResult();
     }
 
-    public Projects getByName(String projectName) throws Exception {
+
+    /*
+       retrieves the project with name same as @Param 'projectName' along with users and issues
+        associated  with the loaded project
+     */
+    public Projects getByProjectNameAlongWithIssuesAndUsers(String projectName) throws Exception {
         return (Projects) sessionFactory.getCurrentSession()
-                .createCriteria(Projects.class,"project").add(Restrictions.eq("name",projectName))
-                .setFetchMode("issueses", FetchMode.JOIN).setFetchMode("users",FetchMode.JOIN).uniqueResult();
+                .createCriteria(Projects.class, "project").add(Restrictions.eq("name", projectName))
+                .setFetchMode("issueses", FetchMode.JOIN).setFetchMode("users", FetchMode.JOIN).uniqueResult();
     }
 
-    public Boolean doesUserHasProject(String email,String projectName) throws Exception {
+    //Check whether the user has project
+    public Boolean doesUserHasProject(String email, String projectName) throws Exception {
         Projects project = (Projects) sessionFactory.getCurrentSession()
-                .createCriteria(Projects.class,"project")
-                .createAlias("project.users","user")
-                .add(Restrictions.eq("name",projectName)).add(Restrictions.eq("user.email",email)).uniqueResult();
+                .createCriteria(Projects.class, "project")
+                .createAlias("project.users", "user")
+                .add(Restrictions.eq("name", projectName)).add(Restrictions.eq("user.email", email)).uniqueResult();
         return NotEmpty.notEmpty(project);
-//
-//        if (NotEmpty.notEmpty(project)){
-//        Set<User> userSet = project.getUsers();
-//        if (NotEmpty.notEmpty(userSet)){
-//            for(User user:userSet){
-//                if (user.getEmail().equalsIgnoreCase(email))
-//                    return true;
-//            }
-//
-//        }
-//        }
-//        return false;
+
     }
 
     //retrieves project list based on user
     public List<Projects> projectsList() throws Exception {
 
-        if(NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
             if (getCurrentUserDetails.getDetails().getRoles().getId() == 1)
                 return sessionFactory.getCurrentSession().createCriteria(Projects.class)
                         .setFetchMode("users", FetchMode.JOIN).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
@@ -93,22 +92,23 @@ public class ProjectDaoImpl implements ProjectDao {
                 }
                 return projectsFinalList;
             }
-        }else
+        } else
             return null;
 
     }
 
+    //get the project by id
     public Projects getById(Integer id) throws Exception {
-        return (Projects)sessionFactory.getCurrentSession().get(Projects.class,id);
+        return (Projects) sessionFactory.getCurrentSession().get(Projects.class, id);
     }
 
-    public  List<Projects> userProjectsList(Integer userId)throws Exception{
+    //get the user's projects list by user id
+    public List<Projects> userProjectsList(Integer userId) throws Exception {
 
-        return sessionFactory.getCurrentSession().createCriteria(Projects.class,"project")
-                .setFetchMode("users",FetchMode.JOIN).createAlias("project.users","users")
-                .add(Restrictions.eq("users.id",userId)).list();
+        return sessionFactory.getCurrentSession().createCriteria(Projects.class, "project")
+                .setFetchMode("users", FetchMode.JOIN).createAlias("project.users", "users")
+                .add(Restrictions.eq("users.id", userId)).list();
     }
-
 
 
 }

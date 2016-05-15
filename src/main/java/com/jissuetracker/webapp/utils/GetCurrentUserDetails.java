@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
  * Created by jovin on 12/4/16.
  */
 
+//for providing the logged in user object in the controllers
 @Component("GetCurrentUserDetails")
 public class GetCurrentUserDetails{
 
@@ -23,7 +24,7 @@ public class GetCurrentUserDetails{
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth != null) {
-            User user = userService.getUserByUserName(auth.getName());
+            User user = userService.getUserByEmail(auth.getName());
             return user;
 
         }else

@@ -7,6 +7,8 @@ import java.util.Comparator;
 /**
  * Created by jovin on 12/2/16.
  */
+
+//for sorting the menu according to name
 public class MenuComparator implements Comparator<Menu> {
 
     public int compare(Menu o1, Menu o2) {

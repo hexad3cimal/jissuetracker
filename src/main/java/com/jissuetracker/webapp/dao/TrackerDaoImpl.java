@@ -19,6 +19,7 @@ public class TrackerDaoImpl implements TrackerDao {
     @Autowired
     SessionFactory sessionFactory;
 
+    //gets hashmap containing statuses
     public HashMap<String, String> trackerDropDownMap() throws Exception {
 
         List<Object []> trackersList = sessionFactory.getCurrentSession()

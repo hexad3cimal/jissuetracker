@@ -18,6 +18,8 @@ import java.util.Set;
 /**
  * Created by jovin on 11/2/16.
  */
+
+//For populating the user session objects after successful login in the view
 @Service("sessionObjectsService")
 public class SessionObjectsService {
 
@@ -38,21 +40,20 @@ public class SessionObjectsService {
         setCurrentUser();
         populateMenu();
         request.getSession().setAttribute("userSession",userSession);
-        UserSession usr = (UserSession)request.getSession().getAttribute("userSession");
-        System.out.println("user session >>"+usr.getUser().getEmail());
-
     }
 
 
+    //for getting the current logged in user from spring SecurityContextHolder
     public void setCurrentUser() throws Exception{
         authentication =SecurityContextHolder.getContext().getAuthentication();
         if(authentication !=null)
-            userSession.setUser(userService.getUserByUserName(authentication.getName().toString()));
+            userSession.setUser(userService.getUserByEmail(authentication.getName().toString()));
 
         else
             System.out.println("Authentication is null");
     }
 
+    //for populating the menu based on logged in user role from db
     public void populateMenu()throws Exception{
         authentication =SecurityContextHolder.getContext().getAuthentication();
 

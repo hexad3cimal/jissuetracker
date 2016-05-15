@@ -1,13 +1,8 @@
 package com.jissuetracker.webapp.controllers;
 
-import com.jissuetracker.webapp.dao.IssueUpdateDao;
-import com.jissuetracker.webapp.dto.IssueDto;
 import com.jissuetracker.webapp.models.*;
 import com.jissuetracker.webapp.services.*;
-import com.jissuetracker.webapp.utils.GetCurrentUserDetails;
-import com.jissuetracker.webapp.utils.IssueUpdateDateComparator;
-import com.jissuetracker.webapp.utils.NotEmpty;
-import com.jissuetracker.webapp.utils.Response;
+import com.jissuetracker.webapp.utils.*;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -65,10 +60,11 @@ public class IssueController {
 
 
         if (NotEmpty.notEmpty(issueMap)) {
-            if (issueMap.containsKey("title") && !issueMap.get("title").equals(null))
-                issue.setTitle(issueMap.get("title"));
+            if (issueMap.containsKey("title") && !issueMap.get("title").equals(null)){
+                issue.setTitle(XssCleaner.clean(issueMap.get("title")));
+            }
             if (issueMap.containsKey("description") && !issueMap.get("description").equals(null))
-                issue.setDescription(issueMap.get("description"));
+                issue.setDescription(XssCleaner.clean(issueMap.get("description")));
             if (issueMap.containsKey("completionDate") && !issueMap.get("completionDate").equals(null))
                 issue.setEndDate(new Date(issueMap.get("completionDate")));
             if (issueMap.containsKey("status") && !issueMap.get("status").equals(null)) {
@@ -90,12 +86,12 @@ public class IssueController {
             issue.setReadByAssigned("false");
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            User createdBy = userService.getUserByUserName(authentication.getName());
+            User createdBy = userService.getUserByEmail(authentication.getName());
             if (NotEmpty.notEmpty(createdBy))
                 issue.setUserByCreatedById(createdBy);
 
             if (NotEmpty.notEmpty(project)) {
-                projectObject = projectService.getByName(project);
+                projectObject = projectService.getByProjectNameAlongWithIssuesAndUsers(project);
                 if (NotEmpty.notEmpty(projectObject))
                     issue.setProjects(projectObject);
             }
@@ -116,11 +112,11 @@ public class IssueController {
     }
 
 
-    @RequestMapping("/issueTitleUrlMap")
-    @ResponseBody
-    public Response issueTitleUrlMap(@RequestParam(value = "title") String title) throws Exception {
-        return new Response(issueService.getIssueByTitleMap(title));
-    }
+//    @RequestMapping("/issueTitleUrlMap")
+//    @ResponseBody
+//    public Response issueTitleUrlMap(@RequestParam(value = "title") String title) throws Exception {
+//        return new Response(issueService.getIssueByTitleMap(title));
+//    }
 
     //retrieves the given project's issues
     @RequestMapping("/{project}")
@@ -204,7 +200,7 @@ public class IssueController {
 
         if(NotEmpty.notEmpty(issueUpdates)){
             if(issueUpdates.containsKey("updateText"))
-                issuesUpdate.setUpdates(issueUpdates.get("updateText"));
+                issuesUpdate.setUpdates(XssCleaner.clean(issueUpdates.get("updateText")));
         }
 
         issueUpdateService.addIssueUpdate(issuesUpdate);
@@ -219,7 +215,6 @@ public class IssueController {
                                     @RequestParam(value = "value") String value)throws Exception{
 
         Issues issue = new Issues();
-        System.out.println("Value"+value);
 
         if(NotEmpty.notEmpty(id)) {
             issue = issueService.getById(Integer.parseInt(id));

@@ -1,10 +1,8 @@
 package com.jissuetracker.webapp.utils;
 
 import org.hibernate.HibernateException;
-import org.springframework.orm.hibernate4.HibernateJdbcException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,13 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class CustomExceptionHandler {
 
-    @ExceptionHandler(value = Exception.class)
-    public Response exception(Exception e) {
-
-        e.printStackTrace();
-        return new Response(e.getMessage());
-    }
-
     @ExceptionHandler(NoHandlerFoundException.class)
     public String handleError404(HttpServletRequest request, Exception e)   {
 
@@ -31,6 +22,13 @@ public class CustomExceptionHandler {
     @ExceptionHandler(HibernateException.class)
     public Response hibernateException(Exception e)
     {
+        return new Response(e.getMessage());
+    }
+
+    @ExceptionHandler(value = Exception.class)
+    public Response exception(Exception e) {
+
+        e.printStackTrace();
         return new Response(e.getMessage());
     }
 

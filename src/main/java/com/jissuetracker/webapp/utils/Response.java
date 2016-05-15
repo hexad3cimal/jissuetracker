@@ -3,10 +3,11 @@ package com.jissuetracker.webapp.utils;
 /**
  * Created by jovin on 5/12/15.
  */
+
+//Custom class for creating output response of ajax requests
 public class Response<T> {
 
     private T data;
-
 
     public Response() {}
 

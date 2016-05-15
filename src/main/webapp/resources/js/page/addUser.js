@@ -14,10 +14,13 @@ $.ajaxSetup({
 });
 
 
+
 $(function () {
 
     //calling function to check whether action is edit or add
     editOrAddChecker();
+
+
 
     $.ajax({
 
@@ -59,6 +62,13 @@ $(function () {
                 required: true
             }
         },
+        messages: {
+
+            email: {
+                required: "Enter an email",
+                remote: "Looks like you have already registered"
+            }
+},
 
 
         highlight: function (element) {
@@ -84,6 +94,9 @@ $(function () {
 
     });
 
+    //remove remote email validation if it is edit action
+    if ($('#id').val() !== '')
+        $('#email').rules('remove', 'remote');
 });
 
 function addUser() {
@@ -140,6 +153,5 @@ function editOrAddChecker() {
         document.title = "Update User";
 
     }
-
 
 }

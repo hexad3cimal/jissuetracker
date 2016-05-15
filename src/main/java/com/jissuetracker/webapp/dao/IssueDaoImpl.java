@@ -39,54 +39,62 @@ public class IssueDaoImpl implements IssueDao {
         sessionFactory.getCurrentSession().update(issue);
     }
 
+    //gets the latest issue id
     public Integer getId() throws Exception {
-        List<Issues> issuesList=  sessionFactory.getCurrentSession().createCriteria(Issues.class).list();
-        if(NotEmpty.notEmpty(issuesList)){
-        Issues issue = issuesList.get(issuesList.size()-1);
-           if(NotEmpty.notEmpty(issue))
-                    return issue.getId()+1;
+        List<Issues> issuesList = sessionFactory.getCurrentSession().createCriteria(Issues.class).list();
+        if (NotEmpty.notEmpty(issuesList)) {
+            Issues issue = issuesList.get(issuesList.size() - 1);
+            if (NotEmpty.notEmpty(issue))
+                return issue.getId() + 1;
 
         }
         return 1;
     }
 
+    //checks whether an issue with title @Param > "issueTitle" exist
     public Boolean checkIfIssueExist(String issueTitle) throws Exception {
         return sessionFactory.getCurrentSession()
                 .createQuery("from Issues where title =:title")
-                .setParameter("title",issueTitle).list().isEmpty();
+                .setParameter("title", issueTitle).list().isEmpty();
     }
 
-    public HashMap<String, String> getIssueByTitleMap(String title) throws Exception {
-        Issues issues = (Issues)sessionFactory.getCurrentSession()
-                .createQuery("From Issues where title =:title")
-                .setParameter("title",title).uniqueResult();
 
-        HashMap<String,String> issueTitleMap = new HashMap<String, String>();
-        issueTitleMap.put(issues.getTitle(),issues.getUrl());
-        return issueTitleMap;
-    }
+//    public HashMap<String, String> getIssueByTitleMap(String title) throws Exception {
+//        Issues issues = (Issues)sessionFactory.getCurrentSession()
+//                .createQuery("From Issues where title =:title")
+//                .setParameter("title",title).uniqueResult();
+//
+//        HashMap<String,String> issueTitleMap = new HashMap<String, String>();
+//        issueTitleMap.put(issues.getTitle(),issues.getUrl());
+//        return issueTitleMap;
+//    }
 
+
+    /*
+    retrieves issue tile, creator,assigned to user,status, tracker, project name, created date,
+      updated date, done percentage, description, url, estimation
+     */
     public List<IssueDto> projectIssuesList(String projectName) throws Exception {
         Criteria criteria = sessionFactory.getCurrentSession()
-                .createCriteria(Issues.class,"issues")
-                .createAlias("issues.userByCreatedById","creator")
-                .createAlias("issues.userByAssignedToId","assigned")
-                .createAlias("issues.status","stats")
-                .createAlias("issues.trackers","trackers")
-                .createAlias("issues.projects","projects")
-                .add(Restrictions.eq("projects.name",projectName))
+                .createCriteria(Issues.class, "issues")
+                .createAlias("issues.userByCreatedById", "creator")
+                .createAlias("issues.userByAssignedToId", "assigned")
+                .createAlias("issues.status", "stats")
+                .createAlias("issues.trackers", "trackers")
+                .createAlias("issues.projects", "projects")
+                .add(Restrictions.eq("projects.name", projectName))
                 .setProjection(Projections.projectionList()
-                .add(Projections.property("issues.title").as("title"))
-                .add(Projections.property("creator.name").as("createdBy"))
-                .add(Projections.property("assigned.name").as("assignedTo"))
-                .add(Projections.property("stats.name").as("status"))
-                .add(Projections.property("trackers.name").as("tracker"))
-                .add(Projections.property("issues.createdOn").as("createdOn"))
-                .add(Projections.property("issues.updatedOn").as("updatedOn"))
-                .add(Projections.property("issues.donePercentage").as("donePercentage"))
-                .add(Projections.property("issues.estimatedHours").as("estimatedHours"))
-                .add(Projections.property("issues.description").as("description"))
-                .add(Projections.property("issues.url").as("url")));
+                        .add(Projections.property("issues.title").as("title"))
+                        .add(Projections.property("creator.name").as("createdBy"))
+                        .add(Projections.property("assigned.name").as("assignedTo"))
+                        .add(Projections.property("stats.name").as("status"))
+                        .add(Projections.property("trackers.name").as("tracker"))
+                        .add(Projections.property("issues.createdOn").as("createdOn"))
+                        .add(Projections.property("issues.updatedOn").as("updatedOn"))
+                        .add(Projections.property("issues.donePercentage").as("donePercentage"))
+                        .add(Projections.property("issues.estimatedHours").as("estimatedHours"))
+                        .add(Projections.property("issues.description").as("description"))
+                        .add(Projections.property("issues.url").as("url")));
         criteria.setResultTransformer(
                 Transformers.aliasToBean(IssueDto.class));
 
@@ -98,21 +106,24 @@ public class IssueDaoImpl implements IssueDao {
 
     }
 
+    //get issue by id
     public Issues getById(Integer id) throws Exception {
-        return (Issues) sessionFactory.getCurrentSession().createCriteria(Issues.class,"issue").
+        return (Issues) sessionFactory.getCurrentSession().createCriteria(Issues.class, "issue").
                 setFetchMode("userByCreatedById", FetchMode.JOIN)
-                .setFetchMode("userByAssignedToId",FetchMode.JOIN)
-                .setFetchMode("status",FetchMode.JOIN)
-                .setFetchMode("trackers",FetchMode.JOIN)
-                .setFetchMode("projects",FetchMode.JOIN)
-                .setFetchMode("issuesUpdateses",FetchMode.JOIN)
-                .add(Restrictions.eq("id",id)).uniqueResult();
+                .setFetchMode("userByAssignedToId", FetchMode.JOIN)
+                .setFetchMode("status", FetchMode.JOIN)
+                .setFetchMode("trackers", FetchMode.JOIN)
+                .setFetchMode("projects", FetchMode.JOIN)
+                .setFetchMode("issuesUpdateses", FetchMode.JOIN)
+                .add(Restrictions.eq("id", id)).uniqueResult();
     }
 
-    public List<Issues> getIssuesById(Integer userId) throws Exception {
-        return sessionFactory.getCurrentSession().createCriteria(Issues.class,"issues")
-                .createAlias("issues.userByAssignedToId","assigned")
-                .add(Restrictions.eq("assigned.id",userId)).list();
+
+    //get issues assigned to the user by user id
+    public List<Issues> getUserIssuesByUserId(Integer userId) throws Exception {
+        return sessionFactory.getCurrentSession().createCriteria(Issues.class, "issues")
+                .createAlias("issues.userByAssignedToId", "assigned")
+                .add(Restrictions.eq("assigned.id", userId)).list();
     }
 
 

@@ -16,7 +16,7 @@ import java.util.Date;
  * Created by jovin on 25/2/16.
  */
 
-
+//Date formatter for json objects
 public class CustomDateFormatter extends JsonSerializer<Date> {
     @Override
     public void serialize(Date value, JsonGenerator gen, SerializerProvider arg2) throws

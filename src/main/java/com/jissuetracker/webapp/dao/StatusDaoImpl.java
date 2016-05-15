@@ -18,6 +18,7 @@ public class StatusDaoImpl implements StatusDao{
     @Autowired
     SessionFactory sessionFactory;
 
+    //gets hashmap containing statuses
     public HashMap<String, String> statusDropDownMap() throws Exception {
 
         List<Object []> statusList = sessionFactory.getCurrentSession()

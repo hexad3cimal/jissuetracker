@@ -24,8 +24,8 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    public User getUserByUserName(String userName) throws Exception {
-        return userDao.getUserByUserName(userName);
+    public User getUserByEmail(String email) throws Exception {
+        return userDao.getUserByEmail(email);
     }
 
     public User getUserByName(String name) throws Exception {

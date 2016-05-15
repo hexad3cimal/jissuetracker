@@ -9,6 +9,8 @@ import java.util.List;
 /**
  * Created by jovin on 11/2/16.
  */
+
+//Usersession class
 public class UserSession implements Serializable {
 
     private User user;

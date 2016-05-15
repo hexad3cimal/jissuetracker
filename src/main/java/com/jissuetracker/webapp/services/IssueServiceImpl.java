@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -38,9 +37,9 @@ public class IssueServiceImpl implements IssueService {
         return issueDao.checkIfIssueExist(issueTitle);
     }
 
-    public HashMap<String, String> getIssueByTitleMap(String title) throws Exception {
-        return issueDao.getIssueByTitleMap(title);
-    }
+//    public HashMap<String, String> getIssueByTitleMap(String title) throws Exception {
+//        return issueDao.getIssueByTitleMap(title);
+//    }
 
     public List<IssueDto> projectIssuesList(String projectName) throws Exception {
         return issueDao.projectIssuesList(projectName);
@@ -50,8 +49,8 @@ public class IssueServiceImpl implements IssueService {
         return issueDao.getById(id);
     }
 
-    public List<Issues> getIssuesById(Integer userId) throws Exception {
-        return issueDao.getIssuesById(userId);
+    public List<Issues> getUserIssuesByUserId(Integer userId) throws Exception {
+        return issueDao.getUserIssuesByUserId(userId);
     }
 
 

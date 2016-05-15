@@ -23,12 +23,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     }
 
-    public Projects projectHomeList(String projectName) throws Exception {
-        return projectDao.projectHomeList(projectName);
+    public Projects getByProjectNameAlongWithUsers(String projectName) throws Exception {
+        return projectDao.getByProjectNameAlongWithUsers(projectName);
     }
 
-    public Projects getByName(String projectName) throws Exception {
-        return projectDao.getByName(projectName);
+    public Projects getByProjectNameAlongWithIssuesAndUsers(String projectName) throws Exception {
+        return projectDao.getByProjectNameAlongWithIssuesAndUsers(projectName);
     }
 
     public Boolean doesUserHasProject(String email, String projectName) throws Exception {

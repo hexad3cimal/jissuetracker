@@ -21,6 +21,7 @@ public class RolesDaoImpl implements RolesDao{
         return sessionFactory.getCurrentSession().createCriteria(Roles.class).list();
     }
 
+    //get role by role name
     public Roles getByName(String roleName) throws Exception {
         return (Roles) sessionFactory.getCurrentSession()
                 .createQuery("From Roles where rolename = :rolename ")

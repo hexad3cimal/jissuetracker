@@ -24,6 +24,7 @@ public class IssueUpdateDaoImpl implements  IssueUpdateDao {
         sessionFactory.getCurrentSession().save(issuesUpdates);
     }
 
+    //gets the given issues updates
     public List<IssuesUpdates> issuesUpdatesList(Integer issueId) throws Exception {
         return sessionFactory.getCurrentSession().createCriteria(IssuesUpdates.class,"issueUpdates")
                 .setFetchMode("issues", FetchMode.JOIN)

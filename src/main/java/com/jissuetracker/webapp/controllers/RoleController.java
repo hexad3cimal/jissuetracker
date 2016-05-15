@@ -24,6 +24,7 @@ public class RoleController {
     @Autowired
     RolesService rolesService;
 
+    //handles and produce roles listing
     @RequestMapping(value = "/list")
     @ResponseBody
     public Response listRoles()throws Exception{

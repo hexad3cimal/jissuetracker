@@ -6,6 +6,8 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Created by jovin on 21/4/16.
  */
+
+//For encoding string to md5
 public class PasswordEncoder {
 
     public static String getMD5(String data) throws NoSuchAlgorithmException
