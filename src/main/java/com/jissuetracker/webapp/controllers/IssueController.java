@@ -3,14 +3,20 @@ package com.jissuetracker.webapp.controllers;
 import com.jissuetracker.webapp.models.*;
 import com.jissuetracker.webapp.services.*;
 import com.jissuetracker.webapp.utils.*;
+import org.apache.commons.io.IOUtils;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -44,79 +50,104 @@ public class IssueController {
     @Autowired
     IssueUpdateService issueUpdateService;
 
+    @Autowired
+    Environment environment;
+
+    @Autowired
+    PriorityService priorityService;
+
+    @Autowired
+    AttachmentService attachmentService;
+
+
     //consumes the ajax post and adds Issue into database
     @RequestMapping(value = "/{project}/add", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Response addIssue(@PathVariable(value = "project") String project,
-                             @RequestBody HashMap<String, String> issueMap) throws Exception {
-
+                             @RequestBody HashMap<String, Object> issueMap) throws Exception {
 
         Issues issue = new Issues();
         Status status = new Status();
         User user = new User();
         Trackers tracker = new Trackers();
-        Projects projectObject = new Projects();
+
 
 
         if (NotEmpty.notEmpty(issueMap)) {
-            if (issueMap.containsKey("title") && !issueMap.get("title").equals(null)){
-                issue.setTitle(XssCleaner.clean(issueMap.get("title")));
+            if (issueMap.containsKey("title") && NotEmpty.notEmpty(issueMap.get("title"))) {
+                issue.setTitle(XssCleaner.clean(issueMap.get("title").toString()));
             }
-            if (issueMap.containsKey("description") && !issueMap.get("description").equals(null))
-                issue.setDescription(XssCleaner.clean(issueMap.get("description")));
-            if (issueMap.containsKey("completionDate") && !issueMap.get("completionDate").equals(null))
-                issue.setEndDate(new Date(issueMap.get("completionDate")));
-            if (issueMap.containsKey("status") && !issueMap.get("status").equals(null)) {
-                status = statusService.getById(Integer.parseInt(issueMap.get("status")));
+            if (issueMap.containsKey("description") && NotEmpty.notEmpty(issueMap.get("description")))
+                issue.setDescription(XssCleaner.clean(issueMap.get("description").toString()));
+            if (issueMap.containsKey("completionDate") && NotEmpty.notEmpty(issueMap.get("completionDate")))
+                issue.setEndDate(new Date(issueMap.get("completionDate").toString()));
+            if (issueMap.containsKey("status") && NotEmpty.notEmpty(issueMap.get("status"))) {
+                status = statusService.getById(Integer.parseInt(issueMap.get("status").toString()));
                 if (NotEmpty.notEmpty(status))
                     issue.setStatus(status);
             }
-            if (issueMap.containsKey("assigned") && !issueMap.get("assigned").equals(null)) {
-                user = userService.getUserById(Integer.parseInt(issueMap.get("assigned")));
+            if (issueMap.containsKey("assigned") && NotEmpty.notEmpty(issueMap.get("assigned"))) {
+                user = userService.getUserById(Integer.parseInt(issueMap.get("assigned").toString()));
                 if (NotEmpty.notEmpty(user))
                     issue.setUserByAssignedToId(user);
             }
-            if (issueMap.containsKey("tracker") && !issueMap.get("tracker").equals(null)) {
-                tracker = trackerService.getById(Integer.parseInt(issueMap.get("tracker")));
+            if (issueMap.containsKey("tracker") && NotEmpty.notEmpty(issueMap.get("tracker"))) {
+                tracker = trackerService.getById(Integer.parseInt(issueMap.get("tracker").toString()));
                 if (NotEmpty.notEmpty(tracker))
                     issue.setTrackers(tracker);
             }
 
+            if (issueMap.containsKey("priority") && NotEmpty.notEmpty(issueMap.get("priority"))) {
+                Priority priority = priorityService.getByPriorityId(Integer.parseInt(issueMap.get("priority").toString()));
+                if (NotEmpty.notEmpty(priority))
+                    issue.setPriority(priority);
+            }
             issue.setReadByAssigned("false");
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            User createdBy = userService.getUserByEmail(authentication.getName());
-            if (NotEmpty.notEmpty(createdBy))
-                issue.setUserByCreatedById(createdBy);
+            if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails()))
+                issue.setUserByCreatedById(getCurrentUserDetails.getDetails());
 
             if (NotEmpty.notEmpty(project)) {
-                projectObject = projectService.getByProjectNameAlongWithIssuesAndUsers(project);
+               Projects projectObject = projectService.getByProjectNameAlongWithIssuesAndUsers(project);
                 if (NotEmpty.notEmpty(projectObject))
                     issue.setProjects(projectObject);
             }
-
-            issue.setUrl("app/issues/get/" + issueService.getId());
-
-
             issueService.add(issue);
+            issue.setUrl("app/issues/get/" + issue.getId());
+            issueService.update(issue);
+
+            if (issueMap.containsKey("files")
+                    && NotEmpty.notEmpty(issueMap.get("files"))) {
+                String files = issueMap.get("files").toString().replace(" ", "")
+                        .replace("[", "").replace("]", "");
+                String fileArray[] = files.split(",");
+                List<String> filesList = Arrays.asList(fileArray);
+                if (NotEmpty.notEmpty(filesList)) {
+                    for (String s : filesList) {
+                        if (s.contains("&")) {
+                            Attachments attachment = new Attachments();
+                            System.out.println(s);
+                            String fileLink[] = s.split("&");
+                            attachment.setIssues(issue);
+                            attachment.setLink(fileLink[0]);
+                            attachment.setOriginalName(fileLink[1]);
+                            attachmentService.add(attachment);
+                        }
+                    }
+                }
+            }
         }
         return new Response("Success");
     }
 
+    //check whether an issue with given title exists
+    //@param   issueTitle   the title of the entered issue from ui.
     @RequestMapping("/checkIfIssueExist")
     @ResponseBody
-    public Boolean checkIfIssueExist(@RequestParam(value = "title") String title) throws Exception {
-
-        return issueService.checkIfIssueExist(title);
+    public Boolean checkIfIssueExist(@RequestParam(value = "issueTitle") String issueTitle) throws Exception {
+        return issueService.checkIfIssueExist(issueTitle);
     }
 
-
-//    @RequestMapping("/issueTitleUrlMap")
-//    @ResponseBody
-//    public Response issueTitleUrlMap(@RequestParam(value = "title") String title) throws Exception {
-//        return new Response(issueService.getIssueByTitleMap(title));
-//    }
 
     //retrieves the given project's issues
     @RequestMapping("/{project}")
@@ -125,108 +156,495 @@ public class IssueController {
         return new Response(issueService.projectIssuesList(project));
     }
 
-
-    @RequestMapping("/get/{id}")
-    public String getIssueDetailsById(@PathVariable(value = "id") String id) throws Exception {
-
-        return "issuePage";
-
-    }
-
-    @RequestMapping("/ajax/{id}")
+    //retrieves the given project's issues created by logged in user
+    @RequestMapping("/created/{projectName}")
     @ResponseBody
-    public Response getIssueDetailsByIdAjaxCall(@PathVariable(value = "id") String id) throws Exception {
-
-        Issues issue = issueService.getById(Integer.parseInt(id));
-        Set<IssuesUpdates> issuesUpdatesSet = new TreeSet<IssuesUpdates>(new IssueUpdateDateComparator());
-        if(NotEmpty.notEmpty(issue)){
-            Projects project = issue.getProjects();
-
-
-            if(issue.getIssuesUpdateses() != null){
-
-            issuesUpdatesSet.addAll(issue.getIssuesUpdateses());
-            issue.setIssuesUpdateses(issuesUpdatesSet);
-
-        }
-
+    public Response projectIssuesListCreatedByLoggedInUser(@PathVariable(value = "projectName") String projectName) throws Exception {
 
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails()))
-        {
+            return new Response(issueService.projectIssuesCreatedByLoggedInUserList(projectName, getCurrentUserDetails.getDetails()));
 
-            if((getCurrentUserDetails.getDetails().getEmail().equalsIgnoreCase(issue.getUserByAssignedToId().getEmail())) &&
-                    issue.getReadByAssigned().equalsIgnoreCase("false")) {
-                issue.setReadByAssigned("true");
-                issueService.update(issue);
-            }
+        return new Response("Error");
+    }
 
-            if(NotEmpty.notEmpty(project)){
-                if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail()
-                        , project.getName()))
-                    issue.setUpdatable("true");
 
-            }
-            else
-                issue.setUpdatable("false");
+    //retrieves the given project's issues assigned to logged in user
+    @RequestMapping("/assigned/{projectName}")
+    @ResponseBody
+    public Response projectIssuesListAssignedToLoggedInUser(@PathVariable(value = "projectName") String projectName) throws Exception {
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails()))
+            return new Response(issueService.projectIssuesAssignedToLoggedInUserList(projectName, getCurrentUserDetails.getDetails()));
 
+        return new Response("Error");
+    }
+
+
+    //retrieves the given project's issues based on status
+    @RequestMapping("/filtered/{projectName}/{mode}/{status}")
+    @ResponseBody
+    public Response openProjectIssuesList(@PathVariable(value = "projectName") String projectName,
+                                          @PathVariable(value = "mode") String mode,
+                                          @PathVariable(value = "status") String status) throws Exception {
+
+
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+            if (mode.equalsIgnoreCase("all-issues"))
+                return new Response(issueService.projectIssuesListBasedOnStatus(projectName, status));
+            if (mode.equalsIgnoreCase("issues-assigned-to-you"))
+                return new Response(issueService.projectIssuesListBasedOnStatusAssignedToLoggedInUserList(projectName, getCurrentUserDetails.getDetails(), status));
+            if (mode.equalsIgnoreCase("issues-by-you"))
+                return new Response(issueService.projectIssuesListBasedOnStatusCreatedByLoggedInUserList(projectName, getCurrentUserDetails.getDetails(), status));
         }
 
+        return new Response("Error");
+    }
 
+    //retrieves the given project's issues based on tracker
+    @RequestMapping("/filtered/{projectName}/{mode}/{status}/{tracker}")
+    @ResponseBody
+    public Response projectIssuesListBasedOnType(@PathVariable(value = "projectName") String projectName,
+                                                 @PathVariable(value = "mode") String mode,
+                                                 @PathVariable(value = "tracker") String tracker,
+                                                 @PathVariable(value = "status") String status) throws Exception {
+
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+            if (mode.equalsIgnoreCase("all-issues"))
+                return new Response(issueService.projectIssuesListBasedOnTracker(projectName, status, tracker));
+            if (mode.equalsIgnoreCase("issues-assigned-to-you"))
+                return new Response(issueService.projectIssuesListBasedOnTrackerAssignedToLoggedInUserList(projectName, getCurrentUserDetails.getDetails(), status, tracker));
+            if (mode.equalsIgnoreCase("issues-by-you"))
+                return new Response(issueService.projectIssuesListBasedOnTrackerCreatedByLoggedInUserList(projectName, getCurrentUserDetails.getDetails(), status, tracker));
         }
 
-        return new Response(issue);
+        return new Response("Error");
+    }
+
+    //serves the issuePage
+    @RequestMapping("/get/{issueId}")
+    public String getIssueDetailsById(@PathVariable(value = "issueId") Integer issueId) throws Exception {
+        Issues issue = issueService.getByIdWithUpdatesStatusTrackerPriorityAttachments(issueId);
+
+        if (NotEmpty.notEmpty(issue)) {
+
+            if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail()
+                    , issue.getProjects().getName())) {
+
+                return "issuePageNew";
+            } else
+                return "issuePageViewOnly";
+        }
+
+        return "404";
 
     }
 
 
-    @RequestMapping("/updateIssue/{id}")
+    //serves the issuePage details via ajax
+    @RequestMapping("/ajax/{issueId}")
     @ResponseBody
-    public Response addIssueUpdates(@PathVariable(value = "id") String id,
-                                    @RequestBody HashMap<String,String> issueUpdates)throws Exception{
+    public Response getIssueDetailsByIdAjaxCall(@PathVariable(value = "issueId") Integer issueId) throws Exception {
+
+        String html = "";
+        String priorityHtml = "";
+        String statusHtml = "";
+        String trackerHtml = "";
+        String memberHtml = "";
+
+        Issues issue = issueService.getByIdWithUpdatesStatusTrackerPriorityAttachments(issueId);
+        Set<IssuesUpdates> issuesUpdatesSet = new TreeSet<IssuesUpdates>(new IssueUpdateDateComparator());
+        if (NotEmpty.notEmpty(issue)) {
+
+            if (NotEmpty.notEmpty(issue.getPriority())) {
+
+                if (issue.getPriority().getName().equalsIgnoreCase("High"))
+                    priorityHtml = " <dd><span class=\"label label-danger\">High</span></dd>";
+                else if (issue.getPriority().getName().equalsIgnoreCase("Medium"))
+                    priorityHtml = " <dd><span class=\"label label-warning\">Medium</span></dd>";
+                else
+                    priorityHtml = " <dd><span class=\"label label-info\">Low</span></dd>";
+            }
+
+
+            if (NotEmpty.notEmpty(issue.getUserByAssignedToId())) {
+
+                memberHtml = memberHtml +
+                        " <li><img alt=\"Avatar\" class=\"img-circle\"\n" +
+                        "  src=\"" + issue.getUserByAssignedToId().getProfilePic() + "+\">\n" +
+                        " <p><strong>" + issue.getUserByAssignedToId().getName() + "</strong></p>" +
+
+                        " </li>\n";
+
+            }
+            if (NotEmpty.notEmpty(issue.getUserByCreatedById())) {
+
+                memberHtml = memberHtml + "<li><img alt=\"Avatar\" class=\"img-circle\"\n" +
+                        "src=\"" + issue.getUserByCreatedById().getProfilePic() + "+\">\n" +
+                        " <p><strong>" + issue.getUserByCreatedById().getName() + "</strong></p>" +
+                        " </li>\n";
+            }
+
+
+            if (NotEmpty.notEmpty(issue.getTrackers())) {
+
+                if (issue.getTrackers().getName().equalsIgnoreCase("Bug"))
+                    trackerHtml = " <dd><span class=\"label label-danger\">Bug</span></dd>";
+                else if (issue.getTrackers().getName().equalsIgnoreCase("Feature"))
+                    trackerHtml = " <dd><span class=\"label label-warning\">Feature</span></dd>";
+                else
+                    trackerHtml = " <dd><span class=\"label label-info\">Modification</span></dd>";
+            }
+
+
+            if (NotEmpty.notEmpty(issue.getStatus())) {
+
+                if (issue.getStatus().getName().equalsIgnoreCase("Closed"))
+                    statusHtml = " <dd><span id=\"issueStatus\" class=\"label label-danger\">Closed</span></dd>";
+                else
+                    statusHtml = " <dd><span id=\"issueStatus\" class=\"label label-success\">Open</span></dd>";
+            }
+
+            html = "  <div class=\"primary-content-heading clearfix\"><h2>" + issue.getTitle() + "</h2>\n" +
+                    "        <hr style=\"border:1px solid #fff\">\n" +
+                    "    </div>\n" +
+                    "    <div class=\"row\">\n" +
+                    "        <div class=\"col-md-8\">\n" +
+                    "            <div class=\"project-section general-info\">\n" +
+                    "                 <p>" + issue.getDescription() + "</p>\n" +
+                    "                <div class=\"row\">\n" +
+                    "                    <div class=\"col-sm-12\">\n" +
+                    "                        <dl class=\"dl-horizontal\">\n" +
+                    "                            <dt>Date:</dt>\n" +
+                    "                            <dd>" + issue.getCreatedTimeStamp() + " - " + issue.getEndDate() + "</dd>\n" +
+                    "                           <dt>Priority:</dt>\n" + priorityHtml +
+                    "                            <dt>Status:</dt>\n" + statusHtml +
+                    "                            <dt>Tracker:</dt>\n" + trackerHtml +
+                    "                            <dt>Members:</dt>\n" +
+                    "                            <dd>" + "<ul class=\"list-inline team-list\">\n" +
+                    memberHtml + "   </ul>\n" +
+                    "                            </dd>\n" +
+                    "                        </dl>\n" +
+                    "                    </div>\n" +
+                    "                </div>\n" +
+                    "            </div>" +
+                    "   <div class=\"project-section activity\"><h3>Activity</h3>\n" +
+                    "                <ul class=\"list-unstyled project-activity-list\">";
+
+            Projects project = issue.getProjects();
+
+            String updateHtml = "";
+            String attachmentHtml = "";
+            if (issue.getIssuesUpdateses() != null) {
+                issuesUpdatesSet.addAll(issue.getIssuesUpdateses());
+                for (IssuesUpdates issuesUpdates : issuesUpdatesSet) {
+                    String updatesAttachmentHtml = "";
+                    if (NotEmpty.notEmpty(issuesUpdates.getAttachmentses())) {
+
+                        for (Attachments attachments : issuesUpdates.getAttachmentses()) {
+
+                            updatesAttachmentHtml = updatesAttachmentHtml +
+                                    "<p><a href=\"/jit/app/issues/files/" + attachments.getId() + "\">" + attachments.getOriginalName() + "</a><p>";
+
+                        }
+                    }
+
+                    updateHtml = updateHtml + "<li>\n" +
+                            " <div class=\"media activity-item\">" +
+                            "<div class=\"media-body\"><p class=\"activity-title\">" + issuesUpdates.getUpdatedByUserFullName() + " has posted an update \n" +
+                            " </p>\n" +
+                            " <small class=\"text-muted\">" + issuesUpdates.getCreatedTimeStamp() + "</small>\n" +
+                            " <div class=\"activity-attachment\">\n" +
+                            " <div class=\"well well-sm\"><strong>Update Note:</strong>\n" +
+                            " <p>" + issuesUpdates.getUpdates() + "</p>" + updatesAttachmentHtml + "</div>" +
+
+                            " </div>\n" +
+                            " </div>\n" +
+                            "</div>\n" +
+                            "</li>";
+
+                }
+
+            }
+
+            if (NotEmpty.notEmpty(issue.getAttachmentses())) {
+
+                attachmentHtml = "<div class=\"col-md-4\">\n" +
+                        "            <div class=\"widget\">\n" +
+                        "                <div class=\"widget-header clearfix\"><h3><i class=\"fa fa-document\"></i> <span>RECENT FILES</span></h3>\n" +
+                        "                </div>\n" +
+                        "                <div class=\"widget-content\">\n" +
+                        "                    <ul class=\"fa-ul recent-file-list bottom-30px\">";
+
+                for (Attachments attachments : issue.getAttachmentses()) {
+
+                    attachmentHtml = attachmentHtml
+                            + "<li><i class=\"fa-li fa fa-file-zip-o\"></i>" +
+                            "<a href=\"/jit/app/issues/files/" + attachments.getId() + "\">" + attachments.getOriginalName() + "</a></li>\n";
+
+                }
+
+                attachmentHtml = attachmentHtml + "</ul>\n" +
+                        "            </div>\n" +
+                        "        </div>\n" +
+                        "\n" +
+                        "    </div>";
+            }
+
+
+            html = html + updateHtml + "  </ul>\n" +
+                    "            </div>\n" +
+                    attachmentHtml +
+                    "        </div>\n" +
+                    "    </div>\n" +
+                    "</div>";
+
+
+            if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+                if ((getCurrentUserDetails.getDetails().getEmail().equalsIgnoreCase(issue.getUserByAssignedToId().getEmail())) &&
+                        issue.getReadByAssigned().equalsIgnoreCase("false")) {
+                    issue.setReadByAssigned("true");
+                    issueService.update(issue);
+                }
+            }
+        }
+
+        return new Response(html);
+
+    }
+
+
+    //serves the issuePage details via ajax
+//    @RequestMapping("/ajax/{id}")
+//    @ResponseBody
+//    public Response getIssueDetailsByIdAjaxCall(@PathVariable(value = "id") String id) throws Exception {
+//
+//        Issues issue = issueService.getByIdWithUpdatesStatusTrackerPriorityAttachments(Integer.parseInt(id));
+//        Set<IssuesUpdates> issuesUpdatesSet = new TreeSet<IssuesUpdates>(new IssueUpdateDateComparator());
+//        if (NotEmpty.notEmpty(issue)) {
+//            Projects project = issue.getProjects();
+//
+//            if (issue.getIssuesUpdateses() != null) {
+//                issuesUpdatesSet.addAll(issue.getIssuesUpdateses());
+//                issue.setIssuesUpdateses(issuesUpdatesSet);
+//            }
+//
+//            if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+//
+//                if ((getCurrentUserDetails.getDetails().getEmail().equalsIgnoreCase(issue.getUserByAssignedToId().getEmail())) &&
+//                        issue.getReadByAssigned().equalsIgnoreCase("false")) {
+//                    issue.setReadByAssigned("true");
+//                    issueService.update(issue);
+//                }
+//
+//                if (NotEmpty.notEmpty(project)) {
+//                    if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail()
+//                            , project.getName()))
+//                        issue.setUpdatable("true");
+//                } else
+//                    issue.setUpdatable("false");
+//            }
+//        }
+//
+//        return new Response(issue);
+//
+//    }
+//
+
+
+    //updates the issue
+    @RequestMapping("/updateIssue/{issueId}")
+    @ResponseBody
+    public Response addIssueUpdates(@PathVariable(value = "issueId") Integer issueId,
+                                    @RequestBody HashMap<String, Object> issueUpdates) throws Exception {
         Issues issue = new Issues();
         IssuesUpdates issuesUpdate = new IssuesUpdates();
-        issuesUpdate.setDate(new Date());
+        issuesUpdate.setCreatedTimeStamp(new Date());
 
-        if(NotEmpty.notEmpty(id)) {
-            issue = issueService.getById(Integer.parseInt(id));
+        if (NotEmpty.notEmpty(issueId)) {
+            issue = issueService.getByIdWithUpdatesStatusTrackerPriorityAttachments(issueId);
             issuesUpdate.setIssues(issue);
-
         }
 
-        if(NotEmpty.notEmpty(getCurrentUserDetails.getDetails())){
-            issuesUpdate.setUpdatedBy(getCurrentUserDetails.getDetails().getName());
-            issuesUpdate.setUpdatedByUserEmail(getCurrentUserDetails.getDetails().getEmail());
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+            issuesUpdate.setUpdatedByUserFullName(getCurrentUserDetails.getDetails().getName());
+            issuesUpdate.setUser(getCurrentUserDetails.getDetails());
         }
 
-        if(NotEmpty.notEmpty(issueUpdates)){
-            if(issueUpdates.containsKey("updateText"))
-                issuesUpdate.setUpdates(XssCleaner.clean(issueUpdates.get("updateText")));
+        if (NotEmpty.notEmpty(issueUpdates)) {
+            if (issueUpdates.containsKey("updateText"))
+                issuesUpdate.setUpdates(XssCleaner.clean(issueUpdates.get("updateText").toString()));
         }
 
         issueUpdateService.addIssueUpdate(issuesUpdate);
 
+        if (issueUpdates.containsKey("files")
+                && NotEmpty.notEmpty(issueUpdates.get("files"))) {
+            String files = issueUpdates.get("files").toString().replace(" ", "")
+                    .replace("[", "").replace("]", "");
+            String fileArray[] = files.split(",");
+            List<String> filesList = Arrays.asList(fileArray);
+            if (NotEmpty.notEmpty(filesList)) {
+                for (String s : filesList) {
+                    if (s.contains("&")) {
+
+                        Attachments attachment = new Attachments();
+                        System.out.println(s);
+                        String fileLink[] = s.split("&");
+                        attachment.setIssuesUpdates(issuesUpdate);
+                        if (fileLink[0].length() > 50) {
+                            fileLink[0] = fileLink[0].substring(0, 30);
+                        }
+                        attachment.setLink(fileLink[1]);
+                        attachment.setOriginalName(fileLink[0]);
+                        attachmentService.add(attachment);
+
+                    }
+                }
+            }
+        }
         return new Response("Success");
 
     }
 
-    @RequestMapping("/updateStatus/{id}")
+
+    //consumes jquery editable request and updates the status of the issue
+    @RequestMapping("/updateStatus/{issueId}")
     @ResponseBody
-    public Response updateStatus(@PathVariable(value = "id") String id,
-                                    @RequestParam(value = "value") String value)throws Exception{
-
-        Issues issue = new Issues();
-
-        if(NotEmpty.notEmpty(id)) {
-            issue = issueService.getById(Integer.parseInt(id));
-            if(NotEmpty.notEmpty(value)){
-                 issue.setStatus(statusService.getById(Integer.parseInt(value)));
+    public Response updateStatus(@PathVariable(value = "issueId") Integer issueId,
+                                 @RequestParam(value = "value") Integer value) throws Exception {
+        if (NotEmpty.notEmpty(issueId)) {
+            Issues issue = issueService.getByIdWithUpdatesStatusTrackerPriorityAttachments(issueId);
+            if (NotEmpty.notEmpty(value) && NotEmpty.notEmpty(issue)) {
+                Status status = statusService.getById(value);
+                issue.setStatus(status);
+                IssuesUpdates issuesUpdates = new IssuesUpdates();
+                issuesUpdates.setIssues(issue);
+                issuesUpdates.setUser(getCurrentUserDetails.getDetails());
+                issuesUpdates.setCreatedTimeStamp(new Date());
+                issuesUpdates.setUpdatedByUserFullName(getCurrentUserDetails.getDetails().getName());
+                issuesUpdates.setUpdates(getCurrentUserDetails.getDetails().getName() +
+                        " updated the status to " + status.getName());
+                issueService.update(issue);
+                return new Response("Success");
             }
-            issueService.update(issue);
 
-            return new Response("Success");
+        }
+        return new Response("Failure");
+
+    }
+
+
+    //handles upload request from ui and saves to the location specified in property file
+    @RequestMapping(value = "/messageFiles", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Response doUploadMessageFiles(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws Exception {
+        HashMap<String, String> uploadDetails = new HashMap<String, String>();
+        Integer uploadedFiles = (Integer)request.getSession().getAttribute("messageFiles");
+        if (!file.isEmpty() && NotEmpty.notEmpty(getCurrentUserDetails.getDetails()) && uploadedFiles < 3
+                ) {
+            try {
+
+                if (NotEmpty.notEmpty(file.getOriginalFilename())) {
+                    if (file.getOriginalFilename().split("\\.")[1].equalsIgnoreCase("png") ||
+                            file.getOriginalFilename().split("\\.")[1].equalsIgnoreCase("pdf") ||
+                            file.getOriginalFilename().split("\\.")[1].equalsIgnoreCase("jpg") ||
+                            file.getOriginalFilename().split("\\.")[1].equalsIgnoreCase("jpeg") ||
+                            file.getOriginalFilename().split("\\.")[1].equalsIgnoreCase("doc") ||
+                            file.getOriginalFilename().split("\\.")[1].equalsIgnoreCase("docx")
+                            ) {
+
+                        String uploadsDir = environment.getProperty("paths.uploadedFiles");
+                        String filePath = uploadsDir + "/" + getCurrentUserDetails.getDetails().getId() + new Date().toString().replace(" ", "") + "." + file.getOriginalFilename().split("\\.")[1];
+                        File dest = new File(filePath);
+                        file.transferTo(dest);
+
+                        uploadDetails.put(file.getOriginalFilename(), filePath);
+                        uploadedFiles++;
+                        request.getSession().setAttribute("messageFiles",uploadedFiles);
+                        return new Response(uploadDetails);
+                    } else
+                        return new Response("file type not supported");
+
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                uploadDetails.put("Error", "Error occurred during upload"+uploadedFiles);
+            }
+        } else if (uploadedFiles.equals(2)) {
+            uploadDetails.put("Limit Reached", "Only 3 files per message is allowed");
+        }
+        uploadDetails.put("Error", "Error occurred during upload"+uploadedFiles);
+        return new Response(uploadDetails);
+    }
+
+
+    //delete the uploaded file
+    @RequestMapping(value = "/deleteFile", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    @ResponseBody
+    public Response deleteFile(@RequestBody HashMap<String, String> fileLocation,
+                               HttpServletRequest request) throws Exception {
+
+
+        if (fileLocation.containsKey("fileLocation") && NotEmpty.notEmpty(fileLocation.get("fileLocation"))) {
+            if (fileLocation.get("fileLocation").contains("&")) {
+                File messageFile = new File(fileLocation.get("fileLocation").replace(" ", "").split("&")[1]);
+                if (messageFile != null) {
+                    Integer uploadedFiles = (Integer)request.getSession().getAttribute("messageFiles");
+                    messageFile.delete();
+                    uploadedFiles--;
+                    request.getSession().setAttribute("messageFiles",uploadedFiles);
+                    return new Response("Deleted"+uploadedFiles);
+                } else
+                    return new Response("File doesn't exist");
+
+            }
+
         }
 
-        return new Response("Failure");
+        return new Response("File doestn't exist");
+
+    }
+
+    //get uploaded files
+    @RequestMapping(value = "/files/{attachmentId}")
+    public void getFile(@PathVariable("attachmentId") Integer attachmentId, HttpServletResponse response) throws Exception {
+        Attachments attachment = attachmentService.getByIdWithIssuesAndIssueUpdates(attachmentId);
+        if (NotEmpty.notEmpty(attachment)) {
+            Issues issues = attachment.getIssues();
+            IssuesUpdates issuesUpdates = attachment.getIssuesUpdates();
+            if (NotEmpty.notEmpty(issues)) {
+                try {
+                    processDownload(attachment, response);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } else if (NotEmpty.notEmpty(issuesUpdates)) {
+                processDownload(attachment, response);
+
+
+            }
+
+        }
+
+    }
+
+    //function for processing download requests
+    public void processDownload(Attachments attachment, HttpServletResponse response) throws Exception {
+        try {
+            File fileToDownload = new File(attachment.getLink());
+            InputStream inputStream = new FileInputStream(fileToDownload);
+            response.setContentType("application/force-download");
+            response.setHeader("Content-Disposition", "attachment; filename=" + attachment.getOriginalName());
+            IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+            inputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
     }
 }

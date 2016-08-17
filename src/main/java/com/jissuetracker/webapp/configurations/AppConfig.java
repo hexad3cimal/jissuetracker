@@ -9,16 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.jissuetracker.webapp.utils.CustomDateFormatter;
 import com.jissuetracker.webapp.utils.MyLogger;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.*;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
-import org.springframework.web.servlet.view.tiles3.TilesViewResolver;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
@@ -27,6 +23,7 @@ import java.util.List;
 
 @Configuration
 @EnableAspectJAutoProxy
+@PropertySource(value = { "classpath:application.properties" })
 @ComponentScan(basePackages = "com.jissuetracker.webapp")
 public class AppConfig extends WebMvcConfigurationSupport {
 
@@ -92,6 +89,15 @@ public class AppConfig extends WebMvcConfigurationSupport {
     @Bean
     public CustomDateFormatter customDateFormatter(){
         return new CustomDateFormatter();
+    }
+
+
+    //for handling multipart file requests
+    @Bean(name = "multipartResolver")
+    public CommonsMultipartResolver createMultipartResolver() {
+        CommonsMultipartResolver resolver=new CommonsMultipartResolver();
+        resolver.setDefaultEncoding("utf-8");
+        return resolver;
     }
 
 

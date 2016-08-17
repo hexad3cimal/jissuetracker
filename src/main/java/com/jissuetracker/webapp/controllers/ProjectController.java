@@ -142,8 +142,6 @@ public class ProjectController {
                         userHashSet.add(userObject);
                 }
             }
-            if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails()))
-                userHashSet.add(getCurrentUserDetails.getDetails());
 
             projects.setUsers(userHashSet);
 
@@ -249,11 +247,11 @@ public class ProjectController {
 
             //administrator can view any project
             if (getCurrentUserDetails.getDetails().getRoles().getId() == 1)
-                return "projectHome";
+                return "projectIssues";
 
             //normal user can view projects only which they are part of
             else if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail(), projectName))
-                return "projectHome";
+                return "projectIssues";
             else
                 return "404";
 

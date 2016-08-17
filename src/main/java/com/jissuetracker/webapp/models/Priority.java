@@ -13,7 +13,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "priority", catalog = "IssueTracker")
-public class Priority implements java.io.Serializable {
+public class Priority extends SuperModelClass implements java.io.Serializable {
 
 	private Integer id;
 	private String name;

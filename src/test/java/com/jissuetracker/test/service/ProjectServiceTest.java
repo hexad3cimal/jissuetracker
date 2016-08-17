@@ -4,6 +4,7 @@ import com.jissuetracker.webapp.dao.ProjectDao;
 import com.jissuetracker.webapp.dao.ProjectDaoImpl;
 import com.jissuetracker.webapp.models.Issues;
 import com.jissuetracker.webapp.models.Projects;
+import com.jissuetracker.webapp.models.Roles;
 import com.jissuetracker.webapp.models.User;
 import com.jissuetracker.webapp.services.ProjectService;
 import com.jissuetracker.webapp.services.ProjectServiceImpl;
@@ -43,8 +44,8 @@ public class ProjectServiceTest {
 
     @Test
     public void doesUserHasProject()throws Exception{
-
-        User user = new User(1,null,"Jovin","jovin.25@hmail.com","123",null,null,null);
+        Roles role = new Roles("Adminstrator");
+        User user = new User(role,"Jovin","jovin.25@hmail.com","123");
         Set<User> users = new HashSet<User>();
         users.add(user);
         Projects project =
@@ -57,7 +58,8 @@ public class ProjectServiceTest {
 
     @Test
     public void projectHomeList() throws Exception {
-        User user = new User(1,null,"Jovin","jovin.25@hmail.com","123",null,null,null);
+        Roles role = new Roles("Adminstrator");
+        User user = new User(role,"Jovin","jovin.25@hmail.com","123");
         Set<User> users = new HashSet<User>();
         users.add(user);
         Projects project =

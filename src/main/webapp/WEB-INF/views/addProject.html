@@ -38,24 +38,31 @@
                         <div class="col-md-12">
                             <form id="newProject" th:object="${projectDto}">
 
-                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
+                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12  col-lg-offset-1">
                                     <div class="form-group">
-                                        <label>Name</label>
-                                        <input name="name" class="form-control" th:field="${projectDto.name}"/>
+                                        <div class="bmd-field-group">
+                                            <input name="name" id="name" required=""
+                                                   class="bmd-input" type="text" th:field="${projectDto.name}" maxlength="50"/>
+                                            <span class="bmd-bar"></span>
+                                            <label class="bmd-label">Project Title</label>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
+                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12  col-lg-offset-1">
 
                                     <div class="form-group">
-                                        <label>Description</label>
-                                        <input name="description" class="form-control"
-                                               th:field="${projectDto.description}"/>
-                                    </div>
+                                        <div class="bmd-field-group">
+                                            <input name="description" id="description" required=""
+                                                   class="bmd-input" type="text" th:field="${projectDto.description}" maxlength="50"/>
+                                            <span class="bmd-bar"></span>
+                                            <label class="bmd-label">Project Description</label>
+                                        </div>
+                                      </div>
 
                                 </div>
 
-                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-md-offset-2 col-lg-offset-2">
+                                <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 col-lg-offset-1">
                                     <div class="form-group">
                                         <label>Users</label>
                                         <select id="userSelect" name="userSelect"
@@ -70,8 +77,10 @@
                                         <button type="submit" id="submitButton"
                                                 class="btn btn-primary pull-right"></button>
                                     </div>
-                                    <input id="userList"  type="hidden"  th:value="${projectDto.userList}" style="display: none;"/>
-                                    <input id="projectId"  name="projectId" type="hidden"  th:value="${projectDto.id}" style="display: none;"/>
+                                    <input id="userList" type="hidden" th:value="${projectDto.userList}"
+                                           style="display: none;"/>
+                                    <input id="projectId" name="projectId" type="hidden" th:value="${projectDto.id}"
+                                           style="display: none;"/>
                                 </div>
                             </form>
                         </div>

@@ -10,11 +10,12 @@ import java.util.Map;
  */
 public interface UserDao {
 
-    public void add(User user)throws Exception;
+    void add(User user)throws Exception;
+    void addOrUpdate(User user)throws Exception;
     void update(User user)throws Exception;
-    public User getUserByEmail(String userName)throws Exception;
-    public User getUserByName(String name)throws Exception;
-    public Map<String,String> projectUserDropdownList()throws Exception;
-    public User getUserById(Integer userId)throws Exception;
+    User getUserByEmail(String userName)throws Exception;
+    User getUserByName(String name)throws Exception;
+    Map<String,String> projectUserDropdownList()throws Exception;
+    User getUserById(Integer userId)throws Exception;
     List<User> userList()throws Exception;
 }

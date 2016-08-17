@@ -139,7 +139,99 @@ $(function () {
     });
 
 
+    $("#fileUpload").change(function () {
+
+        saveMedia();
+    });
+
+
+    $(document).on('click', '.uploadedFiles', function () {
+        var data = {"fileLocation": $(this).find('.fileLink').val()};
+        $(this).closest('.fileLink').val();
+        $(this).closest('.uploadedFiles').remove();
+        $('#fileLimit').text('')
+        files--;
+        $.ajax({
+
+            url: ctx + "/app/inbox/deleteFile",
+            type: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (data) {
+                console.log(data.data);
+            }
+
+        });
+
+
+    });
+
+
 });
+
+
+
+function saveMedia() {
+
+
+    $('#spin').append('<div class="bmd-spinner bmd-spinner-default bmd-spinner-sm">' +
+        '<svg viewBox="0 0 50 50">' +
+        '<circle cx="25" cy="25" r="20"></circle>' +
+        '</svg>')
+    var mySelections = [];
+    var formData = new FormData();
+    formData.append('file', $('input[type=file]')[0].files[0]);
+    console.log("form data " + formData);
+    console.log($('input[type=file]')[0].files[0].size);
+    if (files < 3) {
+
+        if ($('input[type=file]')[0].files[0].size > 2097152) {
+            $('#files').append('<div id="fileLimit">Files with size less than 2 mb can be uploaded</div>');
+
+
+        } else {
+            $.ajax({
+                url: ctx + '/app/inbox/messageFiles',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (data) {
+                    files++;
+                    $.each(data.data, function (value, key) {
+                        if (value != "Limit Reached") {
+                            $('#files').append('<div class="uploadedFiles"><span>' + value + '</span><button class="btn btn-warning btn-xs delete"> Delete </button> <input type="hidden" value=" ' +key+'" class="fileLink"/></div>'
+                            );
+
+                            $('#spin').empty();
+                            addToast('info', 'up', "File uploaded successfully")
+
+
+                        } else
+                            $('#files').append('<div id="fileLimit">Upto 3 files can be uploaded</div>');
+
+                        $('#spin').empty();
+
+                    });
+
+
+                },
+                error: function (err) {
+                }
+
+
+            });
+        }
+    }
+    else {
+        $('#files').append('<div id="fileLimit">Upto 3 files can be uploaded</div>');
+        $('#spin').empty();
+
+    }
+
+
+}
+
 
 //function for adding new issue via ajax post
 function addUpdate() {

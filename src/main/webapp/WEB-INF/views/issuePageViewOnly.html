@@ -1,0 +1,51 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="wireframe :: header">
+</head>
+<body>
+<link th:href="@{/resources/css/datatables.min.css}" href="/resources/css/datatables.min.css" rel="stylesheet"/>
+<link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css}" rel="stylesheet" />
+
+<link th:href="@{/resources/css/chosen.css}" href="/resources/css/chosen.css" rel="stylesheet"/>
+<link th:href="@{/resources/css/custom.css}" href="/resources/css/custom.css" rel="stylesheet"/>
+<link th:href="@{/resources/css/issuePage.css}" href="/resources/css/issuePage.css" rel="stylesheet"/>
+<link th:href="@{/resources/css/bootstrap-editable.css}" href="/resources/css/bootstrap-editable.css" rel="stylesheet"/>
+<link th:href="@{/resources/css/bootstrap-datetimepicker.css}" href="/resources/css/bootstrap-datetimepicker.css"
+      rel="stylesheet"/>
+<script th:src="@{/resources/js/chosen.jquery.js} " src="/resources/js/chosen.jquery.js"></script>
+<script th:src="@{/resources/js/moment.js} " src="/resources/js/moment.js"></script>
+<script th:src="@{/resources/js/bootstrap-editable.js} " src="/resources/js/bootstrap-editable.js"></script>
+<script th:src="@{/resources/js/bootstrap-datetimepicker.min.js} "
+        src="/resources/js/bootstrap-datetimepicker.min.js"></script>
+<script th:src="@{/resources/js/datatables.min.js} " src="/resources/js/datatables.min.js"></script>
+<script th:src="@{/resources/js/page/issuePageNew.js} " src="/resources/js/page/issuePageNew.js"></script>
+
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+
+    <div th:include="wireframe :: topNavBar">
+    </div>
+</nav>
+
+
+<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+    <div th:include="wireframe :: sidebar">
+    </div>
+</div>
+
+
+
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+
+    <div class="container-fluid primary-content">
+
+        <div id="issues-block"></div>
+    </div>
+
+
+
+</div>
+
+</body>
+
+</html>

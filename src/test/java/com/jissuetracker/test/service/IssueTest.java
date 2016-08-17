@@ -37,31 +37,31 @@ public class IssueTest {
 
         MockitoAnnotations.initMocks(IssueTest.class);
         Trackers tracker = new Trackers(1,"Bug");
+        Priority priority = new Priority("High");
+        Roles role = new Roles("Adminstrator");
         Status status = new Status(1,"Open");
-        User user = new User(1,null,"Jovin","jovin.25@hmail.com","123",null,null,null);
-        User creator = new User(1,null,"Creator","jovin.25@hmail.com","123",null,null,null);
-        User assigned = new User(1,null,"Editor","jovin.25@hmail.com","123",null,null,null);
+        User user = new User(role,"Jovin","jovin.25@hmail.com","123");
+        User creator = new User(role,"Creater","creator@gmail.com","123");
+        User assigned = new User(role,"Assigned","assigned@gmail.com","123");
         Set<User> users = new HashSet<User>();
         users.add(user);
         Projects project =
                 new Projects(1,"TestProject","Test Description","test url",null
                         ,null,users,null,"jovin");
-        Issues issue  = new Issues(1,"url","Test Issue", project, creator, assigned,
-                status, tracker,null,new Date(),new Date(),null,null,new Date(), "Test description", null,null);
-        Issues issue2  = new Issues(2,"url","Test Issue 2", project, creator, assigned,
-                status, tracker,null,new Date(),new Date(),null,null,new Date(), "Test description", null,null);
+        Issues issue  = new Issues(priority,project, creator, assigned,
+                status, tracker,null,new Date(), "Test description", "Test title");
+
         Attachments attachment = new Attachments();
-        IssuesUpdates issuesUpdate = new IssuesUpdates(1,issue,assigned.getName(),attachment,"Fixed the issue",new Date(),null);
-        attachment = new Attachments(1,null,issuesUpdate,"filelink",null,null);
-        when(issueDao.getById(1)).thenReturn(issue);
-        when(issueDao.getById(2)).thenReturn(issue2);
+        IssuesUpdates issuesUpdate = new IssuesUpdates(issue,assigned,"Fixed the issue");
+        attachment = new Attachments(null,issuesUpdate,"filelink",null,null);
+        when(issueDao.getByIdWithUpdatesStatusTrackerPriorityAttachments(1)).thenReturn(issue);
         when(issueDao.checkIfIssueExist("Test Issue")).thenReturn(true);
     }
 
     @Test
     public void issueGetByIdTest() throws Exception{
 
-        Assert.assertEquals(issueService.getById(1),issueDao.getById(1));
+        Assert.assertEquals(issueService.getUserIssuesByUserId(1),issueDao.getUserIssuesByUserId(1));
     }
 
     @Test

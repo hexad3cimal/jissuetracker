@@ -1,13 +1,14 @@
 package com.jissuetracker.webapp.models;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by jovin on 11/2/16.
  */
 @Entity
 @Table(name = "subMenu")
-public class SubMenu {
+public class SubMenu extends SuperModelClass implements Serializable {
 
     private int id;
     private String name;

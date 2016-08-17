@@ -14,7 +14,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Entity
 @Table(name = "roles", catalog = "IssueTracker")
-public class Roles implements java.io.Serializable {
+public class Roles extends SuperModelClass implements java.io.Serializable {
 
 	private Integer id;
 	private String rolename;

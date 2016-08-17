@@ -1,7 +1,6 @@
 package com.jissuetracker.webapp.utils;
 
 import java.text.Normalizer;
-import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Pattern;
 

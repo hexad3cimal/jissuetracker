@@ -4,7 +4,11 @@ package com.jissuetracker.webapp.configurations;
  * Created by jovin on 8/1/16.
  */
 
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -27,6 +31,12 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
     @Override
     public void customizeRegistration(ServletRegistration.Dynamic registration) {
         registration.setInitParameter("throwExceptionIfNoHandlerFound", "true");
+    }
+
+    @Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+        super.onStartup(servletContext);
+        servletContext.addListener(new HttpSessionEventPublisher());
     }
 
 

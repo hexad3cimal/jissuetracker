@@ -10,13 +10,16 @@ import com.jissuetracker.webapp.services.RolesService;
 import com.jissuetracker.webapp.services.UserService;
 import com.jissuetracker.webapp.utils.GetCurrentUserDetails;
 import com.jissuetracker.webapp.utils.NotEmpty;
+import com.jissuetracker.webapp.utils.PasswordEncoder;
 import com.jissuetracker.webapp.utils.Response;
-import com.jissuetracker.webapp.utils.XssCleaner;
+import com.jissuetracker.webapp.validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -156,45 +159,39 @@ public class UserController {
     }
 
 
-    @RequestMapping("/addNew")
+    @RequestMapping("/add/ajax")
     @ResponseBody
-    public Response addUserAjax(@RequestBody HashMap<String, String> userMap) throws Exception {
+    public Response addUserAjax(@Valid @RequestBody UserValidator userValidator,
+                                BindingResult result) throws Exception {
 
-        User user = new User();
-if(NotEmpty.notEmpty(userMap) )
-        {
-            userMap=  (HashMap)XssCleaner.clean(userMap);
-        }
+
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
-            if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
-                if (NotEmpty.notEmpty(userMap)) {
-                    if (userMap.containsKey("id") && NotEmpty.notEmpty(userMap.get("id")))
-                        user = userService.getUserById(Integer.parseInt(userMap.get("id")));
-                    if (userMap.containsKey("name") && NotEmpty.notEmpty(userMap.get("name")))
-                        user.setName(userMap.get("name"));
-                    if (userMap.containsKey("email") && NotEmpty.notEmpty(userMap.get("email")))
-                        user.setEmail(userMap.get("email"));
-                    if (userMap.containsKey("password") && NotEmpty.notEmpty(userMap.get("password")))
-                        user.setPassword(com.jissuetracker.webapp.utils.PasswordEncoder.getMD5(userMap.get("password")));
-                    if (userMap.containsKey("role") && NotEmpty.notEmpty(userMap.get("role"))
-                            && (getCurrentUserDetails.getDetails().getRoles().getId() == 1))
-                        user.setRoles(rolesService.getByName(userMap.get("role")));
+            if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())
+                    && getCurrentUserDetails.getDetails().getRoles().getId().equals(1)) {
 
+                if (result.hasErrors()) {
+                    return new Response("Error");
+                } else {
+                    User user = new User();
+
+                    if (NotEmpty.notEmpty(userValidator.getId()))
+                        user = userService.getUserById(userValidator.getId());
+                    user.setEmail(userValidator.getEmail());
+                    user.setName(userValidator.getName());
+                    user.setPassword(PasswordEncoder.getMD5(userValidator.getPassword()));
+                    user.setRoles(rolesService.getByName(userValidator.getRoles()));
                     if (user.getId() != null) {
                         userService.update(user);
                     } else if (getCurrentUserDetails.getDetails().getRoles().getId() == 1)
                         userService.add(user);
 
                     return new Response("Success");
+                }
+            }
 
-                } else
-                    return new Response("Error");
 
-            } else
-                return new Response("Error");
-
-        } else
-            return new Response("Error");
+        }
+        return new Response("Error");
 
     }
 

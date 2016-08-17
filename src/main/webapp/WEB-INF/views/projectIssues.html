@@ -1,0 +1,294 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="wireframe :: header">
+</head>
+<body>
+<link th:href="@{/resources/css/datatables.min.css}" href="/resources/css/datatables.min.css" rel="stylesheet"/>
+<link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css}" rel="stylesheet"/>
+
+<link th:href="@{/resources/css/chosen.css}" href="/resources/css/chosen.css" rel="stylesheet"/>
+<link th:href="@{/resources/css/issues.css}" href="/resources/css/issues.css" rel="stylesheet"/>
+<link th:href="@{/resources/css/bootstrap-datetimepicker.css}" href="/resources/css/bootstrap-datetimepicker.css"
+      rel="stylesheet"/>
+<script th:src="@{/resources/js/chosen.jquery.js} " src="/resources/js/chosen.jquery.js"></script>
+<script th:src="@{/resources/js/moment.js} " src="/resources/js/moment.js"></script>
+<script th:src="@{/resources/js/bootstrap-datetimepicker.min.js} "
+        src="/resources/js/bootstrap-datetimepicker.min.js"></script>
+<script th:src="@{/resources/js/datatables.min.js} " src="/resources/js/datatables.min.js"></script>
+
+<script th:src="@{/resources/js/page/projectHomeNew.js} " src="/resources/js/page/projectHomeNew.js"></script>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+
+    <div th:include="wireframe :: topNavBar">
+    </div>
+</nav>
+
+<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+    <div th:include="wireframe :: sidebar">
+    </div>
+</div>
+
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+
+    <input id="request-type" value="all-issues" type="hidden"/>
+    <input id="open-close" value="all" type="hidden"/>
+    <div class="col-lg-12">
+        <div id="projectBlock">
+
+            <div class="row">
+                <div class="form-group">
+                    &nbsp;
+                    &nbsp;
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+
+                        <div class="col-lg-6">
+
+                            <h1 id="projectTitle"></h1>
+
+                            <p id="projectDescription"></p>
+                        </div>
+                        <div class="col-lg-6">
+
+                            <h3><span class="glyphicon glyphicon-user"></span>&nbsp;
+                                Manager</h3>
+
+                            <p id="manager">
+                            </p>
+                            <h3><span class="glyphicon glyphicon-user"></span>&nbsp;
+                                Reporters</h3>
+
+                            <p id="reporters">
+                            </p>
+                            <h3><span class="glyphicon glyphicon-user"></span>
+                                &nbsp;Testers</h3>
+                            <div id="testers">
+                            </div>
+                            <h3><span class="glyphicon glyphicon-user"></span>&nbsp;Developers</h3>
+
+                            <p id="developers">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--modal dialog for adding issues start-->
+
+    <div class="modal fade issue-modal" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" id="issues" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div id="con">
+
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                Add New Issue
+                            </div>
+                        </div>
+                        <div class="panel-body">
+
+                            <form id="issue" method="post">
+
+                                <div class="form-group">
+                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 col-lg-offset-1 ">
+                                        <div class="bmd-field-group">
+                                            <input name="title" id="title" required=""
+                                                   class="bmd-input" type="text" maxlength="50"/>
+                                            <span class="bmd-bar"></span>
+                                            <label class="bmd-label">Issue Title</label>
+                                        </div>
+                                    </div>
+                                    <div id="titleError"></div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 col-lg-offset-1 ">
+                                        <div class="bmd-field-group">
+                                            <textarea id="description" name="description" required=""
+                                                      class="bmd-textarea" rows="8" maxlength="5000"></textarea>
+                                            <span class="bmd-bar"></span>
+                                            <label class="bmd-label">Projet Description</label>
+                                            <h6 class="pull-right" id="count_message"></h6>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="assigned">Assigned to</label>
+                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 col-lg-offset-1 ">
+                                        <select id="assigned" name="assigned" class="selectpicker"
+                                                required="required"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="tracker">Tracker</label>
+                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 col-lg-offset-1 ">
+                                        <select id="tracker" name="tracker" class="selectpicker"
+                                                required="required"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="priority">Priority</label>
+                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 col-lg-offset-1 ">
+                                        <select id="priority" name="priority" class="selectpicker"
+                                                required="required"></select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label>Completion Date</label>
+                                    <div class="input-group date col-sm-8 col-md-8 col-lg-8 col-lg-offset-1 "
+                                         id="completionDate">
+                                        <input type="text" class="form-control" name="completionDate"/>
+                                                 <span class="input-group-addon">
+                                                     <span class="glyphicon glyphicon-calendar"></span>
+                                                 </span>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <div class="input-group col-sm-8 col-md-8 col-lg-8 col-lg-offset-1">
+                                        <select id="status" name="status" class="selectpicker"
+                                                required="required"></select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <span>Maximum three files can be uploaded.</span>
+                                        </div>
+                                    </div>
+                                    <span class="btn btn-success fileinput-button">
+                                        <i class="fa fa-plus"></i>
+                                        <span>Add file...</span>
+                                        <input id="fileUpload" type="file" name="file"/>
+                                    </span>
+                                    <div id="spin"></div>
+                                    <div id="files" class="files"></div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <input type="submit" name="submit" id="submit" value="Add"
+                                           class="btn btn-success pull-right"/>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!--modal dialog for adding issues end-->
+
+
+    <div id="datatables">
+
+        <div class="row">
+            <!-- BEGIN NAV TICKET -->
+            <div class="col-md-3">
+                <div class="grid support">
+                    <div class="grid-body">
+                        <h2>Browse</h2>
+
+
+                        <ul class="filer-list">
+                            <li><a id="all-issues">Everyone's Issues<span class="pull-right"></span></a></li>
+                            <li><a id="issues-by-you">Created by you<span class="pull-right"></span></a></li>
+                            <li><a id="issues-assigned-to-you">Mentioning you<span class="pull-right"></span></a></li>
+                        </ul>
+
+
+                    </div>
+                </div>
+            </div>
+            <!-- END NAV TICKET -->
+            <!-- BEGIN TICKET -->
+            <div class="col-md-9">
+                <div class="grid support-content">
+                    <div class="grid-body">
+                        <h2>Issues</h2>
+
+                        <button class="btn btn-success pull-right" data-toggle="modal" data-target=".issue-modal"
+                                id="addIssue">Add new issue
+                        </button>
+                        <div class="padding">&nbsp;</div>
+
+                        <div class="btn-group pull-left">
+                            <button type="button" id="open-issues" class="btn btn-default">Open</button>
+                            <button type="button" id="closed-issues" class="btn btn-default">Closed</button>
+                        </div>
+
+                        <div class="btn-group pull-right">
+                            <button type="button" id="bug" class="btn btn-default btn-danger">Bug</button>
+                            <button type="button" id="feature" class="btn btn-default btn-success">Feature</button>
+                            <button type="button" id="modification" class="btn btn-default btn-info">Modification
+                            </button>
+                        </div>
+
+                        <div class="padding">&nbsp;</div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="list-group fa-padding">
+
+
+                                    <table id="issueTable" class="table table-striped " cellspacing="0"
+                                           width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                        </tr>
+                                        </thead>
+
+                                    </table>
+
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END TICKET -->
+        </div>
+
+
+        <div class="form-group">
+            &nbsp;
+            &nbsp;
+        </div>
+
+        <input type="submit" id="reload" value="Go back"
+               class="btn btn-success pull-right"/>
+    </div>
+    <div class="form-group">
+        &nbsp;
+        &nbsp;
+    </div>
+</div>
+
+
+</body>
+</html>

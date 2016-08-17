@@ -12,9 +12,9 @@ import java.util.Comparator;
 public class IssueUpdateDateComparator implements Comparator<IssuesUpdates> {
 
     public int compare(IssuesUpdates o1, IssuesUpdates o2) {
-        if (o1.getDate() != null && o2.getDate() != null) {
+        if (o1.getCreatedTimeStamp() != null && o2.getCreatedTimeStamp() != null) {
 
-            return o1.getDate().compareTo(o2.getDate());
+            return o1.getCreatedTimeStamp().compareTo(o2.getCreatedTimeStamp());
 
         } else
             return 0;

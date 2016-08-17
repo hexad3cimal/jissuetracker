@@ -111,26 +111,42 @@ function addUser() {
         email: $('#email').val(),
         id: $('#id').val(),
         name: $('#name').val(),
-        role: $('#role').val(),
+        roles: $('#role').val(),
         password: $('#password').val()
 
     };
 
 
     $.ajax({
-        url: '/jit/app/user/addNew',
+        url: '/jit/app/user/add/ajax',
         type: 'POST',
         contentType: "application/json",
         dataType: 'json',
         data: JSON.stringify(JsonData),
         success: function (data) {
 
-            var path = $(location).attr('href');
-            var splitted = path.split('/');
-            if (splitted[6] == "profile")
-                window.location.href = "http://localhost:8080/jit/app/user/profile";
-            else
-                window.location.href = "http://localhost:8080/jit/app/user/";
+            if (data.data == "Success") {
+
+                $.dialog({
+                    title: 'Success!',
+                    content: 'User have been added successfully',
+                    onClose: function(){
+                        window.location.href = ctx+"/app/user/";
+                    },
+
+                });
+            }else {
+                $.dialog({
+                    title: 'Oops!',
+                    content: 'Some error occured',
+                    onClose: function(){
+                        window.location.href = ctx+"/app/user/";
+                    },
+
+                });
+
+            }
+
 
         }
     });

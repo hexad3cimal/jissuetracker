@@ -15,7 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Entity
 @Table(name = "menu")
-public class Menu implements Serializable{
+public class Menu extends SuperModelClass  implements Serializable{
 
     private int id;
     private String name;

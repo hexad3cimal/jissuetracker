@@ -17,7 +17,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "trackers", catalog = "IssueTracker")
-public class Trackers implements java.io.Serializable {
+public class Trackers extends SuperModelClass implements java.io.Serializable {
 
 	private Integer id;
 	private String name;

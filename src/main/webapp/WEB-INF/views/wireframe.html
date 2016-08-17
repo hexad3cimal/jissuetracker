@@ -8,17 +8,25 @@
     <meta name="ctx" th:content="${#httpServletRequest.getContextPath()}" />
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <link th:href="@{/resources/css/bootstrap.min.css}" href="/resources/css/bootstrap.min.css" rel="stylesheet" />
-    <link th:href="@{/resources/css/datepicker3.css}" href="/resources/css/datepicker3.css" rel="stylesheet" />
-    <link th:href="@{/resources/css/styles.css}" href="/resources/css/styles.css" rel="stylesheet" />
-    <link th:href="@{/resources/css/font-awesome.min.css}" href="/resources/css/font-awesome.min.css" rel="stylesheet" />
-    <script>var contextPath = "${pageContext.request.contextPath}"</script>
 
-    <!--Icons-->
+    <!--css-->
+    <link th:href="@{/resources/css/bootstrap.min.css}" href="/resources/css/bootstrap.min.css" rel="stylesheet" />
+    <link th:href="@{/resources/css/styles.css}" href="/resources/css/styles.css" rel="stylesheet" />
+    <link th:href="@{/resources/css/material.css}" href="/resources/css/material.css" rel="stylesheet" />
+    <link th:href="@{/resources/css/jquery-confirm.css}" href="/resources/css/jquery-confirm.css" rel="stylesheet" />
+    <link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css}" rel="stylesheet" />
+
+
+    <!--scripts-->
     <script th:src="@{/resources/js/jquery-1.11.1.min.js} " src="/resources/js/jquery-1.11.1.min.js"></script>
     <script th:src="@{/resources/js/bootstrap.js}" src="/resources/js/bootstrap.js"></script>
     <script th:src="@{/resources/js/jquery.validate.js}" src="/resources/js/jquery.validate.js"></script>
     <script th:src="@{/resources/js/common.js}" src="/resources/js/common.js"></script>
+    <script th:src="@{/resources/js/modernizr.js} " src="/resources/js/modernizr.js"></script>
+    <script th:src="@{/resources/js/prettify.js} " src="/resources/js/prettify.js"></script>
+    <script th:src="@{/resources/js/material.js}" src="/resources/js/material.js"></script>
+    <script th:src="@{/resources/js/jquery-confirm.js}" src="/resources/js/jquery-confirm.js"></script>
+    <script>var ctx = $("meta[name='ctx']").attr("content");</script>
 
 
 </head>

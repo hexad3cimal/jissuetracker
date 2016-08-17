@@ -10,15 +10,12 @@ import java.security.NoSuchAlgorithmException;
 //For encoding string to md5
 public class PasswordEncoder {
 
-    public static String getMD5(String data) throws NoSuchAlgorithmException
-    {
-        MessageDigest messageDigest=MessageDigest.getInstance("MD5");
-
-        messageDigest.update(data.getBytes());
-        byte[] digest=messageDigest.digest();
+    public static String getMD5(String data) throws Exception{
+        java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+        byte[] array = md.digest(data.getBytes());
         StringBuffer sb = new StringBuffer();
-        for (byte b : digest) {
-            sb.append(Integer.toHexString((int) (b & 0xff)));
+        for (int i = 0; i < array.length; ++i) {
+            sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
         }
         return sb.toString();
     }

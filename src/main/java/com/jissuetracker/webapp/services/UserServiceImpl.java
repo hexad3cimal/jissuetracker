@@ -47,4 +47,8 @@ public class UserServiceImpl implements UserService {
     public List<User> userList() throws Exception {
         return userDao.userList();
     }
+
+    public void addOrUpdate(User user) throws Exception {
+        userDao.addOrUpdate(user);
+    }
 }
