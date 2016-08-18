@@ -46,9 +46,9 @@
 
                         <div class="col-lg-6">
 
-                            <h1 id="projectTitle"></h1>
+                            <h1 th:text="${project.name}"></h1>
 
-                            <p id="projectDescription"></p>
+                            <p th:text="${project.description}"></p>
                         </div>
                         <div class="col-lg-6">
 
@@ -239,12 +239,15 @@
                         <div class="btn-group pull-left">
                             <button type="button" id="open-issues" class="btn btn-default">Open</button>
                             <button type="button" id="closed-issues" class="btn btn-default">Closed</button>
+                            <button type="button" id="high-priority" class="btn btn-default">High</button>
+                            <button type="button" id="medium-priority" class="btn btn-default">Medium</button>
+                            <button type="button" id="low-priority" class="btn btn-default">Low</button>
                         </div>
 
                         <div class="btn-group pull-right">
                             <button type="button" id="bug" class="btn btn-default btn-danger">Bug</button>
                             <button type="button" id="feature" class="btn btn-default btn-success">Feature</button>
-                            <button type="button" id="modification" class="btn btn-default btn-info">Modification
+                            <button type="button" id="modification" class="btn btn-default">Modification
                             </button>
                         </div>
 

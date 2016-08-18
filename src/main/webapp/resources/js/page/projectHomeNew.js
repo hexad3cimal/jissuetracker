@@ -288,13 +288,8 @@ $(function () {
         url: '/jit/app/project/projectHomeList?projectName=' + getProjectName(),
         success: function (json) {
 
-            $("#projectTitle").text(getProjectName());
-
-            if (json.data.Description != null)
-                $("#projectDescription").text(json.data.Description);
-
-            if (json.data.Manager != null)
-                $("#manager").text(json.data.Manager);
+            if (json.data.Managers != null)
+                $("#manager").text(json.data.Managers);
 
             if (json.data.Developers != null)
                 $("#developers").text(json.data.Developers);
@@ -434,7 +429,26 @@ function addIssue() {
         },
         success: function (data) {
 
+            console.log(data);
+            if (data.data.status == "Success") {
 
+                $.dialog({
+                    title: 'Success!',
+                    content: 'Issue have been added successfully',
+                    onClose: function(){
+                        window.location.href = ctx+"/app/issue/get/"+data.data.issueId;
+
+                    },
+
+                });
+            }else {
+                $.dialog({
+                    title: 'Oops!',
+                    content: 'Some error occured',
+
+                });
+
+        }
         }
     });
 }

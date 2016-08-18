@@ -1,5 +1,6 @@
 package com.jissuetracker.webapp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jissuetracker.webapp.utils.IdGenerator;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -33,6 +34,7 @@ public abstract class SuperModelClass implements java.io.Serializable{
         this.createdTimeStamp = createdTimeStamp;
     }
 
+    @JsonIgnore
     @Column(name = "uuid", updatable = false, nullable = false)
     public String getUuId() {
         return uuId;
@@ -41,6 +43,7 @@ public abstract class SuperModelClass implements java.io.Serializable{
         this.uuId = uuId;
     }
 
+    @JsonIgnore
     @Version
     @Column(name = "version", nullable = false)
     public Integer getVersion() {

@@ -1,6 +1,8 @@
 package com.jissuetracker.webapp.models;
 // Generated 16 Aug, 2016 4:24:53 PM by Hibernate Tools 4.0.0
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
@@ -61,7 +63,7 @@ public class User extends SuperModelClass implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "roleId", nullable = false)
 	public Roles getRoles() {
 		return this.roles;
@@ -89,6 +91,7 @@ public class User extends SuperModelClass implements java.io.Serializable {
 		this.email = email;
 	}
 
+	@JsonIgnore
 	@Column(name = "password", nullable = false, length = 200)
 	public String getPassword() {
 		return this.password;
@@ -108,7 +111,7 @@ public class User extends SuperModelClass implements java.io.Serializable {
 		this.profilePic = profilePic;
 	}
 
-	@ManyToMany(fetch=FetchType.LAZY ,mappedBy = "users",cascade = CascadeType.MERGE)
+	@ManyToMany(fetch=FetchType.LAZY ,mappedBy = "users")
 //	@JoinTable(name="projectUserAssociation", catalog="IssueTracker", joinColumns = {
 //			@JoinColumn(name="userId", nullable=false, updatable=false) }, inverseJoinColumns = {
 //			@JoinColumn(name="projectId", nullable=false, updatable=false) })

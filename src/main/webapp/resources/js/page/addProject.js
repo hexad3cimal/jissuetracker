@@ -12,9 +12,12 @@ $(function () {
     editOrAddChecker();
 
     //for enabling the validation of chosen plugin fields
-    $.validator.setDefaults({
-        ignore: ':not(select:hidden, input:visible, textarea:visible)'
-    });
+    $.validator.setDefaults({ignore: ":hidden:not(select)"}) //for all select
+
+
+    jQuery.validator.addMethod("notEqual", function (value, element, param) {
+        return this.optional(element) || value != param;
+    }, "Please select at least one user");
 
     //for real time validating the select
     $('#newProject select').on('change', function (e) {
@@ -32,7 +35,6 @@ $(function () {
             $el.empty(); // remove old options
             $el.append($("<option></option>")
             );
-            console.log("Json" + json.data);
             if (json.data != "Null") {
                 $.each(json.data, function (value, key) {
                     $el.append($("<option></option>")
@@ -42,7 +44,7 @@ $(function () {
             }
 
             var users = formatUserArray($('#userList').val());
-            jQuery('#userSelect').val(users)
+            $('#userSelect').val(users)
             $('#userSelect').chosen({width: "95%"});
 
 
@@ -62,8 +64,8 @@ $(function () {
                 required: true
             },
             userSelect: {
-                required: true
-
+                required: true,
+                notEqual: ""
             }
 
 
@@ -79,14 +81,21 @@ $(function () {
         errorElement: 'span',
         errorClass: 'help-block',
         errorPlacement: function (error, element) {
-            if (element.parent('.input-group').length) {
+            if (element.next().hasClass('chosen-container')) {
+
+                error.insertAfter(element.next());
+            }
+            else if (element.parent('.bmd-input').length) {
                 error.insertAfter(element.parent());
-            } else {
+            }
+
+            else {
                 error.insertAfter(element);
             }
         },
 
         submitHandler: function (form) {
+
             addProject();
         }
 
@@ -99,18 +108,12 @@ $(function () {
 //function to add/update project
 function addProject() {
 
-    var mySelections = [];
-    $('#userSelect option').each(function (i) {
-        if (this.selected == true) {
-            mySelections.push(this.value);
-        }
-    });
 
     var data = {
         name: $('input[name=name]').val(),
-        description: $('input[name=description]').val(),
+        description: $('#description').val(),
         id: $('input[name=projectId]').val(),
-        users: mySelections
+        users: $('#userSelect').chosen().val()
     };
 
     $.ajax({
@@ -125,8 +128,25 @@ function addProject() {
         },
         success: function (data) {
 
-            window.location.href = "http://localhost:8080/jit/app/project/";
+            if (data.data == "Success") {
 
+                $.dialog({
+                    title: 'Success!',
+                    content: 'Project have been added successfully',
+                    onClose: function(){
+                        window.location.href = ctx+"/app/project/";
+
+                    },
+
+                });
+            }else {
+                $.dialog({
+                    title: 'Oops!',
+                    content: 'Some error occured',
+
+                });
+
+        }
         }
 
     });

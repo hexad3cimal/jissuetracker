@@ -101,11 +101,6 @@ $(function () {
 
 function addUser() {
 
-    //var stack_center = {"dir1": "down", "dir2": "right", "firstpos1": 25, "firstpos2": ($(window).width() / 2) - (Number(PNotify.prototype.options.width.replace(/\D/g, '')) / 2)};
-    //$(window).resize(function(){
-    //    stack_center.firstpos2 = ($(window).width() / 2) - (Number(PNotify.prototype.options.width.replace(/\D/g, '')) / 2);
-    //});
-    //PNotify.prototype.options.styling = "bootstrap3";
 
     var JsonData = {
         email: $('#email').val(),

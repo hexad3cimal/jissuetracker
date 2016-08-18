@@ -29,24 +29,27 @@ public class SessionObjectsService {
     @Autowired
     UserService userService;
 
-    private UserSession userSession = new UserSession();
+    private UserSession userSession;
 
     private Roles roles;
 
-    private Authentication authentication;;
+    private Authentication authentication;
+    ;
 
-    public void setSessionObjects(HttpServletRequest request)throws Exception{
-
+    public void setSessionObjects(HttpServletRequest request) throws Exception {
+        userSession = new UserSession();
         setCurrentUser();
         populateMenu();
-        request.getSession().setAttribute("userSession",userSession);
+        request.getSession().setAttribute("userSession", userSession);
+        request.getSession().setAttribute("messageFiles", 0);
+
     }
 
 
     //for getting the current logged in user from spring SecurityContextHolder
-    public void setCurrentUser() throws Exception{
-        authentication =SecurityContextHolder.getContext().getAuthentication();
-        if(authentication !=null)
+    public void setCurrentUser() throws Exception {
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null)
             userSession.setUser(userService.getUserByEmail(authentication.getName().toString()));
 
         else
@@ -54,24 +57,22 @@ public class SessionObjectsService {
     }
 
     //for populating the menu based on logged in user role from db
-    public void populateMenu()throws Exception{
-        authentication =SecurityContextHolder.getContext().getAuthentication();
+    public void populateMenu() throws Exception {
+        authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication !=null){
-            Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>)authentication.getAuthorities();
+        if (authentication != null) {
+            Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>) authentication.getAuthorities();
             roles = rolesService.getByName(authorities.iterator().next().getAuthority());
-        }else
+        } else
             roles = null;
 
-        if(NotEmpty.notEmpty(roles))
-        {
+        if (NotEmpty.notEmpty(roles)) {
             Set<Menu> menuSet = roles.getMenuSet();
             ArrayList<Menu> menuList = new ArrayList<Menu>(menuSet);
             userSession.setMenuList(menuList);
         }
 
     }
-
 
 
 }

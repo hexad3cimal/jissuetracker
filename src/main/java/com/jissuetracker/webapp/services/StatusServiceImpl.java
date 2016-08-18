@@ -18,7 +18,7 @@ public class StatusServiceImpl implements StatusService {
     @Autowired
     StatusDao statusDao;
 
-    public HashMap<String, String> statusDropDownMap() throws Exception {
+    public HashMap<Integer, String> statusDropDownMap() throws Exception {
         return statusDao.statusDropDownMap();
     }
 

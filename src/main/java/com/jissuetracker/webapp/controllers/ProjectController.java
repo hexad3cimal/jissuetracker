@@ -10,13 +10,17 @@ import com.jissuetracker.webapp.utils.GetCurrentUserDetails;
 import com.jissuetracker.webapp.utils.NotEmpty;
 import com.jissuetracker.webapp.utils.Response;
 import com.jissuetracker.webapp.utils.XssCleaner;
+import com.jissuetracker.webapp.validators.ProjectValidator;
+import com.jissuetracker.webapp.validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.*;
 
 /**
@@ -106,68 +110,77 @@ public class ProjectController {
             method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Response addNewProject
-            (@RequestBody HashMap<String, Object> projectMap)
+    (@Valid @RequestBody ProjectValidator projectValidator,
+     BindingResult result)
             throws Exception {
 
 
-        Projects projects = new Projects();
-
+        if (result.hasErrors()) {
+            System.out.println("Error"+result.getAllErrors().toString());
+            return new Response("Error");
+        } else {
         //determines whether edit or add
-        //if given hashmap contains id key with valid value objwct with that id will be loaded
-        if (projectMap.containsKey("id") && NotEmpty.notEmpty(projectMap.get("id").toString())) {
-            projects = projectService.getById(Integer.parseInt(projectMap.get("id").toString()));
+        //if given hashmap contains id key with valid value object with that id will be loaded
+            Projects projects = new Projects();
+
+            if (NotEmpty.notEmpty(projectValidator.getId())) {
+
+            projects = projectService.getById(projectValidator.getId());
+            projects.setUpdatedOn(new Date());
         }
 
-        if (projectMap.containsKey("name") && NotEmpty.notEmpty(projectMap.get("name"))) {
 
-            projects.setName(XssCleaner.clean(projectMap.get("name").toString()));
-        }
+            projects.setName(XssCleaner.clean(projectValidator.getName()));
 
-        if (projectMap.containsKey("description") && NotEmpty.notEmpty(projectMap.get("description"))) {
-            projects.setDescription(XssCleaner.clean(projectMap.get("description").toString()));
-        }
 
-        if (projectMap.containsKey("users") && NotEmpty.notEmpty(projectMap.get("users"))) {
-            String usersString = projectMap.get("users").toString();
-            String userArray[] = usersString.split(",");
+            projects.setDescription(XssCleaner.clean(projectValidator.getDescription()));
+
+
+//            String usersString = projectValidator.getUsers();
+//            String userArray[] = usersString.split(",");
             User userObject = new User();
             HashSet<User> userHashSet = new HashSet<User>();
-            if (NotEmpty.notEmpty(userArray)) {
-                for (String user : userArray) {
+            if (NotEmpty.notEmpty(projectValidator.getUsers())) {
+                for (String user : projectValidator.getUsers()) {
+                    System.out.println("Users>>"+user);
                     user = user.replace("[", "");
                     user = user.replace("]", "");
                     user = user.replace(" ", "");
                     userObject = userService.getUserByEmail(user);
-                    if (NotEmpty.notEmpty(userObject))
+                    if (NotEmpty.notEmpty(userObject)){
+                        if(userObject.getRoles().getId().equals(2)){
+                            projects.setManager(userObject.getName());
+                        }
                         userHashSet.add(userObject);
+                    }
                 }
             }
 
             projects.setUsers(userHashSet);
 
-        }
-
 
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
 
 
-            projects.setManager(getCurrentUserDetails.getDetails().getEmail());
-
             if (NotEmpty.notEmpty(projects.getName()))
                 projects.setUrl("/jit/app/project/" + projects.getName());
-
 
             if (projects.getId() == null &&
                     (getCurrentUserDetails.getDetails().getRoles().getId() == 1
                             || (getCurrentUserDetails.getDetails().getRoles().getId() == 2))) {
+
+                projects.setCreatedTimeStamp(new Date());
+                projects.setUpdatedOn(new Date());
                 projectService.add(projects);
                 return new Response("Success");
 
 
             } else {
+                projects.setUpdatedOn(new Date());
                 projectService.update(projects);
                 return new Response("Success");
             }
+        }
         }
 
         return new Response("Error");
@@ -187,7 +200,7 @@ public class ProjectController {
 
     }
 
-   //produces values used in the project home page
+    //produces values used in the project home page
     @RequestMapping(value = "/projectHomeList")
     @ResponseBody
     public Response projectHomeList(
@@ -221,14 +234,14 @@ public class ProjectController {
                                 reporters.add(user.getName());
                                 projectUsers.put("Reporters", reporters);
                             }
+                            if (user.getRoles().getRolename().equalsIgnoreCase("Manager")) {
+                                List<String> managers = new ArrayList<String>();
+                                managers.add(user.getName());
+                                projectUsers.put("Managers", managers);
+                            }
                         }
                     }
-                    if (NotEmpty.notEmpty(project.getManager())) {
-                        if (NotEmpty.notEmpty(userService.getUserByEmail(project.getManager()))) ;
-                        List<String> manager = new ArrayList<String>();
-                        manager.add(userService.getUserByEmail(project.getManager()).getName());
-                        projectUsers.put("Manager", manager);
-                    }
+
                 }
 
                 return new Response(projectUsers);
@@ -241,23 +254,36 @@ public class ProjectController {
 
     //handles view resolution request of project home page
     @RequestMapping(value = "/{projectName}")
-    public String projectHome(@PathVariable(value = "projectName")
+    public ModelAndView projectHome(@PathVariable(value = "projectName")
                               String projectName) throws Exception {
-        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+        Projects project = projectService.getByProjectNameAlongWithUsers(projectName);
+        ModelAndView mv =new ModelAndView();
+        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())
+                && NotEmpty.notEmpty(project)) {
 
             //administrator can view any project
-            if (getCurrentUserDetails.getDetails().getRoles().getId() == 1)
-                return "projectIssues";
+            if (getCurrentUserDetails.getDetails().getRoles().getId() == 1) {
+                mv.addObject("project",project);
+                mv.setViewName("projectIssues");
+                return mv;
+            }
 
             //normal user can view projects only which they are part of
-            else if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail(), projectName))
-                return "projectIssues";
+            else if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail(), projectName)) {
+                mv.setViewName("projectIssues");
+                mv.addObject("project",project);
+                return mv;
+            }
             else
-                return "404";
+                mv.setViewName("404");
+
+            return mv;
 
 
         } else
-            return "404";
+            mv.setViewName("404");
+
+        return mv;
     }
 
 
@@ -265,7 +291,7 @@ public class ProjectController {
     @RequestMapping("/{userId}/projects")
     @ResponseBody
     public Response userProjects
-            (@PathVariable(value = "userId") Integer userId) throws Exception {
+    (@PathVariable(value = "userId") Integer userId) throws Exception {
 
         User userProjectsObject = userService.getUserById(userId);
         if (NotEmpty.notEmpty(userProjectsObject)) {
@@ -291,14 +317,14 @@ public class ProjectController {
         Projects project = projectService.getByProjectNameAlongWithIssuesAndUsers(name);
         Set<Issues> issuesSet = new HashSet<Issues>();
 
-        if (NotEmpty.notEmpty(project)){
+        if (NotEmpty.notEmpty(project)) {
             issuesSet = project.getIssueses();
 
             if (NotEmpty.notEmpty(issuesSet)) {
                 request.getSession().setAttribute("issues", issuesSet);
             }
             return "projectIssuesHome";
-        }else
+        } else
             return "404";
     }
 

@@ -3,17 +3,21 @@ package com.jissuetracker.webapp.controllers;
 import com.jissuetracker.webapp.models.*;
 import com.jissuetracker.webapp.services.*;
 import com.jissuetracker.webapp.utils.*;
+import com.jissuetracker.webapp.validators.IssueUpdateValidator;
+import com.jissuetracker.webapp.validators.IssueValidator;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -65,86 +69,85 @@ public class IssueController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Response addIssue(@PathVariable(value = "project") String project,
-                             @RequestBody HashMap<String, Object> issueMap) throws Exception {
+                             @Valid @RequestBody IssueValidator issueValidator,
+                             BindingResult result) throws Exception {
 
         Issues issue = new Issues();
         Status status = new Status();
         User user = new User();
         Trackers tracker = new Trackers();
 
+        HashMap<String, String> responseMap = new HashMap<String, String>();
 
 
-        if (NotEmpty.notEmpty(issueMap)) {
-            if (issueMap.containsKey("title") && NotEmpty.notEmpty(issueMap.get("title"))) {
-                issue.setTitle(XssCleaner.clean(issueMap.get("title").toString()));
-            }
-            if (issueMap.containsKey("description") && NotEmpty.notEmpty(issueMap.get("description")))
-                issue.setDescription(XssCleaner.clean(issueMap.get("description").toString()));
-            if (issueMap.containsKey("completionDate") && NotEmpty.notEmpty(issueMap.get("completionDate")))
-                issue.setEndDate(new Date(issueMap.get("completionDate").toString()));
-            if (issueMap.containsKey("status") && NotEmpty.notEmpty(issueMap.get("status"))) {
-                status = statusService.getById(Integer.parseInt(issueMap.get("status").toString()));
-                if (NotEmpty.notEmpty(status))
-                    issue.setStatus(status);
-            }
-            if (issueMap.containsKey("assigned") && NotEmpty.notEmpty(issueMap.get("assigned"))) {
-                user = userService.getUserById(Integer.parseInt(issueMap.get("assigned").toString()));
-                if (NotEmpty.notEmpty(user))
-                    issue.setUserByAssignedToId(user);
-            }
-            if (issueMap.containsKey("tracker") && NotEmpty.notEmpty(issueMap.get("tracker"))) {
-                tracker = trackerService.getById(Integer.parseInt(issueMap.get("tracker").toString()));
-                if (NotEmpty.notEmpty(tracker))
-                    issue.setTrackers(tracker);
-            }
+        if (result.hasErrors()) {
+            responseMap.put("status", "Error");
+            return new Response(responseMap);
+        } else {
+            issue.setTitle(XssCleaner.clean(issueValidator.getTitle()));
 
-            if (issueMap.containsKey("priority") && NotEmpty.notEmpty(issueMap.get("priority"))) {
-                Priority priority = priorityService.getByPriorityId(Integer.parseInt(issueMap.get("priority").toString()));
-                if (NotEmpty.notEmpty(priority))
-                    issue.setPriority(priority);
-            }
+            issue.setDescription(XssCleaner.clean(issueValidator.getDescription()));
+            issue.setEndDate(new Date(issueValidator.getCompletionDate()));
+            status = statusService.getById(issueValidator.getStatus());
+            if (NotEmpty.notEmpty(status))
+                issue.setStatus(status);
+
+            user = userService.getUserById(issueValidator.getAssigned());
+            if (NotEmpty.notEmpty(user))
+                issue.setUserByAssignedToId(user);
+
+            tracker = trackerService.getById(issueValidator.getTracker());
+            if (NotEmpty.notEmpty(tracker))
+                issue.setTrackers(tracker);
+
+
+            Priority priority = priorityService.getByPriorityId(issueValidator.getPriority());
+            if (NotEmpty.notEmpty(priority))
+                issue.setPriority(priority);
+
             issue.setReadByAssigned("false");
             if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails()))
                 issue.setUserByCreatedById(getCurrentUserDetails.getDetails());
 
             if (NotEmpty.notEmpty(project)) {
-               Projects projectObject = projectService.getByProjectNameAlongWithIssuesAndUsers(project);
+                Projects projectObject = projectService.getByProjectNameAlongWithIssuesAndUsers(project);
                 if (NotEmpty.notEmpty(projectObject))
                     issue.setProjects(projectObject);
             }
+            issue.setUpdatedOn(new Date());
+            issue.setCreatedTimeStamp(new Date());
             issueService.add(issue);
             issue.setUrl("app/issues/get/" + issue.getId());
             issueService.update(issue);
 
-            if (issueMap.containsKey("files")
-                    && NotEmpty.notEmpty(issueMap.get("files"))) {
-                String files = issueMap.get("files").toString().replace(" ", "")
-                        .replace("[", "").replace("]", "");
-                String fileArray[] = files.split(",");
-                List<String> filesList = Arrays.asList(fileArray);
-                if (NotEmpty.notEmpty(filesList)) {
-                    for (String s : filesList) {
-                        if (s.contains("&")) {
-                            Attachments attachment = new Attachments();
-                            System.out.println(s);
-                            String fileLink[] = s.split("&");
-                            attachment.setIssues(issue);
-                            attachment.setLink(fileLink[0]);
-                            attachment.setOriginalName(fileLink[1]);
-                            attachmentService.add(attachment);
-                        }
+
+            List<String> filesList = issueValidator.getFiles();
+            if (NotEmpty.notEmpty(filesList)) {
+                for (String s : filesList) {
+                    if (s.contains("&")) {
+                        Attachments attachment = new Attachments();
+                        System.out.println(s);
+                        String fileLink[] = s.split("&");
+                        attachment.setIssues(issue);
+                        attachment.setLink(fileLink[1]);
+                        attachment.setOriginalName(fileLink[0]);
+                        attachmentService.add(attachment);
                     }
                 }
             }
+            responseMap.put("status", "Success");
+            responseMap.put("issueId", issue.getId().toString());
+            return new Response(responseMap);
+
         }
-        return new Response("Success");
+
     }
 
     //check whether an issue with given title exists
     //@param   issueTitle   the title of the entered issue from ui.
     @RequestMapping("/checkIfIssueExist")
     @ResponseBody
-    public Boolean checkIfIssueExist(@RequestParam(value = "issueTitle") String issueTitle) throws Exception {
+    public Boolean checkIfIssueExist(@RequestParam(value = "title") String issueTitle) throws Exception {
         return issueService.checkIfIssueExist(issueTitle);
     }
 
@@ -227,7 +230,8 @@ public class IssueController {
         if (NotEmpty.notEmpty(issue)) {
 
             if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail()
-                    , issue.getProjects().getName())) {
+                    , issue.getProjects().getName()) ||
+                    new Integer(1).equals(getCurrentUserDetails.getDetails().getRoles().getId())) {
 
                 return "issuePageNew";
             } else
@@ -371,7 +375,7 @@ public class IssueController {
                         "            <div class=\"widget\">\n" +
                         "                <div class=\"widget-header clearfix\"><h3><i class=\"fa fa-document\"></i> <span>RECENT FILES</span></h3>\n" +
                         "                </div>\n" +
-                        "                <div class=\"widget-content\">\n" +
+                        "                <div class=\"widget-content\" style=\"word-wrap: break-word;\">\n" +
                         "                    <ul class=\"fa-ul recent-file-list bottom-30px\">";
 
                 for (Attachments attachments : issue.getAttachmentses()) {
@@ -412,91 +416,47 @@ public class IssueController {
     }
 
 
-    //serves the issuePage details via ajax
-//    @RequestMapping("/ajax/{id}")
-//    @ResponseBody
-//    public Response getIssueDetailsByIdAjaxCall(@PathVariable(value = "id") String id) throws Exception {
-//
-//        Issues issue = issueService.getByIdWithUpdatesStatusTrackerPriorityAttachments(Integer.parseInt(id));
-//        Set<IssuesUpdates> issuesUpdatesSet = new TreeSet<IssuesUpdates>(new IssueUpdateDateComparator());
-//        if (NotEmpty.notEmpty(issue)) {
-//            Projects project = issue.getProjects();
-//
-//            if (issue.getIssuesUpdateses() != null) {
-//                issuesUpdatesSet.addAll(issue.getIssuesUpdateses());
-//                issue.setIssuesUpdateses(issuesUpdatesSet);
-//            }
-//
-//            if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
-//
-//                if ((getCurrentUserDetails.getDetails().getEmail().equalsIgnoreCase(issue.getUserByAssignedToId().getEmail())) &&
-//                        issue.getReadByAssigned().equalsIgnoreCase("false")) {
-//                    issue.setReadByAssigned("true");
-//                    issueService.update(issue);
-//                }
-//
-//                if (NotEmpty.notEmpty(project)) {
-//                    if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail()
-//                            , project.getName()))
-//                        issue.setUpdatable("true");
-//                } else
-//                    issue.setUpdatable("false");
-//            }
-//        }
-//
-//        return new Response(issue);
-//
-//    }
-//
-
-
     //updates the issue
     @RequestMapping("/updateIssue/{issueId}")
     @ResponseBody
     public Response addIssueUpdates(@PathVariable(value = "issueId") Integer issueId,
-                                    @RequestBody HashMap<String, Object> issueUpdates) throws Exception {
-        Issues issue = new Issues();
-        IssuesUpdates issuesUpdate = new IssuesUpdates();
-        issuesUpdate.setCreatedTimeStamp(new Date());
+                                    @Valid @RequestBody IssueUpdateValidator issueUpdateValidator, BindingResult result) throws Exception {
 
-        if (NotEmpty.notEmpty(issueId)) {
+
+        if (result.hasErrors()) {
+            return new Response("Error");
+        } else {
+            Issues issue = new Issues();
+            IssuesUpdates issuesUpdate = new IssuesUpdates();
+            issuesUpdate.setCreatedTimeStamp(new Date());
             issue = issueService.getByIdWithUpdatesStatusTrackerPriorityAttachments(issueId);
-            issuesUpdate.setIssues(issue);
-        }
 
-        if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
-            issuesUpdate.setUpdatedByUserFullName(getCurrentUserDetails.getDetails().getName());
-            issuesUpdate.setUser(getCurrentUserDetails.getDetails());
-        }
+            if (NotEmpty.notEmpty(issue)) {
+                issuesUpdate.setIssues(issue);
+            }
 
-        if (NotEmpty.notEmpty(issueUpdates)) {
-            if (issueUpdates.containsKey("updateText"))
-                issuesUpdate.setUpdates(XssCleaner.clean(issueUpdates.get("updateText").toString()));
-        }
+            if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())) {
+                issuesUpdate.setUpdatedByUserFullName(getCurrentUserDetails.getDetails().getName());
+                issuesUpdate.setUser(getCurrentUserDetails.getDetails());
+            }
 
-        issueUpdateService.addIssueUpdate(issuesUpdate);
+            issuesUpdate.setUpdates(XssCleaner.clean(issueUpdateValidator.getUpdateText()));
 
-        if (issueUpdates.containsKey("files")
-                && NotEmpty.notEmpty(issueUpdates.get("files"))) {
-            String files = issueUpdates.get("files").toString().replace(" ", "")
-                    .replace("[", "").replace("]", "");
-            String fileArray[] = files.split(",");
-            List<String> filesList = Arrays.asList(fileArray);
+
+            issuesUpdate.setCreatedTimeStamp(new Date());
+            issueUpdateService.addIssueUpdate(issuesUpdate);
+
+            List<String> filesList = issueUpdateValidator.getFiles();
             if (NotEmpty.notEmpty(filesList)) {
                 for (String s : filesList) {
                     if (s.contains("&")) {
-
                         Attachments attachment = new Attachments();
                         System.out.println(s);
                         String fileLink[] = s.split("&");
                         attachment.setIssuesUpdates(issuesUpdate);
-                        if (fileLink[0].length() > 50) {
-                            fileLink[0] = fileLink[0].substring(0, 30);
-                        }
                         attachment.setLink(fileLink[1]);
                         attachment.setOriginalName(fileLink[0]);
                         attachmentService.add(attachment);
-
                     }
                 }
             }
@@ -539,7 +499,7 @@ public class IssueController {
     @ResponseBody
     Response doUploadMessageFiles(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws Exception {
         HashMap<String, String> uploadDetails = new HashMap<String, String>();
-        Integer uploadedFiles = (Integer)request.getSession().getAttribute("messageFiles");
+        Integer uploadedFiles = (Integer) request.getSession().getAttribute("messageFiles");
         if (!file.isEmpty() && NotEmpty.notEmpty(getCurrentUserDetails.getDetails()) && uploadedFiles < 3
                 ) {
             try {
@@ -560,7 +520,7 @@ public class IssueController {
 
                         uploadDetails.put(file.getOriginalFilename(), filePath);
                         uploadedFiles++;
-                        request.getSession().setAttribute("messageFiles",uploadedFiles);
+                        request.getSession().setAttribute("messageFiles", uploadedFiles);
                         return new Response(uploadDetails);
                     } else
                         return new Response("file type not supported");
@@ -570,12 +530,12 @@ public class IssueController {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                uploadDetails.put("Error", "Error occurred during upload"+uploadedFiles);
+                uploadDetails.put("Error", "Error occurred during upload" + uploadedFiles);
             }
         } else if (uploadedFiles.equals(2)) {
             uploadDetails.put("Limit Reached", "Only 3 files per message is allowed");
         }
-        uploadDetails.put("Error", "Error occurred during upload"+uploadedFiles);
+        uploadDetails.put("Error", "Error occurred during upload" + uploadedFiles);
         return new Response(uploadDetails);
     }
 
@@ -591,11 +551,11 @@ public class IssueController {
             if (fileLocation.get("fileLocation").contains("&")) {
                 File messageFile = new File(fileLocation.get("fileLocation").replace(" ", "").split("&")[1]);
                 if (messageFile != null) {
-                    Integer uploadedFiles = (Integer)request.getSession().getAttribute("messageFiles");
+                    Integer uploadedFiles = (Integer) request.getSession().getAttribute("messageFiles");
                     messageFile.delete();
                     uploadedFiles--;
-                    request.getSession().setAttribute("messageFiles",uploadedFiles);
-                    return new Response("Deleted"+uploadedFiles);
+                    request.getSession().setAttribute("messageFiles", uploadedFiles);
+                    return new Response("Deleted" + uploadedFiles);
                 } else
                     return new Response("File doesn't exist");
 
@@ -623,13 +583,10 @@ public class IssueController {
 
             } else if (NotEmpty.notEmpty(issuesUpdates)) {
                 processDownload(attachment, response);
-
-
             }
-
         }
-
     }
+
 
     //function for processing download requests
     public void processDownload(Attachments attachment, HttpServletResponse response) throws Exception {
@@ -644,7 +601,6 @@ public class IssueController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
+
 }

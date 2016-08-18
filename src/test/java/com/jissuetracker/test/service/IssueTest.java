@@ -49,11 +49,11 @@ public class IssueTest {
                 new Projects(1,"TestProject","Test Description","test url",null
                         ,null,users,null,"jovin");
         Issues issue  = new Issues(priority,project, creator, assigned,
-                status, tracker,null,new Date(), "Test description", "Test title");
+                status, tracker,new Date(), "Test description", "Test title");
 
         Attachments attachment = new Attachments();
         IssuesUpdates issuesUpdate = new IssuesUpdates(issue,assigned,"Fixed the issue");
-        attachment = new Attachments(null,issuesUpdate,"filelink",null,null);
+        attachment = new Attachments(null,issuesUpdate,"filelink",null);
         when(issueDao.getByIdWithUpdatesStatusTrackerPriorityAttachments(1)).thenReturn(issue);
         when(issueDao.checkIfIssueExist("Test Issue")).thenReturn(true);
     }

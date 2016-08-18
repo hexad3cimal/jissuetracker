@@ -13,20 +13,20 @@ import java.util.List;
  * Created by jovin on 22/2/16.
  */
 @Repository("StatusDao")
-public class StatusDaoImpl implements StatusDao{
+public class StatusDaoImpl implements StatusDao {
 
     @Autowired
     SessionFactory sessionFactory;
 
     //gets hashmap containing statuses
-    public HashMap<String, String> statusDropDownMap() throws Exception {
+    public HashMap<Integer, String> statusDropDownMap() throws Exception {
 
-        List<Object []> statusList = sessionFactory.getCurrentSession()
-                .createQuery("select id,name from Status").list();
-        HashMap<String, String> statusDropDownMap = new HashMap<String, String>();
+        List<Status> statusList = sessionFactory.getCurrentSession()
+                .createCriteria(Status.class).list();
+        HashMap<Integer, String> statusDropDownMap = new HashMap<Integer, String>();
         if(NotEmpty.notEmpty(statusList)){
-            for (Object[] status : statusList){
-                statusDropDownMap.put(status[0].toString(),status[1].toString());
+            for (Status status : statusList){
+                statusDropDownMap.put(status.getId(),status.getName());
             }
         }
         return statusDropDownMap;

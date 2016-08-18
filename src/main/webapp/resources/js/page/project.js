@@ -17,7 +17,7 @@ $(function () {
 
     $('#addProject').click(function(){
 
-        window.location.href="http://localhost:8080/jit/app/project/add"
+        window.location.href=ctx+"/app/project/add"
 
     });
 
@@ -44,7 +44,7 @@ $(function () {
         "columns": [
             {"data": "name"},
             {"data": "description"},
-            {"data": "createdOn"},
+            {"data": "createdTimeStamp"},
             {"data": "updatedOn"},
             {"data": "users"},
             {"data": "name"},
@@ -98,7 +98,6 @@ $(function () {
     });
 
     if (getLoggedInUserRoleId() != 1){
-
         datatable.column(5).visible(false);
         }
 

@@ -32,7 +32,6 @@ public class Issues extends SuperModelClass implements java.io.Serializable {
 	private User userByAssignedToId;
 	private Status status;
 	private Trackers trackers;
-	private Attachments attachments;
 	private Date updatedOn;
 	private Integer donePercentage;
 	private String estimatedHours;
@@ -50,7 +49,7 @@ public class Issues extends SuperModelClass implements java.io.Serializable {
 
 
 	public Issues(Priority priority, Projects projects, User userByCreatedById, User userByAssignedToId, Status status,
-				  Trackers trackers, Attachments attachments, Date endDate, String description,
+				  Trackers trackers, Date endDate, String description,
 				  String title) {
 		this.priority = priority;
 		this.projects = projects;
@@ -58,14 +57,13 @@ public class Issues extends SuperModelClass implements java.io.Serializable {
 		this.userByAssignedToId = userByAssignedToId;
 		this.status = status;
 		this.trackers = trackers;
-		this.attachments = attachments;
 		this.endDate = endDate;
 		this.description = description;
 		this.title = title;
 	}
 
 	public Issues(Priority priority, Projects projects, User userByCreatedById, User userByAssignedToId, Status status,
-				  Trackers trackers, Attachments attachments, Date updatedOn, Integer donePercentage,
+				  Trackers trackers,  Date updatedOn, Integer donePercentage,
 				  String estimatedHours, Date endDate, String description, String title, String url, String readByAssigned,
 				  Set<IssuesUpdates> issuesUpdateses, Set<Attachments> attachmentses) {
 		this.priority = priority;
@@ -74,7 +72,6 @@ public class Issues extends SuperModelClass implements java.io.Serializable {
 		this.userByAssignedToId = userByAssignedToId;
 		this.status = status;
 		this.trackers = trackers;
-		this.attachments = attachments;
 		this.updatedOn = updatedOn;
 		this.donePercentage = donePercentage;
 		this.estimatedHours = estimatedHours;
@@ -160,15 +157,6 @@ public class Issues extends SuperModelClass implements java.io.Serializable {
 		this.trackers = trackers;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "attachmentId", nullable = false)
-	public Attachments getAttachments() {
-		return this.attachments;
-	}
-
-	public void setAttachments(Attachments attachments) {
-		this.attachments = attachments;
-	}
 
 
 	@Temporal(TemporalType.TIMESTAMP)

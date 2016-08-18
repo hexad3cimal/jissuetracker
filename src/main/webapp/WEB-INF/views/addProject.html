@@ -53,8 +53,7 @@
 
                                     <div class="form-group">
                                         <div class="bmd-field-group">
-                                            <input name="description" id="description" required=""
-                                                   class="bmd-input" type="text" th:field="${projectDto.description}" maxlength="50"/>
+                                            <textarea id="description"  name="description" required="" class="bmd-textarea" th:field="${projectDto.description}" rows="8" maxlength="5000"></textarea>
                                             <span class="bmd-bar"></span>
                                             <label class="bmd-label">Project Description</label>
                                         </div>
@@ -66,7 +65,7 @@
                                     <div class="form-group">
                                         <label>Users</label>
                                         <select id="userSelect" name="userSelect"
-                                                multiple="multiple" class="chosen-select">
+                                                multiple="multiple" class="chosen-select" required="required">
                                         </select>
                                     </div>
                                 </div>

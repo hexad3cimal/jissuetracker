@@ -9,8 +9,8 @@ import java.util.HashMap;
  */
 public interface StatusDao {
 
-    HashMap<String,String> statusDropDownMap()throws Exception;
-    public Status getById(Integer statusId)throws Exception;
-    public void add(Status status)throws Exception;
-    public void update(Status status)throws Exception;
+    HashMap<Integer,String> statusDropDownMap()throws Exception;
+    Status getById(Integer statusId)throws Exception;
+    void add(Status status)throws Exception;
+    void update(Status status)throws Exception;
 }

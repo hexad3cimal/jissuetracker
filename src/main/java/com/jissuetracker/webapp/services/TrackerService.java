@@ -9,8 +9,8 @@ import java.util.HashMap;
  */
 public interface TrackerService {
 
-    HashMap<String,String> trackerDropDownMap()throws Exception;
-    public Trackers getById(Integer trackerId)throws Exception;
+    HashMap<Integer,String> trackerDropDownMap()throws Exception;
+    Trackers getById(Integer trackerId)throws Exception;
 
 
 }

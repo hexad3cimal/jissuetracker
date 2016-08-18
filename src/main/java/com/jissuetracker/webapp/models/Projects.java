@@ -109,7 +109,7 @@ public class Projects extends SuperModelClass implements java.io.Serializable {
 	}
 
 
-	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "projectUserAssociation", catalog = "IssueTracker", joinColumns = {
 			@JoinColumn(name = "projectId", nullable = false, updatable = false) }, inverseJoinColumns = {
 			@JoinColumn(name = "userId", nullable = false, updatable = false) })

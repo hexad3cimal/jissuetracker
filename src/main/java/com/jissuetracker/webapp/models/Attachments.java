@@ -30,7 +30,6 @@ public class Attachments extends SuperModelClass implements java.io.Serializable
 	private IssuesUpdates issuesUpdates;
 	private String link;
 	private String originalName;
-	private Set<Issues> issueses = new HashSet<Issues>(0);
 
 	public Attachments() {
 	}
@@ -43,14 +42,7 @@ public class Attachments extends SuperModelClass implements java.io.Serializable
 		this.originalName = originalName;
 	}
 
-	public Attachments(Issues issues, IssuesUpdates issuesUpdates, String link, String originalName,
-					   Set<Issues> issueses) {
-		this.issues = issues;
-		this.issuesUpdates = issuesUpdates;
-		this.link = link;
-		this.originalName = originalName;
-		this.issueses = issueses;
-	}
+
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -67,7 +59,7 @@ public class Attachments extends SuperModelClass implements java.io.Serializable
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "issueId", nullable = false)
+	@JoinColumn(name = "issueId")
 	public Issues getIssues() {
 		return this.issues;
 	}
@@ -77,7 +69,7 @@ public class Attachments extends SuperModelClass implements java.io.Serializable
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "issueUpdatesId", nullable = false)
+	@JoinColumn(name = "issueUpdatesId")
 	public IssuesUpdates getIssuesUpdates() {
 		return this.issuesUpdates;
 	}
@@ -104,14 +96,5 @@ public class Attachments extends SuperModelClass implements java.io.Serializable
 		this.originalName = originalName;
 	}
 
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "attachments")
-	public Set<Issues> getIssueses() {
-		return this.issueses;
-	}
-
-	public void setIssueses(Set<Issues> issueses) {
-		this.issueses = issueses;
-	}
 
 }

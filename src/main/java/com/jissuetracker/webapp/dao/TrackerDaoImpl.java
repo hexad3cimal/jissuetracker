@@ -3,7 +3,6 @@ package com.jissuetracker.webapp.dao;
 
 import com.jissuetracker.webapp.models.Trackers;
 import org.hibernate.SessionFactory;
-import org.hibernate.transform.RootEntityResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -20,14 +19,14 @@ public class TrackerDaoImpl implements TrackerDao {
     SessionFactory sessionFactory;
 
     //gets hashmap containing statuses
-    public HashMap<String, String> trackerDropDownMap() throws Exception {
+    public HashMap<Integer, String> trackerDropDownMap() throws Exception {
 
-        List<Object []> trackersList = sessionFactory.getCurrentSession()
-                .createQuery("select id,name from Trackers")
+        List<Trackers> trackersList = sessionFactory.getCurrentSession()
+                .createCriteria(Trackers.class)
                 .list();
-        HashMap<String,String> trackerMap = new HashMap<String, String>();
-        for (Object [] trackers : trackersList){
-            trackerMap.put(trackers[0].toString(),trackers[1].toString());
+        HashMap<Integer,String> trackerMap = new HashMap<Integer, String>();
+        for (Trackers trackers : trackersList){
+            trackerMap.put(trackers.getId(),trackers.getName());
         }
 
         return trackerMap;
