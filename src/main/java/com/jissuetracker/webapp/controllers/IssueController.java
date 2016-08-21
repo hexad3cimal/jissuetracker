@@ -548,7 +548,6 @@ public class IssueController {
         return new Response(uploadDetails);
     }
 
-
     //delete the uploaded file
     @RequestMapping(value = "/deleteFile", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     @ResponseBody
