@@ -65,6 +65,11 @@ public class IssueController {
 
 
     //consumes the ajax post and adds Issue into database
+    /**
+     * @param project - name of the project issue to be added
+     * @param issueValidator - validator object for checking errors
+     * @return Hashmap containing operation status
+     */
     @RequestMapping(value = "/{project}/add", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -144,7 +149,7 @@ public class IssueController {
     }
 
     //check whether an issue with given title exists
-    //@param   issueTitle   the title of the entered issue from ui.
+    //@param issueTitle   the title of the entered issue from ui.
     @RequestMapping("/checkIfIssueExist")
     @ResponseBody
     public Boolean checkIfIssueExist(@RequestParam(value = "title") String issueTitle) throws Exception {
@@ -203,6 +208,13 @@ public class IssueController {
     }
 
     //retrieves the given project's issues based on tracker
+    /**@RequestMapping @params
+     * @param projectName - name of the project
+     * @param mode - specifies to search whether the issues created-by/assigned-to is to be looked
+     * @param tracker - issue tracker to be searched
+     * @param status - issue status to be searched
+     * @return JSON response based on the above params
+     */
     @RequestMapping("/filtered/{projectName}/{mode}/{status}/{tracker}")
     @ResponseBody
     public Response projectIssuesListBasedOnType(@PathVariable(value = "projectName") String projectName,
@@ -275,7 +287,6 @@ public class IssueController {
                         " <li><img alt=\"Avatar\" class=\"img-circle\"\n" +
                         "  src=\"" + issue.getUserByAssignedToId().getProfilePic() + "+\">\n" +
                         " <p><strong>" + issue.getUserByAssignedToId().getName() + "</strong></p>" +
-
                         " </li>\n";
 
             }
@@ -332,8 +343,6 @@ public class IssueController {
                     "            </div>" +
                     "   <div class=\"project-section activity\"><h3>Activity</h3>\n" +
                     "                <ul class=\"list-unstyled project-activity-list\">";
-
-            Projects project = issue.getProjects();
 
             String updateHtml = "";
             String attachmentHtml = "";
