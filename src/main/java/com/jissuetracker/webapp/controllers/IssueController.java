@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by jovin on 24/2/16.
@@ -91,7 +93,10 @@ public class IssueController {
         } else {
             issue.setTitle(XssCleaner.clean(issueValidator.getTitle()));
 
-            issue.setDescription(XssCleaner.clean(issueValidator.getDescription()));
+            String issueText = XssCleaner.clean(issueValidator.getDescription());
+
+
+            issue.setDescription(issueMapper(issueText));
             issue.setEndDate(new Date(issueValidator.getCompletionDate()));
             status = statusService.getById(issueValidator.getStatus());
             if (NotEmpty.notEmpty(status))
@@ -318,7 +323,7 @@ public class IssueController {
                     statusHtml = " <dd><span id=\"issueStatus\" class=\"label label-success\">Open</span></dd>";
             }
 
-            html = "  <div class=\"primary-content-heading clearfix\"><h2>" + issue.getTitle() + "</h2>\n" +
+            html = "  <div class=\"primary-content-heading clearfix\"><h2>" + issue.getTitle() +" "+"#"+issue.getId()+"</h2>\n" +
                     "        <hr style=\"border:1px solid #fff\">\n" +
                     "    </div>\n" +
                     "    <div class=\"row\">\n" +
@@ -449,7 +454,9 @@ public class IssueController {
                 issuesUpdate.setUser(getCurrentUserDetails.getDetails());
             }
 
-            issuesUpdate.setUpdates(XssCleaner.clean(issueUpdateValidator.getUpdateText()));
+            String updateText = XssCleaner.clean(issueUpdateValidator.getUpdateText());
+
+            issuesUpdate.setUpdates(issueMapper(updateText));
 
 
             issuesUpdate.setCreatedTimeStamp(new Date());
@@ -609,6 +616,33 @@ public class IssueController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private String issueMapper(String issueDetails)throws Exception{
+
+
+        Pattern pattern = Pattern.compile("Issue@\\w+");
+
+        WeakHashMap<String,String> issueMapper = new WeakHashMap<String, String>();
+        Matcher issueMatcher = pattern.matcher(issueDetails);
+        while (issueMatcher.find()) {
+            if(issueMatcher.group().contains("@")){
+                String[] splittedString = issueMatcher.group().split("@");
+                issueMapper.put(issueMatcher.group(),"<a href=\"/jit/app/issues/get/"+splittedString[1]+"\">"+issueMatcher.group()+"</a>");
+            }
+        }
+
+        if(NotEmpty.notEmpty(issueMapper)){
+            String updateTextArray[] = issueDetails.split(" ");
+            for (String s : updateTextArray){
+                if(issueMapper.containsKey(s)){
+                    issueDetails =  issueDetails.replace(s, issueMapper.get(s));
+                }
+            }
+
+        }
+
+        return issueDetails;
     }
 
 }

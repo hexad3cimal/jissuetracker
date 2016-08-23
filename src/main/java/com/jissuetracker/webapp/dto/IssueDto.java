@@ -10,6 +10,7 @@ import java.util.Date;
  * Created by jovin on 22/3/16.
  */
 public class IssueDto {
+    private Integer id;
     private Date createdOn;
     private Date updatedOn;
     private Integer donePercentage;
@@ -119,5 +120,13 @@ public class IssueDto {
 
     public void setTracker(String tracker) {
         this.tracker = tracker;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

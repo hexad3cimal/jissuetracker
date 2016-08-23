@@ -49,11 +49,11 @@ $(document).on('click', '#issueStatus', function () {
         type: "GET",
         url: '/jit/app/issues/ajax/' + getIssueId(),
         success: function (json) {
-            if (json.data != null) {
 
                 $('#issues-block').append(json.data)
 
-            }
+
+
         }
     });
 

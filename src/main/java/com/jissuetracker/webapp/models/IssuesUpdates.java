@@ -103,7 +103,7 @@ public class IssuesUpdates extends SuperModelClass implements java.io.Serializab
 		this.updatedByUserFullName = updatedByUserFullName;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "issuesUpdates")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "issuesUpdates")
 	public Set<Attachments> getAttachmentses() {
 		return this.attachmentses;
 	}
