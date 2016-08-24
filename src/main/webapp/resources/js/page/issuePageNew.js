@@ -47,13 +47,10 @@ $(document).on('click', '#issueStatus', function () {
 
     $.ajax({
         type: "GET",
+        async:false,
         url: '/jit/app/issues/ajax/' + getIssueId(),
         success: function (json) {
-
                 $('#issues-block').append(json.data)
-
-
-
         }
     });
 

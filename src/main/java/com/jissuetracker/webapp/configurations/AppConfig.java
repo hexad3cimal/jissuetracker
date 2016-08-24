@@ -19,7 +19,9 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.TimeZone;
 
 @Configuration
 @EnableAspectJAutoProxy
@@ -73,6 +75,9 @@ public class AppConfig extends WebMvcConfigurationSupport {
         ObjectMapper mapper = new ObjectMapper(factory);
         Hibernate4Module hm = new Hibernate4Module();
         hm.disable(Hibernate4Module.Feature.USE_TRANSIENT_ANNOTATION);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss a z");
+        mapper.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+        mapper.setDateFormat(formatter);
         mapper.registerModule(hm);
         messageConverter.setObjectMapper(mapper);
         return messageConverter;

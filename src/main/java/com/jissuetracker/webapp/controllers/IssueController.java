@@ -500,6 +500,7 @@ public class IssueController {
                 issuesUpdates.setUpdates(getCurrentUserDetails.getDetails().getName() +
                         " updated the status to " + status.getName());
                 issueService.update(issue);
+                issueUpdateService.addIssueUpdate(issuesUpdates);
                 return new Response("Success");
             }
 
