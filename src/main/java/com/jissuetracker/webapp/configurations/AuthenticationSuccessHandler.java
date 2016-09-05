@@ -35,6 +35,7 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
 
         //Save the initial request url
         SavedRequest savedRequest = requestCache.getRequest(request, response);
+        request.getSession().setMaxInactiveInterval(10*60);
 
         try {
             //populate the session objects

@@ -15,6 +15,13 @@ public class MyLogger {
 
     private Logger log = Logger.getLogger(getClass());
 
+    @Before("execution(* com.jissuetracker.webapp.controllers.WebSocketController.notify(..))")
+    public void notify(JoinPoint point) {
+        log.info(point.getSignature().getName()
+                + "  controller called with arguments "+ point.getArgs());
+    }
+
+
     @Before("execution(* com.jissuetracker.webapp.dao.IssueDaoImpl.add(..))")
     public void issueAddDao(JoinPoint point) {
         log.info(point.getSignature().getName()

@@ -5,6 +5,7 @@ package com.jissuetracker.webapp.configurations;
  */
 
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.session.web.context.AbstractHttpSessionApplicationInitializer;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.ServletContext;

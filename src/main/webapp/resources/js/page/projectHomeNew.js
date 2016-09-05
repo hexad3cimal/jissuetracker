@@ -58,7 +58,9 @@ $(function () {
 
     $("#completionDate").datetimepicker({
 
-        container:'#issues'
+
+        container:'#issues',
+        format: 'DD/MM/YYYY HH:mm:ss'
     });
 
     $('#addIssue').click(function () {
@@ -341,6 +343,10 @@ $(function () {
             },
             priority: {
                 required: true
+            },
+            completionDate: {
+                required:true,
+                date: true
             }
 
 
@@ -429,8 +435,13 @@ function addIssue() {
         },
         success: function (data) {
 
-            console.log(data);
             if (data.data.status == "Success") {
+
+                console.log("success");
+                stompClient.send("/app/notifications", {}, JSON.stringify({
+                    'toId': $('#assigned').chosen().val(),
+                    'type': "message"
+                }));
 
                 $.dialog({
                     title: 'Success!',
@@ -448,7 +459,7 @@ function addIssue() {
 
                 });
 
-        }
+            }
         }
     });
 }
@@ -457,9 +468,8 @@ function addIssue() {
 function getProjectName() {
 
     //splitting the current url for getting the project name
-    var path = $(location).attr('href');
-    var splitted = path.split('/');
-    return splitted[6];
+
+    return $('#project-name').text();
 }
 
 

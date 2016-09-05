@@ -27,7 +27,6 @@ $(function(){
                 var table = $('#projectTable').children();
                 $.each(json.data, function (key, value) {
                     table.append('<tr><td><a href=' + value + '>' + key + '</a></td></tr>');
-                    console.log(key + " " + value)
                 });
             }
 

@@ -116,7 +116,6 @@ public class ProjectController {
 
 
         if (result.hasErrors()) {
-            System.out.println("Error"+result.getAllErrors().toString());
             return new Response("Error");
         } else {
         //determines whether edit or add
@@ -135,9 +134,6 @@ public class ProjectController {
 
             projects.setDescription(XssCleaner.clean(projectValidator.getDescription()));
 
-
-//            String usersString = projectValidator.getUsers();
-//            String userArray[] = usersString.split(",");
             User userObject = new User();
             HashSet<User> userHashSet = new HashSet<User>();
             if (NotEmpty.notEmpty(projectValidator.getUsers())) {
@@ -163,7 +159,7 @@ public class ProjectController {
 
 
             if (NotEmpty.notEmpty(projects.getName()))
-                projects.setUrl("/jit/app/project/" + projects.getName());
+                projects.setUrl("/jit/app/project/" + projects.getName().replace(" ","&"));
 
             if (projects.getId() == null &&
                     (getCurrentUserDetails.getDetails().getRoles().getId() == 1
@@ -256,28 +252,31 @@ public class ProjectController {
     @RequestMapping(value = "/{projectName}")
     public ModelAndView projectHome(@PathVariable(value = "projectName")
                               String projectName) throws Exception {
-        Projects project = projectService.getByProjectNameAlongWithUsers(projectName);
+        Projects project = projectService.getByProjectNameAlongWithUsers(projectName.replace("&"," "));
         ModelAndView mv =new ModelAndView();
         if (NotEmpty.notEmpty(getCurrentUserDetails.getDetails())
                 && NotEmpty.notEmpty(project)) {
 
             //administrator can view any project
             if (getCurrentUserDetails.getDetails().getRoles().getId() == 1) {
+
                 mv.addObject("project",project);
                 mv.setViewName("projectIssues");
                 return mv;
             }
 
             //normal user can view projects only which they are part of
-            else if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail(), projectName)) {
+            else if (projectService.doesUserHasProject(getCurrentUserDetails.getDetails().getEmail(), projectName.replace("&"," "))) {
+
                 mv.setViewName("projectIssues");
                 mv.addObject("project",project);
                 return mv;
             }
-            else
-                mv.setViewName("404");
+            else {
 
-            return mv;
+                mv.setViewName("404");
+                return mv;
+            }
 
 
         } else
